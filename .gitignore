@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+
+# Environment & IDE
+.env
+.env.local
+.vscode/
+.idea/
+*.log
