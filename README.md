@@ -94,32 +94,74 @@ $$\mathbf{\text{Gross Total Compensation}} = C_{\text{Base}} + \text{Solatium} +
 
 ---
 
-## 🚀 Quick Start Guide
+## 💻 Team Setup & Execution Guide (For Your Machine)
 
-### Prerequisites
-- Node.js (v18+)
-- Python (v3.10+)
-
-### 1. Start the FastAPI Backend
+### 📥 1. Clone the Repository (For New Team Members)
+Open your terminal or PowerShell and run:
 ```bash
-cd backend
-python -m pip install -r requirements.txt
+git clone https://github.com/shree172006/nlams.git
+cd nlams
+```
+
+---
+
+### ⚙️ 2. Run Backend API (Terminal 1)
+```bash
+# Install backend dependencies
+python -m pip install -r backend/requirements.txt
+
+# Start FastAPI server
 python -m uvicorn backend.main:app --host 0.0.0.0 --port 8000
 ```
 - **Backend API**: `http://localhost:8000`
 - **Interactive Swagger Docs**: `http://localhost:8000/docs`
 
-### 2. Start the Frontend Web Portal
+---
+
+### 🌐 3. Run Frontend Portal (Terminal 2)
 ```bash
+# Navigate to frontend folder
 cd frontend
+
+# Install packages
 npm install
+
+# Start Vite development server
 npm run dev
 ```
 - **Frontend Portal**: `http://localhost:5173`
 
-### 3. Run Automated Tests
+---
+
+### 🧪 4. Run Automated Statutory Tests
 ```bash
 python -m pytest backend/test_backend.py
+```
+
+---
+
+## 🔄 How to Push Your Changes to GitHub (Team Workflow)
+
+Whenever you make changes to any files in the project, follow these 3 simple commands to push your updates:
+
+```bash
+# 1. Stage all modified and new files
+git add .
+
+# 2. Commit with a message explaining what you did
+git commit -m "Updated UI components and valuation logic"
+
+# 3. Push to your GitHub repository
+git push origin main
+```
+
+---
+
+## ⬇️ How Team Members Get the Latest Changes (Pulling Updates)
+
+If someone else has pushed new changes to GitHub, update your local machine by running:
+```bash
+git pull origin main
 ```
 
 ---
@@ -146,9 +188,12 @@ python -m pytest backend/test_backend.py
 │   ├── index.html              # HTML shell with Google Fonts & Leaflet
 │   └── package.json            # Node dependencies
 ├── pitch_kit/
-│   ├── presentation_guide.md   # Presentation script for Team Leader (Girl 1)
-│   ├── statutory_playbook.md   # Revenue nomenclature & Schedules for Researcher (Girl 2)
-│   └── judge_qa_defense.md     # Bulletproof defenses for Pitcher (Girl 3)
+│   ├── NLAMS_SIH_Presentation.pptx # 16:9 Widescreen PowerPoint Presentation
+│   ├── presentation_slides.html    # Interactive HTML5 Browser Slide Deck
+│   ├── generate_ppt.py             # Python PowerPoint deck generator
+│   ├── presentation_guide.md       # Presentation script for Team Leader
+│   ├── statutory_playbook.md       # Revenue nomenclature & Schedules for Researcher
+│   └── judge_qa_defense.md         # Bulletproof defenses for Pitcher
 └── README.md
 ```
 
@@ -156,8 +201,9 @@ python -m pytest backend/test_backend.py
 
 ## 👥 Smart India Hackathon (SIH) Team Distribution
 - **Technical Lead / Backend Architect**: Microservices, 9-stage state machine, and First Schedule valuation math.
-- **Team Leader (Girl 1)**: Presentation narrative and end-to-end user journey demonstration.
-- **Researcher (Girl 2)**: RFCTLARR schedules, state nomenclature (Khasra, 7/12, Patta), and Vikas scoring.
-- **Pitcher & Strategist (Girl 3)**: Judge Q&A defenses (ULPIN encumbrance locking, DBT transparency, e-Courts sync).
-- **Cloud & DB Engineer (Boy 1)**: PostGIS database, GeoServer WMS/WFS, and Dockerization.
-- **Frontend Contributor (Girl 4)**: React components and Leaflet GIS integration.
+- **Team Leader**: Presentation narrative and end-to-end user journey demonstration.
+- **Researcher**: RFCTLARR schedules, state nomenclature (Khasra, 7/12, Patta), and Vikas scoring.
+- **Pitcher & Strategist**: Judge Q&A defenses (ULPIN encumbrance locking, DBT transparency, e-Courts sync).
+- **Cloud & DB Engineer**: PostGIS database, GeoServer WMS/WFS, and Dockerization.
+- **Frontend Contributor**: React components and Leaflet GIS integration.
+
