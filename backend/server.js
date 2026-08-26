@@ -615,8 +615,8 @@ app.post('/api/parcels/:ulpin/split-khata', (req, res) => {
 
 // Start listening if executed directly
 if (require.main === module) {
-  app.listen(PORT, '127.0.0.1', () => {
-    console.log(`[BACKEND] NLAMS Express REST API server running on http://127.0.0.1:${PORT}`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`[BACKEND] NLAMS Express REST API server running on port ${PORT}`);
   });
 }
 
