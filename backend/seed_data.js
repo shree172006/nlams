@@ -146,41 +146,148 @@ function seedDatabase() {
     reasoned_order_summary: null
   };
 
-  const rr1 = {
-    family_id: "RR-VNS-01",
-    project_id: "PRJ-NHAI-2026-UP01",
-    head_of_family: "Shri Ramcharan Yadav",
-    category: "OBC",
-    is_displaced: true,
-    claimant_type: "OWNER",
-    monetary_entitlements_settled: 11,
-    total_rr_assistance_inr: 550000.0,
-    resettlement_amenities_allocated: ["Drinking Water", "Electricity", "Paved Access Road"]
-  };
+  // R&R Families (Second Schedule) across All Corridor Locations
+  const rrFamiliesAll = [
+    // 1. Varanasi Ring Road Phase-II (UP)
+    {
+      family_id: "RR-VNS-01",
+      project_id: "PRJ-NHAI-2026-UP01",
+      head_of_family: "Shri Ramcharan Yadav",
+      category: "OBC",
+      is_displaced: true,
+      claimant_type: "OWNER",
+      monetary_entitlements_settled: 11,
+      total_rr_assistance_inr: 550000.0,
+      resettlement_amenities_allocated: ["Drinking Water", "Electricity", "Paved Access Road"]
+    },
+    {
+      family_id: "RR-VNS-02",
+      project_id: "PRJ-NHAI-2026-UP01",
+      head_of_family: "Smt. Shanti Devi",
+      category: "General",
+      is_displaced: false,
+      claimant_type: "OWNER",
+      monetary_entitlements_settled: 8,
+      total_rr_assistance_inr: 350000.0,
+      resettlement_amenities_allocated: ["Access Road"]
+    },
+    {
+      family_id: "RR-VNS-03",
+      project_id: "PRJ-NHAI-2026-UP01",
+      head_of_family: "Shri Birju Paswan",
+      category: "SC/ST",
+      is_displaced: true,
+      claimant_type: "AGRICULTURAL_LABORER",
+      monetary_entitlements_settled: 11,
+      total_rr_assistance_inr: 436000.0,
+      resettlement_amenities_allocated: ["Sanitation Unit", "Solar Street Lighting", "Drinking Water"]
+    },
 
-  const rr2 = {
-    family_id: "RR-VNS-02",
-    project_id: "PRJ-NHAI-2026-UP01",
-    head_of_family: "Smt. Shanti Devi",
-    category: "General",
-    is_displaced: false,
-    claimant_type: "OWNER",
-    monetary_entitlements_settled: 8,
-    total_rr_assistance_inr: 350000.0,
-    resettlement_amenities_allocated: ["Access Road"]
-  };
+    // 2. Nagpur-Mumbai Samruddhi Expressway (Maharashtra)
+    {
+      family_id: "RR-NGP-01",
+      project_id: "PRJ-MSRDC-2026-MH04",
+      head_of_family: "Shri Eknath Patil",
+      category: "OBC",
+      is_displaced: true,
+      claimant_type: "OWNER",
+      monetary_entitlements_settled: 11,
+      total_rr_assistance_inr: 680000.0,
+      resettlement_amenities_allocated: ["Resettlement Colony Plot", "Farm Link Road", "Power Connection"]
+    },
+    {
+      family_id: "RR-NGP-02",
+      project_id: "PRJ-MSRDC-2026-MH04",
+      head_of_family: "Shri Santosh Gaikwad",
+      category: "SC/ST",
+      is_displaced: true,
+      claimant_type: "AGRICULTURAL_LABORER",
+      monetary_entitlements_settled: 11,
+      total_rr_assistance_inr: 480000.0,
+      resettlement_amenities_allocated: ["Concrete House Grant", "Drinking Water", "Cattle Shed Allotment"]
+    },
+    {
+      family_id: "RR-NGP-03",
+      project_id: "PRJ-MSRDC-2026-MH04",
+      head_of_family: "Smt. Vimalabai Deshmukh",
+      category: "General",
+      is_displaced: false,
+      claimant_type: "TENANT",
+      monetary_entitlements_settled: 9,
+      total_rr_assistance_inr: 320000.0,
+      resettlement_amenities_allocated: ["Paved Road", "Community Hall Access"]
+    },
 
-  const rr3 = {
-    family_id: "RR-VNS-03",
-    project_id: "PRJ-NHAI-2026-UP01",
-    head_of_family: "Shri Birju Paswan",
-    category: "SC/ST",
-    is_displaced: true,
-    claimant_type: "AGRICULTURAL_LABORER",
-    monetary_entitlements_settled: 11,
-    total_rr_assistance_inr: 436000.0, // Housing grant + ₹36k subsistence + ₹50k shifting + ₹25k shop
-    resettlement_amenities_allocated: ["Sanitation Unit", "Solar Street Lighting", "Drinking Water"]
-  };
+    // 3. Bengaluru Satellite Town Ring Road (Karnataka)
+    {
+      family_id: "RR-BLR-01",
+      project_id: "PRJ-KRDCL-2026-KA08",
+      head_of_family: "Shri Manjunath Swamy",
+      category: "General",
+      is_displaced: false,
+      claimant_type: "OWNER",
+      monetary_entitlements_settled: 11,
+      total_rr_assistance_inr: 750000.0,
+      resettlement_amenities_allocated: ["Commercial Stall Allotment", "Storm Water Drainage", "Fiber Optic Line"]
+    },
+    {
+      family_id: "RR-BLR-02",
+      project_id: "PRJ-KRDCL-2026-KA08",
+      head_of_family: "Shri Venkateshappa",
+      category: "SC/ST",
+      is_displaced: true,
+      claimant_type: "ARTISAN",
+      monetary_entitlements_settled: 10,
+      total_rr_assistance_inr: 525000.0,
+      resettlement_amenities_allocated: ["Artisan Work Shed", "Solar Street Lighting", "Resettlement Housing"]
+    },
+    {
+      family_id: "RR-BLR-03",
+      project_id: "PRJ-KRDCL-2026-KA08",
+      head_of_family: "Smt. Gowramma",
+      category: "OBC",
+      is_displaced: true,
+      claimant_type: "AGRICULTURAL_LABORER",
+      monetary_entitlements_settled: 11,
+      total_rr_assistance_inr: 460000.0,
+      resettlement_amenities_allocated: ["Drinking Water", "Paved Access Road", "Anganwadi Access"]
+    },
+
+    // 4. Delhi-Amritsar Dedicated Freight Corridor (Punjab)
+    {
+      family_id: "RR-LDH-01",
+      project_id: "PRJ-DFCCIL-2026-PB02",
+      head_of_family: "Sardar Gurdeep Singh",
+      category: "General",
+      is_displaced: false,
+      claimant_type: "OWNER",
+      monetary_entitlements_settled: 11,
+      total_rr_assistance_inr: 820000.0,
+      resettlement_amenities_allocated: ["Tractor Crossing Underpass", "Tubewell Power Connection"]
+    },
+    {
+      family_id: "RR-LDH-02",
+      project_id: "PRJ-DFCCIL-2026-PB02",
+      head_of_family: "Shri Baldev Ram",
+      category: "SC/ST",
+      is_displaced: true,
+      claimant_type: "AGRICULTURAL_LABORER",
+      monetary_entitlements_settled: 11,
+      total_rr_assistance_inr: 450000.0,
+      resettlement_amenities_allocated: ["Pucca House Grant", "Drainage", "Community Centre Allotment"]
+    },
+    {
+      family_id: "RR-LDH-03",
+      project_id: "PRJ-DFCCIL-2026-PB02",
+      head_of_family: "Smt. Jaswinder Kaur",
+      category: "General",
+      is_displaced: false,
+      claimant_type: "SHOPKEEPER",
+      monetary_entitlements_settled: 8,
+      total_rr_assistance_inr: 380000.0,
+      resettlement_amenities_allocated: ["Market Complex Booth Allotment", "Drinking Water"]
+    }
+  ];
 
   // LARRDA Reference under Section 64 (PDF statutory pillar)
   const larrda1 = {
@@ -194,6 +301,51 @@ function seedDatabase() {
     tribunal_bench: "Uttar Pradesh Land Acquisition, Rehabilitation & Resettlement Authority (Varanasi Bench)",
     case_no: "LARRA/VNS/2026/882",
     hearing_date: "2026-04-18",
+    status: "UNDER_ADJUDICATION",
+    high_court_appeal_status: "ELIGIBLE_60_DAYS"
+  };
+
+  const larrda2 = {
+    id: "REF-LARRDA-MH-2026-014",
+    project_id: "PRJ-MSRDC-2026-MH04",
+    ulpin: "IN27MH89123401",
+    claimant_name: "Shri Eknath Patil",
+    ground_type: "APPORTIONMENT",
+    filing_date: "2026-02-05",
+    collector_referral_date: "2026-02-28",
+    tribunal_bench: "Maharashtra LARR Authority (Nagpur Divisional Bench)",
+    case_no: "LARRA/NGP/2026/104",
+    hearing_date: "2026-05-12",
+    status: "UNDER_ADJUDICATION",
+    high_court_appeal_status: "ELIGIBLE_60_DAYS"
+  };
+
+  const larrda3 = {
+    id: "REF-LARRDA-KA-2026-022",
+    project_id: "PRJ-KRDCL-2026-KA08",
+    ulpin: "IN29KA56789001",
+    claimant_name: "Shri Manjunath Swamy",
+    ground_type: "REHABILITATION",
+    filing_date: "2026-01-14",
+    collector_referral_date: "2026-02-19",
+    tribunal_bench: "Karnataka Land Acquisition Tribunal (Bengaluru Rural Bench)",
+    case_no: "LARRA/BLR/2026/419",
+    hearing_date: "2026-04-29",
+    status: "DISPOSED",
+    high_court_appeal_status: "APPEAL_FILED_HC"
+  };
+
+  const larrda4 = {
+    id: "REF-LARRDA-PB-2026-031",
+    project_id: "PRJ-DFCCIL-2026-PB02",
+    ulpin: "IN03PB11223301",
+    claimant_name: "Sardar Gurdeep Singh",
+    ground_type: "MEASUREMENT_AREA",
+    filing_date: "2026-02-12",
+    collector_referral_date: "2026-03-01",
+    tribunal_bench: "Punjab Land Acquisition Authority (Ludhiana Bench)",
+    case_no: "LARRA/LDH/2026/711",
+    hearing_date: "2026-05-04",
     status: "UNDER_ADJUDICATION",
     high_court_appeal_status: "ELIGIBLE_60_DAYS"
   };
@@ -351,8 +503,8 @@ function seedDatabase() {
   db.insertProjects([p1, p2, p3, p4]);
   db.insertParcels([...parcelsP1, ...parcelsP2, ...parcelsP3, ...parcelsP4]);
   db.insertObjection(obj1);
-  db.insertRRFamilies([rr1, rr2, rr3]);
-  db.insertLARRDAReferences([larrda1]);
+  db.insertRRFamilies(rrFamiliesAll);
+  db.insertLARRDAReferences([larrda1, larrda2, larrda3, larrda4]);
 }
 
 function seedOfficers() {
