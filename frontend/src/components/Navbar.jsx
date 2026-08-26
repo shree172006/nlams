@@ -170,14 +170,14 @@ export default function Navbar({
                 onClick={() => setActiveTab('citizen')}
               >
                 <Search size={14} />
-                <span>{langHindi ? '1. भू-स्वामी नागरिक सेवा' : '1. Citizen Land Portal (Free)'}</span>
+                <span>{langHindi ? '1. भू-स्वामी सेवा' : '1. Citizen Land Portal (Free)'}</span>
               </button>
               <button 
                 className={`nav-link-btn ${activeTab === 'gis' ? 'active' : ''}`}
                 onClick={() => setActiveTab('gis')}
               >
                 <Layers size={14} />
-                <span>{langHindi ? '2. मैप-टू-मनी जीआईएस' : '2. Map-to-Money GIS'}</span>
+                <span>{langHindi ? '2. जीआईएस नक्शा' : '2. Map-to-Money GIS'}</span>
               </button>
               <button 
                 className={`nav-link-btn ${activeTab === 'calculator' ? 'active' : ''}`}
@@ -191,7 +191,7 @@ export default function Navbar({
                 onClick={() => setActiveTab('rr')}
               >
                 <Users size={14} />
-                <span>{langHindi ? '4. पुनर्वास एवं R&R' : '4. R&R Entitlements Guide'}</span>
+                <span>{langHindi ? '4. पुनर्वास R&R' : '4. R&R Entitlements Guide'}</span>
               </button>
             </>
           ) : (
@@ -202,56 +202,56 @@ export default function Navbar({
                 onClick={() => setActiveTab('dashboard')}
               >
                 <TrendingUp size={14} />
-                <span>{t.navDashboard}</span>
+                <span>{langHindi ? '1. डैशबोर्ड' : '1. Dashboard'}</span>
               </button>
               <button 
                 className={`nav-link-btn ${activeTab === 'gis' ? 'active' : ''}`}
                 onClick={() => setActiveTab('gis')}
               >
                 <Layers size={14} />
-                <span>{langHindi ? '2. मैप-टू-मनी जीआईएस' : '2. Map-to-Money GIS'}</span>
+                <span>{langHindi ? '2. जीआईएस नक्शा' : '2. GIS Map'}</span>
               </button>
               <button 
                 className={`nav-link-btn ${activeTab === 'workbench' ? 'active' : ''}`}
                 onClick={() => setActiveTab('workbench')}
               >
                 <Building2 size={14} />
-                <span>{langHindi ? '3. वैधानिक चरण गेटकीपर' : '3. Statutory Workflow'}</span>
+                <span>{langHindi ? '3. अधिग्रहण चरण' : '3. Statutory Workflow'}</span>
               </button>
               <button 
                 className={`nav-link-btn ${activeTab === 'objections' ? 'active' : ''}`}
                 onClick={() => setActiveTab('objections')}
               >
                 <Scale size={14} />
-                <span>{langHindi ? '4. धारा 15 आपत्तियां' : '4. Sec 15 Inquiry Bench'}</span>
+                <span>{langHindi ? '4. धारा 15 आपत्तियां' : '4. Sec 15 Objections'}</span>
               </button>
               <button 
                 className={`nav-link-btn ${activeTab === 'larrda' ? 'active' : ''}`}
                 onClick={() => setActiveTab('larrda')}
               >
                 <Scale size={14} color="#f59e0b" />
-                <span>{langHindi ? '5. लार्ड्डा न्यायाधिकरण (Sec 64)' : '5. LARRDA Dispute Tribunal'}</span>
+                <span>{langHindi ? '5. लार्ड्डा (धारा 64)' : '5. LARRDA Tribunal'}</span>
               </button>
               <button 
                 className={`nav-link-btn ${activeTab === 'rr' ? 'active' : ''}`}
                 onClick={() => setActiveTab('rr')}
               >
                 <Users size={14} />
-                <span>{langHindi ? '6. गैर-मालिक व R&R' : '6. Non-Owner R&R'}</span>
+                <span>{langHindi ? '6. पुनर्वास R&R' : '6. Non-Owner R&R'}</span>
               </button>
               <button 
                 className={`nav-link-btn ${activeTab === 'airisk' ? 'active' : ''}`}
                 onClick={() => setActiveTab('airisk')}
               >
                 <Zap size={14} />
-                <span>{t.navAIRisk}</span>
+                <span>{langHindi ? '7. एआई जोखिम' : '7. AI Delay-Risk'}</span>
               </button>
               <button 
                 className={`nav-link-btn ${activeTab === 'calculator' ? 'active' : ''}`}
                 onClick={() => setActiveTab('calculator')}
               >
                 <IndianRupee size={14} />
-                <span>{langHindi ? '8. मुआवजा मूल्यांकन' : '8. Valuation Sandbox'}</span>
+                <span>{langHindi ? '8. मुआवजा कैलकुलेटर' : '8. Valuation Sandbox'}</span>
               </button>
             </>
           )}
