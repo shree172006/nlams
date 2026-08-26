@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   Home, TrendingUp, Layers, Building2, IndianRupee, 
-  Search, Scale, Users, Zap, Globe 
+  Search, Scale, Users, Zap, Globe, Shield, UserCheck, LogIn, LogOut, Smartphone
 } from 'lucide-react';
 
 export default function Navbar({ 
@@ -13,8 +13,13 @@ export default function Navbar({
   setLangHindi, 
   t, 
   selectedProject, 
-  metrics 
+  metrics,
+  currentUser,
+  setShowLoginModal,
+  handleLogout
 }) {
+  const isOfficer = currentUser && currentUser.role !== 'CITIZEN';
+
   return (
     <>
       {/* 1. GIGW 3.0 Standard Accessibility Top Bar */}
@@ -92,30 +97,59 @@ export default function Navbar({
           </div>
 
           <div className="header-trust-badges">
-            <div className="trust-chip" style={{ borderLeft: '3px solid #059669', padding: '6px 14px' }}>
-              <span className="tc-title" style={{ color: '#059669', display: 'flex', alignItems: 'center', gap: 5 }}>
-                <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#059669', display: 'inline-block' }}></span>
-                {t.liveSystem}
-              </span>
-              <span className="tc-sub">{t.govtDept}</span>
-            </div>
-            <div className="trust-chip" style={{ borderLeft: '3px solid #f97316', padding: '6px 14px' }}>
-              <span className="tc-title">{t.actBadge}</span>
-              <span className="tc-sub">{t.actSub}</span>
-            </div>
+            {isOfficer ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 'var(--radius-md)', padding: '6px 14px', boxShadow: 'var(--shadow-xs)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#1e3a8a', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.8rem' }}>
+                    <Shield size={16} color="#93c5fd" />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#1e3a8a', display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <span>{currentUser.name}</span>
+                      <span className="badge-pill badge-blue" style={{ fontSize: '0.62rem', padding: '1px 5px' }}>{currentUser.role}</span>
+                    </div>
+                    <div style={{ fontSize: '0.68rem', color: '#64748b' }}>{currentUser.designation}</div>
+                  </div>
+                </div>
+                <div style={{ height: 24, width: 1, background: '#cbd5e1', margin: '0 4px' }} />
+                <button 
+                  onClick={handleLogout}
+                  className="btn-action btn-outline"
+                  style={{ fontSize: '0.7rem', padding: '4px 8px', color: '#dc2626', borderColor: '#fca5a5' }}
+                  title="Switch back to Free Citizen Mode"
+                >
+                  <LogOut size={12} />
+                  <span>Logout</span>
+                </button>
+              </div>
+            ) : (
+              <button 
+                className="btn-action btn-navy"
+                style={{
+                  padding: '9px 18px',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  borderRadius: 'var(--radius-md)',
+                  background: '#071426',
+                  color: '#ffffff',
+                  border: '1px solid #1e3a8a',
+                  boxShadow: '0 2px 6px rgba(7,20,38,0.15)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onClick={() => setShowLoginModal(true)}
+              >
+                <Shield size={16} color="#60a5fa" />
+                <span>{langHindi ? 'अधिकारी लॉगिन' : 'Officer Login'}</span>
+                <span className="badge-pill badge-gold" style={{ fontSize: '0.62rem', padding: '1px 6px' }}>Portal</span>
+              </button>
+            )}
           </div>
         </div>
       </header>
-
-      {/* 4. Statutory Ticker Feed */}
-      <div className="statutory-ticker">
-        <div className="ticker-badge">
-          <span>{t.tickerTitle}</span>
-        </div>
-        <div className="ticker-content">
-          ★ <strong>{langHindi ? 'चयनित कॉरिडोर' : 'Selected Corridor'}</strong>: {selectedProject?.title || 'Varanasi Ring Road'} • <strong>{langHindi ? 'वर्तमान चरण' : 'Current Stage'}</strong>: {selectedProject?.current_stage} • <strong>PFMS DBT</strong>: ₹{metrics?.total_compensation_disbursed_cr} Cr {langHindi ? 'वितरित' : 'Disbursed'} • <strong>{langHindi ? 'भार-मुक्ति लॉक' : 'Encumbrance Locks'}</strong>: {metrics?.ulpin_encumbrance_locks_active} {langHindi ? 'पार्सल' : 'Parcels'}.
-        </div>
-      </div>
 
       {/* 5. Navigation Bar */}
       <nav className="main-nav-strip">
@@ -127,62 +161,100 @@ export default function Navbar({
             <Home size={14} />
             <span>{t.gatewayHub}</span>
           </button>
-          <button 
-            className={`nav-link-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
-            onClick={() => setActiveTab('dashboard')}
-          >
-            <TrendingUp size={14} />
-            <span>{t.navDashboard}</span>
-          </button>
-          <button 
-            className={`nav-link-btn ${activeTab === 'gis' ? 'active' : ''}`}
-            onClick={() => setActiveTab('gis')}
-          >
-            <Layers size={14} />
-            <span>{t.navGis}</span>
-          </button>
-          <button 
-            className={`nav-link-btn ${activeTab === 'workbench' ? 'active' : ''}`}
-            onClick={() => setActiveTab('workbench')}
-          >
-            <Building2 size={14} />
-            <span>{t.navWorkflow}</span>
-          </button>
-          <button 
-            className={`nav-link-btn ${activeTab === 'calculator' ? 'active' : ''}`}
-            onClick={() => setActiveTab('calculator')}
-          >
-            <IndianRupee size={14} />
-            <span>{t.navCalculator}</span>
-          </button>
-          <button 
-            className={`nav-link-btn ${activeTab === 'citizen' ? 'active' : ''}`}
-            onClick={() => setActiveTab('citizen')}
-          >
-            <Search size={14} />
-            <span>{t.navLandowner}</span>
-          </button>
-          <button 
-            className={`nav-link-btn ${activeTab === 'objections' ? 'active' : ''}`}
-            onClick={() => setActiveTab('objections')}
-          >
-            <Scale size={14} />
-            <span>{t.navObjections}</span>
-          </button>
-          <button 
-            className={`nav-link-btn ${activeTab === 'rr' ? 'active' : ''}`}
-            onClick={() => setActiveTab('rr')}
-          >
-            <Users size={14} />
-            <span>{t.navRR}</span>
-          </button>
-          <button 
-            className={`nav-link-btn ${activeTab === 'airisk' ? 'active' : ''}`}
-            onClick={() => setActiveTab('airisk')}
-          >
-            <Zap size={14} />
-            <span>{t.navAIRisk}</span>
-          </button>
+
+          {!isOfficer ? (
+            /* ================= CITIZEN PUBLIC TABS (NOT LOGGED IN AS OFFICER) ================= */
+            <>
+              <button 
+                className={`nav-link-btn ${activeTab === 'citizen' ? 'active' : ''}`}
+                onClick={() => setActiveTab('citizen')}
+              >
+                <Search size={14} />
+                <span>{langHindi ? '1. भू-स्वामी नागरिक सेवा' : '1. Citizen Land Portal (Free)'}</span>
+              </button>
+              <button 
+                className={`nav-link-btn ${activeTab === 'gis' ? 'active' : ''}`}
+                onClick={() => setActiveTab('gis')}
+              >
+                <Layers size={14} />
+                <span>{langHindi ? '2. मैप-टू-मनी जीआईएस' : '2. Map-to-Money GIS'}</span>
+              </button>
+              <button 
+                className={`nav-link-btn ${activeTab === 'calculator' ? 'active' : ''}`}
+                onClick={() => setActiveTab('calculator')}
+              >
+                <IndianRupee size={14} />
+                <span>{langHindi ? '3. मुआवजा कैलकुलेटर' : '3. Compensation Calculator'}</span>
+              </button>
+              <button 
+                className={`nav-link-btn ${activeTab === 'rr' ? 'active' : ''}`}
+                onClick={() => setActiveTab('rr')}
+              >
+                <Users size={14} />
+                <span>{langHindi ? '4. पुनर्वास एवं R&R' : '4. R&R Entitlements Guide'}</span>
+              </button>
+            </>
+          ) : (
+            /* ================= OFFICER TABS (WHEN AUTHENTICATED) ================= */
+            <>
+              <button 
+                className={`nav-link-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
+                onClick={() => setActiveTab('dashboard')}
+              >
+                <TrendingUp size={14} />
+                <span>{t.navDashboard}</span>
+              </button>
+              <button 
+                className={`nav-link-btn ${activeTab === 'gis' ? 'active' : ''}`}
+                onClick={() => setActiveTab('gis')}
+              >
+                <Layers size={14} />
+                <span>{langHindi ? '2. मैप-टू-मनी जीआईएस' : '2. Map-to-Money GIS'}</span>
+              </button>
+              <button 
+                className={`nav-link-btn ${activeTab === 'workbench' ? 'active' : ''}`}
+                onClick={() => setActiveTab('workbench')}
+              >
+                <Building2 size={14} />
+                <span>{langHindi ? '3. वैधानिक चरण गेटकीपर' : '3. Statutory Workflow'}</span>
+              </button>
+              <button 
+                className={`nav-link-btn ${activeTab === 'objections' ? 'active' : ''}`}
+                onClick={() => setActiveTab('objections')}
+              >
+                <Scale size={14} />
+                <span>{langHindi ? '4. धारा 15 आपत्तियां' : '4. Sec 15 Inquiry Bench'}</span>
+              </button>
+              <button 
+                className={`nav-link-btn ${activeTab === 'larrda' ? 'active' : ''}`}
+                onClick={() => setActiveTab('larrda')}
+              >
+                <Scale size={14} color="#f59e0b" />
+                <span>{langHindi ? '5. लार्ड्डा न्यायाधिकरण (Sec 64)' : '5. LARRDA Dispute Tribunal'}</span>
+              </button>
+              <button 
+                className={`nav-link-btn ${activeTab === 'rr' ? 'active' : ''}`}
+                onClick={() => setActiveTab('rr')}
+              >
+                <Users size={14} />
+                <span>{langHindi ? '6. गैर-मालिक व R&R' : '6. Non-Owner R&R'}</span>
+              </button>
+              <button 
+                className={`nav-link-btn ${activeTab === 'airisk' ? 'active' : ''}`}
+                onClick={() => setActiveTab('airisk')}
+              >
+                <Zap size={14} />
+                <span>{t.navAIRisk}</span>
+              </button>
+              <button 
+                className={`nav-link-btn ${activeTab === 'calculator' ? 'active' : ''}`}
+                onClick={() => setActiveTab('calculator')}
+              >
+                <IndianRupee size={14} />
+                <span>{langHindi ? '8. मुआवजा मूल्यांकन' : '8. Valuation Sandbox'}</span>
+              </button>
+            </>
+          )}
         </div>
       </nav>
     </>

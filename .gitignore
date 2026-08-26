@@ -18,5 +18,13 @@ build/
 .vscode/
 .idea/
 *.log
-~$*
 nlams.db
+nlams.db-shm
+nlams.db-wal
+
+# Flutter build artifacts
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+

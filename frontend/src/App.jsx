@@ -3,7 +3,8 @@ import {
   Building2, MapPin, ShieldCheck, FileText, IndianRupee, Layers, 
   TrendingUp, AlertTriangle, CheckCircle, Search, Clock, 
   ArrowRight, Lock, RefreshCw, Check, HelpCircle, Printer, Globe,
-  Home, ChevronRight, Scale, Users, PlusCircle, Zap, Sparkles, Calendar
+  Home, ChevronRight, Scale, Users, PlusCircle, Zap, Sparkles, Calendar,
+  Shield, LogIn, LogOut, UserCheck
 } from 'lucide-react';
 
 import Navbar from './components/Navbar';
@@ -27,7 +28,7 @@ const T = {
     actBadge: "RFCTLARR Act 2013",
     actSub: "NH Act 1956 (Sec 3G)",
     tickerTitle: "SYSTEM CONTROL CONSOLE",
-    gatewayHub: "Gateway Hub",
+    gatewayHub: "Home",
     navDashboard: "1. Officer Dashboard",
     navGis: "2. GIS Parcel Map",
     navWorkflow: "3. Acquisition Workflow",
@@ -80,7 +81,7 @@ const T = {
     actBadge: "भूमि अर्जन अधिनियम 2013",
     actSub: "राजमार्ग अधिनियम 1956 (धारा 3G)",
     tickerTitle: "प्रणाली नियंत्रण पटल",
-    gatewayHub: "मुख्य द्वार (Gateway)",
+    gatewayHub: "होम (Home)",
     navDashboard: "1. अधिकारी डैशबोर्ड",
     navGis: "2. जीआईएस पार्सल नक्शा",
     navWorkflow: "3. अधिग्रहण वर्कफ़्लो",
@@ -92,18 +93,18 @@ const T = {
     heroBadge: "भूमि संसाधन विभाग • उत्पादन-सक्षम प्लेटफॉर्म",
     heroTitle: "राष्ट्रीय भूमि अधिग्रहण एवं प्रबंधन प्रणाली",
     heroDesc: "भूमि अर्जन एवं पुनर्वास अधिनियम 2013 एवं राष्ट्रीय राजमार्ग अधिनियम 1956 के तहत सार्वजनिक बुनियादी ढांचा परियोजनाओं हेतु भूमि अधिग्रहण की संपूर्ण डिजिटल व पारदर्शी प्रक्रिया। 14-अंकीय भू-आधार (ULPIN) द्वारा अभिलेखों का स्वतः लाकिंग एवं PFMS द्वारा सीधे बैंक खातों में मुआवजा भुगतान।",
-    statDBT: "PFMS प्रत्यक्ष बैंक भुगतान",
+    statDBT: "PFMS DBT द्वारा सीधा भुगतान",
     statArea: "अधिसूचित कॉरिडोर क्षेत्र",
-    statParcels: "लिंक किए गए भू-आधार",
-    statModules: "कार्यशील मॉड्यूल तैयार",
-    modSectionTitle: "8 मुख्य कार्यात्मक मॉड्यूल",
-    modSectionDesc: "लाइव सुविधाओं का अनुभव करने हेतु नीचे दिए गए किसी भी मॉड्यूल का चयन करें।",
+    statParcels: "14-अंकीय भू-आधार जुड़े पार्सल",
+    statModules: "उत्पादन संस्करण (MVP) तैयार",
+    modSectionTitle: "मुख्य कार्यात्मक मॉड्यूल",
+    modSectionDesc: "लाइव सुविधाओं का अनुभव करने हेतु नीचे दिए गए 8 समर्पित मॉड्यूल में से किसी एक का चयन करें।",
     openModule: "मॉड्यूल खोलें",
-    activeProjectLabel: "सक्रिय परियोजना:",
+    activeProjectLabel: "सक्रिय कॉरिडोर:",
     activeCorridors: "सक्रिय कॉरिडोर",
     notifiedLandArea: "अधिसूचित भूमि क्षेत्र",
     pfmsDbtDisbursed: "PFMS DBT वितरित मुआवजा",
-    activeEncumbranceLocks: "सक्रिय भार-मुक्ति लॉक",
+    activeEncumbranceLocks: "सक्रिय भू-अभिलेख लॉक",
     avgPossession: "औसत भौतिक कब्जा",
     advanceStage: "चरण आगे बढ़ाएं",
     searchRecords: "अभिलेख खोजें",
@@ -188,12 +189,180 @@ export default function App() {
   });
   const [calcResult, setCalcResult] = useState(null);
 
+  // Officer Authentication & RBAC
+  const [currentUser, setCurrentUser] = useState({
+    role: 'CITIZEN',
+    name: 'Public Citizen / Landowner',
+    designation: 'Open Public Access'
+  });
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [officersList, setOfficersList] = useState([]);
+  const [loginEmailInput, setLoginEmailInput] = useState('');
+
+  // LARRDA Dispute Reference State (Section 64)
+  const [larrdaReferences, setLarrdaReferences] = useState([]);
+  const [newLarrdaForm, setNewLarrdaForm] = useState({
+    project_id: '',
+    ulpin: '',
+    claimant_name: '',
+    ground_type: 'VALUATION'
+  });
+
+  // Joint Khata Splitting State
+  const [activeSplitKhataParcel, setActiveSplitKhataParcel] = useState(null);
+  const [splitHeirsList, setSplitHeirsList] = useState([]);
+
   const t = langHindi ? T.hi : T.en;
+
+  // URL Routing, History & Page Title Synchronization
+  useEffect(() => {
+    const tabTitles = {
+      home: "NLAMS | National Land Acquisition & Management System",
+      citizen: "Citizen Landowner Portal | NLAMS",
+      gis: "Map-to-Money GIS | NLAMS",
+      calculator: "Compensation Calculator | NLAMS",
+      dashboard: "Officer Dashboard | NLAMS",
+      workbench: "Statutory Workflow | NLAMS",
+      objections: "Section 15 Objections | NLAMS",
+      larrda: "LARRDA Dispute Tribunal | NLAMS",
+      rr: "R&R Tracking | NLAMS",
+      airisk: "AI Delay-Risk Forecaster | NLAMS"
+    };
+    document.title = tabTitles[activeTab] || "NLAMS | National Land Acquisition & Management System";
+
+    const path = activeTab === 'home' ? '/home' : `/${activeTab}`;
+    if (window.location.pathname !== path) {
+      window.history.pushState({ tab: activeTab }, '', path);
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const current = getInitialTabFromUrl();
+      setActiveTab(current);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Font size scaler effect
   useEffect(() => {
     document.documentElement.className = `font-scale-${fontSize}`;
   }, [fontSize]);
+
+  // Fetch officers list for quick demo login
+  useEffect(() => {
+    fetch(`${API_BASE}/api/auth/officers`)
+      .then(r => r.json())
+      .then(data => setOfficersList(data))
+      .catch(() => {});
+  }, []);
+
+  const DEMO_OFFICERS = {
+    COLLECTOR: {
+      id: "usr_coll_01",
+      name: "Shri S. Rajalingam, IAS",
+      email: "collector.varanasi@up.gov.in",
+      role: "COLLECTOR",
+      designation: "District Magistrate & Collector, Varanasi",
+      district: "Varanasi",
+      agency: "Revenue Administration"
+    },
+    CALA: {
+      id: "usr_cala_01",
+      name: "Dr. Alok Verma, PCS",
+      email: "cala.nh19@up.gov.in",
+      role: "CALA",
+      designation: "Competent Authority Land Acquisition (CALA) / ADM (LA)",
+      district: "Varanasi",
+      agency: "CALA Revenue Bench"
+    },
+    SURVEYOR: {
+      id: "usr_surv_01",
+      name: "Shri S. K. Sharma",
+      email: "sk.sharma.survey@gov.in",
+      role: "SURVEYOR",
+      designation: "Assistant Director / Field Surveyor",
+      district: "Varanasi",
+      agency: "Directorate of Land Records & Survey"
+    },
+    AGENCY: {
+      id: "usr_nhai_01",
+      name: "Er. Ramesh Chandra",
+      email: "ramesh.chandra@nhai.org",
+      role: "AGENCY",
+      designation: "Project Director & GM (Tech), NHAI PIU Varanasi",
+      district: "Varanasi",
+      agency: "National Highways Authority of India (NHAI)"
+    }
+  };
+
+  const handleOfficerLogin = async (roleOrEmail) => {
+    try {
+      const isEmail = typeof roleOrEmail === 'string' && roleOrEmail.includes('@');
+      const payload = isEmail ? { email: roleOrEmail } : { role: roleOrEmail };
+      
+      let loggedUser = null;
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok && data.user) {
+          loggedUser = data.user;
+        }
+      } catch (err) {
+        console.warn("Backend auth call failed, using client fallback:", err);
+      }
+
+      if (!loggedUser) {
+        loggedUser = DEMO_OFFICERS[roleOrEmail] || DEMO_OFFICERS.COLLECTOR;
+      }
+
+      setCurrentUser(loggedUser);
+      setShowLoginModal(false);
+      setActiveTab('dashboard');
+      showToast(`Authenticated as ${loggedUser.name} (${loggedUser.role}) • Officer Workspace Enabled`, 'success');
+    } catch (e) {
+      console.error(e);
+      showToast("Officer login error.", 'error');
+    }
+  };
+
+  const handleLogout = () => {
+    setCurrentUser({
+      role: 'CITIZEN',
+      name: 'Public Citizen / Landowner',
+      designation: 'Open Public Access'
+    });
+    setActiveTab('home');
+    showToast("Switched to Free Citizen Public Mode", 'info');
+  };
+
+  const requireOfficerRole = (requiredRoles = ['COLLECTOR', 'CALA', 'AGENCY', 'SURVEYOR']) => {
+    if (!currentUser || currentUser.role === 'CITIZEN') {
+      setShowLoginModal(true);
+      showToast("Officer Authorization Required: Please login with an officer profile.", 'error');
+      return false;
+    }
+    if (!requiredRoles.includes(currentUser.role)) {
+      showToast(`Access Restricted: This action requires role: ${requiredRoles.join(' or ')}.`, 'error');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSelectTab = (tabId) => {
+    const officerExclusiveTabs = ['dashboard', 'workbench', 'objections', 'larrda', 'airisk'];
+    if (officerExclusiveTabs.includes(tabId) && (!currentUser || currentUser.role === 'CITIZEN')) {
+      setShowLoginModal(true);
+      showToast("Officer Login Required: Please authenticate to access official administrative modules.", 'error');
+      return;
+    }
+    setActiveTab(tabId);
+  };
 
   // Fetch initial data
   const fetchData = async () => {
@@ -281,8 +450,9 @@ export default function App() {
     setTimeout(() => setNotificationToast(null), 4000);
   };
 
-  // Actions
+  // Actions with RBAC
   const handleAdvanceStage = async () => {
+    if (!requireOfficerRole(['COLLECTOR', 'CALA', 'AGENCY'])) return;
     if (!selectedProject) return;
     try {
       const res = await fetch(`${API_BASE}/api/projects/${selectedProject.id}/advance-stage`, {
@@ -316,6 +486,7 @@ export default function App() {
   };
 
   const handleDisburseDBT = async () => {
+    if (!requireOfficerRole(['COLLECTOR', 'CALA'])) return;
     if (!selectedProject) return;
     try {
       const res = await fetch(`${API_BASE}/api/projects/${selectedProject.id}/disburse-pfms-dbt`, {
@@ -332,6 +503,7 @@ export default function App() {
   };
 
   const handleTriggerMutation = async () => {
+    if (!requireOfficerRole(['COLLECTOR', 'CALA'])) return;
     if (!selectedProject) return;
     try {
       const res = await fetch(`${API_BASE}/api/projects/${selectedProject.id}/trigger-mutation`, {
@@ -364,6 +536,7 @@ export default function App() {
   };
 
   const handleScheduleHearing = async () => {
+    if (!requireOfficerRole(['CALA', 'COLLECTOR'])) return;
     if (!activeObjectionToSchedule) return;
     try {
       const res = await fetch(
@@ -381,6 +554,7 @@ export default function App() {
   };
 
   const handleDisposeObjection = async () => {
+    if (!requireOfficerRole(['CALA', 'COLLECTOR'])) return;
     if (!activeObjectionToDispose || !disposalForm.reason) {
       showToast("Please provide a reasoned order summary.", 'error');
       return;
@@ -402,6 +576,55 @@ export default function App() {
       }
     } catch (err) {
       showToast("Failed to record disposal order.", 'error');
+    }
+  };
+
+  const handleFileLarrdaReference = async (e) => {
+    e.preventDefault();
+    if (!newLarrdaForm.project_id || !newLarrdaForm.ulpin || !newLarrdaForm.claimant_name) {
+      showToast("Please fill all required LARRDA reference fields.", 'error');
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE}/api/larrda-references`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newLarrdaForm)
+      });
+      if (res.ok) {
+        showToast("Section 64 Reference submitted to State LARRDA Tribunal.", 'success');
+        setActiveModal(null);
+        fetchLarrdaData();
+      }
+    } catch (e) {
+      showToast("Failed to file LARRDA reference.", 'error');
+    }
+  };
+
+  const fetchLarrdaData = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/larrda-references`);
+      if (res.ok) {
+        const data = await res.json();
+        setLarrdaReferences(data);
+      }
+    } catch (e) {}
+  };
+
+  const handleSaveJointKhataSplit = async (ulpin, heirs) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/parcels/${ulpin}/split-khata`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ heirs })
+      });
+      if (res.ok) {
+        showToast(`Joint Khata partitioned successfully across ${heirs.length} co-heirs!`, 'success');
+        setActiveSplitKhataParcel(null);
+        fetchData();
+      }
+    } catch (e) {
+      showToast("Failed to split Joint Khata.", 'error');
     }
   };
 
@@ -593,7 +816,7 @@ export default function App() {
       {/* 1. Global Navigation Bar */}
       <Navbar 
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleSelectTab}
         fontSize={fontSize}
         setFontSize={setFontSize}
         langHindi={langHindi}
@@ -601,6 +824,9 @@ export default function App() {
         t={t}
         selectedProject={selectedProject}
         metrics={metrics}
+        currentUser={currentUser}
+        setShowLoginModal={setShowLoginModal}
+        handleLogout={handleLogout}
       />
 
       {/* Toast Notification */}
@@ -682,7 +908,7 @@ export default function App() {
                 <div 
                   key={mod.id} 
                   className="portal-tile-card"
-                  onClick={() => setActiveTab(mod.id)}
+                  onClick={() => handleSelectTab(mod.id)}
                 >
                   <div>
                     <div className="portal-header-row">
@@ -704,7 +930,7 @@ export default function App() {
                       style={{ padding: '5px 12px', fontSize: '0.72rem' }}
                       onClick={(e) => {
                         e.stopPropagation();
-                        setActiveTab(mod.id);
+                        handleSelectTab(mod.id);
                       }}
                     >
                       <span>{t.openModule}</span>
@@ -928,6 +1154,8 @@ export default function App() {
             calcInputs={calcInputs}
             setCalcInputs={setCalcInputs}
             calcResult={calcResult}
+            runCalculator={runCalculator}
+            showToast={showToast}
             setActiveTab={setActiveTab}
             t={t}
             langHindi={langHindi}
@@ -1247,6 +1475,97 @@ export default function App() {
           />
         )}
 
+        {/* ================= MODULE 9: LARRDA DISPUTE TRIBUNAL (SECTION 64) ================= */}
+        {activeTab === 'larrda' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <div>
+                <h2 style={{ fontSize: '1.2rem', color: '#071426' }}>Land Acquisition Dispute Settlement Authority (LARRDA)</h2>
+                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                  {langHindi ? 'धारा 64 न्यायाधिकरण संदर्भ, 90-दिवसीय कलेक्टर प्रेषण व 60-दिवसीय उच्च न्यायालय अपील निगरानी' : 'Quasi-judicial authority established under Section 64 of RFCTLARR Act, 2013 presided over by District Judge'}
+                </span>
+              </div>
+              <button 
+                className="btn-action btn-saffron" 
+                style={{ fontSize: '0.72rem' }}
+                onClick={() => {
+                  setNewLarrdaForm({
+                    project_id: selectedProject?.id || '',
+                    ulpin: selectedProject?.parcels[0]?.ulpin || '',
+                    claimant_name: '',
+                    ground_type: 'VALUATION'
+                  });
+                  setActiveModal('fileLarrda');
+                }}
+              >
+                <PlusCircle size={13} />
+                <span>File Section 64 Reference</span>
+              </button>
+            </div>
+
+            {/* Statutory Deadlines Strip */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
+              <div style={{ background: '#fffbeb', border: '1px solid #fef3c7', borderLeft: '4px solid #f59e0b', padding: 14, borderRadius: 'var(--radius-md)' }}>
+                <strong style={{ fontSize: '0.85rem', color: '#92400e', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Clock size={14} />
+                  <span>Collector Referral Mandate (Section 64)</span>
+                </strong>
+                <p style={{ fontSize: '0.75rem', color: '#78350f', marginTop: 4, margin: '4px 0 0 0' }}>
+                  District Collector must refer dispute to LARRDA within <strong>90 days</strong> of written objection. Bombay High Court affirms LARRDA has full judicial power over limitation questions.
+                </p>
+              </div>
+              <div style={{ background: '#eff6ff', border: '1px solid #dbeafe', borderLeft: '4px solid #3b82f6', padding: 14, borderRadius: 'var(--radius-md)' }}>
+                <strong style={{ fontSize: '0.85rem', color: '#1e40af', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Scale size={14} />
+                  <span>Direct High Court Appeal (Section 74)</span>
+                </strong>
+                <p style={{ fontSize: '0.75rem', color: '#1e3a8a', marginTop: 4, margin: '4px 0 0 0' }}>
+                  Any party aggrieved by a LARRDA award can bypass lower civil courts and appeal directly to the <strong>State High Court within 60 days</strong>.
+                </p>
+              </div>
+            </div>
+
+            {/* References Table */}
+            <div className="section-panel-card">
+              <div className="panel-card-head">
+                <h3 className="panel-card-title">
+                  <Scale size={16} color="#071426" />
+                  <span>Active LARRDA References & Tribunal Dockets ({larrdaReferences.length} Records)</span>
+                </h3>
+                <span className="badge-pill badge-gold">Tribunal Jurisdiction</span>
+              </div>
+              <div className="panel-card-body">
+                {larrdaReferences.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: 24, color: '#64748b', fontSize: '0.78rem' }}>
+                    No statutory references currently pending before LARRDA Bench.
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {larrdaReferences.map(ref => (
+                      <div key={ref.id} style={{ background: '#f8fafc', border: '1px solid var(--border-main)', borderRadius: 'var(--radius-md)', padding: 16 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <strong style={{ color: '#071426', fontSize: '0.9rem' }}>{ref.case_no}</strong>
+                            <span className="badge-pill badge-blue">Ground: {ref.ground_type}</span>
+                            <span className="badge-pill badge-saffron">{ref.status.replace('_', ' ')}</span>
+                          </div>
+                          <span style={{ fontSize: '0.7rem', color: '#64748b' }}>Filing: {ref.filing_date} • Referred: {ref.collector_referral_date}</span>
+                        </div>
+                        <div style={{ fontSize: '0.76rem', color: '#334155', marginBottom: 6 }}>
+                          Claimant: <strong>{ref.claimant_name}</strong> • 14-Digit ULPIN: <strong>{ref.ulpin}</strong>
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: '#475569', background: '#ffffff', border: '1px solid #e2e8f0', padding: 8, borderRadius: 4 }}>
+                          Tribunal Bench: <strong>{ref.tribunal_bench}</strong> • High Court Appeal: <span style={{ color: '#059669', fontWeight: 700 }}>{ref.high_court_appeal_status}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
       </main>
 
       {/* 3. Footer */}
@@ -1543,19 +1862,7 @@ export default function App() {
                 </select>
               </div>
 
-              <div style={{ marginBottom: 14 }}>
-                <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, marginBottom: 3 }}>Objection Details & Grounds</label>
-                <textarea 
-                  rows={3} 
-                  required
-                  placeholder="Explain why the proposed acquisition measurement, rate, or alignment should be re-examined..."
-                  style={{ width: '100%', padding: '7px 10px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
-                  value={newObjectionForm.objection_details}
-                  onChange={(e) => setNewObjectionForm({ ...newObjectionForm, objection_details: e.target.value })}
-                />
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 14 }}>
                 <button type="button" className="btn-action btn-outline" onClick={() => setActiveModal(null)}>{t.cancel}</button>
                 <button type="submit" className="btn-action btn-saffron">{t.submit}</button>
               </div>
@@ -1564,16 +1871,137 @@ export default function App() {
         </div>
       )}
 
-      {/* ================= MODAL 6: SCHEDULE HEARING ================= */}
-      {activeObjectionToSchedule && (
+      {/* ================= MODAL: OFFICER AUTHENTICATION & DEMO ROLES ================= */}
+      {showLoginModal && (
+        <div className="modal-overlay" onClick={() => setShowLoginModal(false)}>
+          <div className="modal-dialog-card" style={{ maxWidth: 520 }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-main)', paddingBottom: 10, marginBottom: 14 }}>
+              <div>
+                <h3 style={{ fontSize: '1.05rem', color: '#071426', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Shield size={16} color="#2563eb" />
+                  <span>Officer Portal Login (RBAC)</span>
+                </h3>
+                <span style={{ fontSize: '0.7rem', color: '#64748b' }}>Authorized Department of Land Resources Personnel</span>
+              </div>
+              <button className="btn-action btn-outline" style={{ padding: '2px 7px' }} onClick={() => setShowLoginModal(false)}>✕</button>
+            </div>
+
+            <p style={{ fontSize: '0.75rem', color: '#475569', marginBottom: 14 }}>
+              Select a pre-configured official role below for instant 1-click evaluation access, or enter your official credentials.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
+              {[
+                { role: 'COLLECTOR', label: 'District Collector', name: 'Shri S. Rajalingam, IAS', color: '#1e3a8a', bg: '#eff6ff' },
+                { role: 'CALA', label: 'CALA / ADM Bench', name: 'Dr. Alok Verma, PCS', color: '#78350f', bg: '#fffbeb' },
+                { role: 'SURVEYOR', label: 'Field Surveyor', name: 'Shri S. K. Sharma', color: '#065f46', bg: '#ecfdf5' },
+                { role: 'AGENCY', label: 'NHAI Project GM', name: 'Er. Ramesh Chandra', color: '#831843', bg: '#fdf2f8' }
+              ].map(prof => (
+                <button
+                  key={prof.role}
+                  className="btn-action"
+                  style={{ 
+                    background: prof.bg, 
+                    border: `1px solid ${prof.color}40`, 
+                    color: prof.color, 
+                    padding: '10px 12px', 
+                    textAlign: 'left',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    gap: 2
+                  }}
+                  onClick={() => handleOfficerLogin(prof.role)}
+                >
+                  <strong style={{ fontSize: '0.8rem' }}>{prof.label}</strong>
+                  <span style={{ fontSize: '0.68rem', opacity: 0.85 }}>{prof.name}</span>
+                </button>
+              ))}
+            </div>
+
+            <div style={{ borderTop: '1px solid var(--border-main)', paddingTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <button 
+                type="button" 
+                className="btn-action btn-outline" 
+                style={{ fontSize: '0.72rem' }}
+                onClick={() => {
+                  handleLogout();
+                  setShowLoginModal(false);
+                }}
+              >
+                🇮🇳 Continue in Free Citizen Mode
+              </button>
+              <span style={{ fontSize: '0.68rem', color: '#94a3b8' }}>DPDP Act 2023 Compliant</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL: FILE LARRDA REFERENCE ================= */}
+      {activeModal === 'fileLarrda' && (
         <div className="modal-overlay" onClick={() => setActiveModal(null)}>
+          <div className="modal-dialog-card" style={{ maxWidth: 480 }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-main)', paddingBottom: 10, marginBottom: 12 }}>
+              <h3 style={{ fontSize: '1rem', color: '#071426' }}>Submit Section 64 Tribunal Reference</h3>
+              <button className="btn-action btn-outline" style={{ padding: '2px 7px' }} onClick={() => setActiveModal(null)}>✕</button>
+            </div>
+
+            <form onSubmit={handleFileLarrdaReference}>
+              <div style={{ marginBottom: 10 }}>
+                <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, marginBottom: 3 }}>Claimant Full Name</label>
+                <input 
+                  type="text" 
+                  required
+                  style={{ width: '100%', padding: '7px 10px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
+                  value={newLarrdaForm.claimant_name}
+                  onChange={(e) => setNewLarrdaForm({ ...newLarrdaForm, claimant_name: e.target.value })}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, marginBottom: 3 }}>14-Digit ULPIN</label>
+                  <input 
+                    type="text" 
+                    required
+                    style={{ width: '100%', padding: '7px 10px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
+                    value={newLarrdaForm.ulpin}
+                    onChange={(e) => setNewLarrdaForm({ ...newLarrdaForm, ulpin: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, marginBottom: 3 }}>Ground Type</label>
+                  <select
+                    style={{ width: '100%', padding: '7px 10px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
+                    value={newLarrdaForm.ground_type}
+                    onChange={(e) => setNewLarrdaForm({ ...newLarrdaForm, ground_type: e.target.value })}
+                  >
+                    <option value="VALUATION">Inadequate Valuation</option>
+                    <option value="MEASUREMENT">Measurement / Area Discrepancy</option>
+                    <option value="TITLE_DISPUTE">Title / Co-parcenary Conflict</option>
+                    <option value="RR_PACKAGE">R&R Second Schedule Package</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 14 }}>
+                <button type="button" className="btn-action btn-outline" onClick={() => setActiveModal(null)}>{t.cancel}</button>
+                <button type="submit" className="btn-action btn-saffron">Submit to LARRDA</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL: SCHEDULE HEARING ================= */}
+      {activeObjectionToSchedule && (
+        <div className="modal-overlay" onClick={() => setActiveObjectionToSchedule(null)}>
           <div className="modal-dialog-card" style={{ maxWidth: 460 }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-main)', paddingBottom: 10, marginBottom: 12 }}>
               <div>
                 <h3 style={{ fontSize: '1rem', color: '#071426' }}>Schedule Quasi-Judicial Hearing</h3>
                 <span style={{ fontSize: '0.7rem', color: '#64748b' }}>Objection Ref: {activeObjectionToSchedule.objection.id}</span>
               </div>
-              <button className="btn-action btn-outline" style={{ padding: '2px 7px' }} onClick={() => setActiveModal(null)}>✕</button>
+              <button className="btn-action btn-outline" style={{ padding: '2px 7px' }} onClick={() => setActiveObjectionToSchedule(null)}>✕</button>
             </div>
 
             <div style={{ marginBottom: 10, fontSize: '0.75rem' }}>
@@ -1599,16 +2027,16 @@ export default function App() {
         </div>
       )}
 
-      {/* ================= MODAL 7: RECORD REASONED DISPOSAL ORDER ================= */}
+      {/* ================= MODAL: RECORD REASONED DISPOSAL ORDER ================= */}
       {activeObjectionToDispose && (
-        <div className="modal-overlay" onClick={() => setActiveModal(null)}>
+        <div className="modal-overlay" onClick={() => setActiveObjectionToDispose(null)}>
           <div className="modal-dialog-card" style={{ maxWidth: 500 }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-main)', paddingBottom: 10, marginBottom: 12 }}>
               <div>
                 <h3 style={{ fontSize: '1rem', color: '#071426' }}>Record Quasi-Judicial Reasoned Order</h3>
                 <span style={{ fontSize: '0.7rem', color: '#64748b' }}>Section 15(2) Inquiry Disposal • {activeObjectionToDispose.objection.id}</span>
               </div>
-              <button className="btn-action btn-outline" style={{ padding: '2px 7px' }} onClick={() => setActiveModal(null)}>✕</button>
+              <button className="btn-action btn-outline" style={{ padding: '2px 7px' }} onClick={() => setActiveObjectionToDispose(null)}>✕</button>
             </div>
 
             <div style={{ marginBottom: 10 }}>

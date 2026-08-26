@@ -29,15 +29,15 @@ console.log(`${BOLD}${CYAN}🚀 Initializing Backend & Frontend services...${RES
 const ROOT_DIR = __dirname;
 const FRONTEND_DIR = path.join(__dirname, 'frontend');
 
-// 1. Launch FastAPI Backend
-console.log(`${CYAN}[BACKEND]${RESET} Starting FastAPI backend on http://localhost:8000 ...`);
+// 1. Launch Node.js Express Backend
+console.log(`${CYAN}[BACKEND]${RESET} Starting Node.js REST API backend on http://localhost:8000 ...`);
 const backendProcess = spawn(
-  'python',
-  ['-m', 'uvicorn', 'backend.main:app', '--reload', '--port', '8000', '--host', '127.0.0.1'],
+  'node',
+  ['backend/server.js'],
   {
     cwd: ROOT_DIR,
     shell: true,
-    env: { ...process.env, PYTHONUNBUFFERED: '1' }
+    env: { ...process.env, PORT: '8000' }
   }
 );
 

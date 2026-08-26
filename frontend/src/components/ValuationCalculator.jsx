@@ -1,14 +1,56 @@
-import React from 'react';
-import { Sliders } from 'lucide-react';
+import React, { useState } from 'react';
+import { Sliders, Calculator, RefreshCw, Sparkles, CheckCircle2, ArrowRight } from 'lucide-react';
 
 export default function ValuationCalculator({
   calcInputs,
   setCalcInputs,
   calcResult,
+  runCalculator,
+  showToast,
   setActiveTab,
   t,
   langHindi
 }) {
+  const [isCalculating, setIsCalculating] = useState(false);
+
+  const handleSubmitCalculate = async (e) => {
+    if (e) e.preventDefault();
+    setIsCalculating(true);
+    if (runCalculator) {
+      await runCalculator();
+    }
+    setTimeout(() => {
+      setIsCalculating(false);
+      if (showToast) {
+        showToast(
+          langHindi
+            ? 'भूमि अर्जन अधिनियम 2013 के तहत वैधानिक मुआवजा सफलतापूर्वक परिकलित!'
+            : 'Statutory Compensation Calculated successfully under RFCTLARR Act 2013!',
+          'success'
+        );
+      }
+    }, 250);
+  };
+
+  const handleResetDefaults = () => {
+    setCalcInputs({
+      owner_name: 'Shri Ramcharan Yadav',
+      acquired_area_sqm: 3500,
+      land_type: 'RURAL_REMOTE',
+      circle_rate_per_sqm: 1850,
+      avg_registered_sale_rate_per_sqm: 2400,
+      ppp_consented_rate_per_sqm: 0,
+      structure_valuation: 350000,
+      tree_valuation: 45000,
+      crop_valuation: 25000,
+      notification_date: '2025-05-15',
+      award_date: '2026-03-01'
+    });
+    if (showToast) {
+      showToast('Reset to standard statutory evaluation benchmark.', 'info');
+    }
+  };
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -72,8 +114,20 @@ export default function ValuationCalculator({
         <div className="panel-card-body">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 20 }}>
             {/* Input form */}
-            <div style={{ background: '#f8fafc', padding: 18, borderRadius: 'var(--radius-md)', border: '1px solid var(--border-main)' }}>
-              <h4 style={{ fontSize: '0.85rem', marginBottom: 12, color: '#071426' }}>1. Enter Parcel Parameters</h4>
+            <form onSubmit={handleSubmitCalculate} style={{ background: '#f8fafc', padding: 18, borderRadius: 'var(--radius-md)', border: '1px solid var(--border-main)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <h4 style={{ fontSize: '0.85rem', color: '#071426', margin: 0 }}>1. Enter Parcel Parameters</h4>
+                <button
+                  type="button"
+                  onClick={handleResetDefaults}
+                  className="btn-action btn-outline"
+                  style={{ fontSize: '0.68rem', padding: '3px 8px', gap: 4 }}
+                  title="Reset to benchmark values"
+                >
+                  <RefreshCw size={10} />
+                  <span>Reset</span>
+                </button>
+              </div>
 
               <div style={{ marginBottom: 10 }}>
                 <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>Landholder Name</label>
@@ -167,7 +221,7 @@ export default function ValuationCalculator({
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>Sec 11 Notification Date</label>
                   <input 
@@ -187,7 +241,43 @@ export default function ValuationCalculator({
                   />
                 </div>
               </div>
-            </div>
+
+              {/* Submit / Calculate Button */}
+              <button
+                type="submit"
+                disabled={isCalculating}
+                className="btn-action btn-navy"
+                style={{
+                  width: '100%',
+                  padding: '11px 16px',
+                  fontSize: '0.82rem',
+                  fontWeight: 800,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: 8,
+                  background: 'linear-gradient(135deg, #071426 0%, #1e3a8a 100%)',
+                  color: '#ffffff',
+                  borderRadius: 'var(--radius-sm)',
+                  boxShadow: '0 3px 8px rgba(7, 20, 38, 0.25)',
+                  cursor: 'pointer',
+                  border: '1px solid #3b82f6'
+                }}
+              >
+                {isCalculating ? (
+                  <>
+                    <RefreshCw size={15} className="spin" />
+                    <span>{langHindi ? 'मुआवजा परिकलित हो रहा है...' : 'Calculating Statutory Award...'}</span>
+                  </>
+                ) : (
+                  <>
+                    <Calculator size={16} color="#60a5fa" />
+                    <span>{langHindi ? 'मुआवजा गणना करें (Submit & Calculate)' : 'Submit & Calculate Statutory Compensation'}</span>
+                    <ArrowRight size={14} />
+                  </>
+                )}
+              </button>
+            </form>
 
             {/* Valuation Breakdown Display */}
             {calcResult && (
