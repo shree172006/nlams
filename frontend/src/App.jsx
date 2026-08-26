@@ -699,13 +699,69 @@ export default function App() {
 
   const currentStageIndex = selectedProject ? STAGES_LIST.indexOf(selectedProject.current_stage) : 0;
 
-  // 8 Core Prototype Modules Definition
-  const CORE_MODULES = [
+  // 4 Citizen Public Portals Definition
+  const CITIZEN_MODULES = [
+    {
+      id: 'citizen',
+      icon: <Search size={20} color="#2563eb" />,
+      iconBg: '#eff6ff',
+      title: langHindi ? '1. भू-स्वामी नागरिक सेवा' : '1. Citizen Land Portal (Free)',
+      statutory: 'Citizen Bhu-Aadhaar Self-Service',
+      desc: langHindi
+        ? '14-अंकीय भू-आधार, खसरा या नाम से सार्वजनिक खोज, डिजिटल मुआवजा पर्ची व ऑनलाइन आपत्ति दर्ज करना।'
+        : 'Public lookup by ULPIN / Khasra / Name to view statutory stage, download award estimate slip, and file grievances.',
+      users: langHindi ? 'भू-स्वामी एवं प्रभावित परिवार' : 'Farmers & Affected Families',
+      tag: 'Citizen Access',
+      badgeColor: 'badge-blue'
+    },
+    {
+      id: 'gis',
+      icon: <Layers size={20} color="#059669" />,
+      iconBg: '#ecfdf5',
+      title: langHindi ? '2. मैप-टू-मनी जीआईएस' : '2. Map-to-Money GIS',
+      statutory: 'ULPIN Bhu-Aadhaar • Cadastral Polygons',
+      desc: langHindi
+        ? 'गांवों के भू-नक्शा पार्सल के ऊपर राइट-ऑफ-वे (RoW) संरेखण का इंटरैक्टिव लेयर व यूएलपीआईएन परीक्षण।'
+        : 'Interactive vector map overlaying Right-of-Way alignments against village cadastral parcels with instant ULPIN inspector.',
+      users: langHindi ? 'नागरिक एवं किसान' : 'Public & Landowners',
+      tag: 'Spatial Fusion',
+      badgeColor: 'badge-green'
+    },
+    {
+      id: 'calculator',
+      icon: <IndianRupee size={20} color="#0b1e36" />,
+      iconBg: '#f1f5f9',
+      title: langHindi ? '3. मुआवजा कैलकुलेटर' : '3. Compensation Calculator',
+      statutory: 'RFCTLARR Sec 26-30 • NH Act 3G',
+      desc: langHindi
+        ? 'बाजार दर × ग्रामीण गुणक + परिसंपत्ति + 100% सोलेशियम + 12% प्रति वर्ष अतिरिक्त राशि का पारदर्शी गणित।'
+        : 'Automated statutory math: Market Value × Rural Multiplier + Assets + 100% Solatium + 12% Additional Amount.',
+      users: langHindi ? 'किसान व भू-स्वामी' : 'Landowners & Beneficiaries',
+      tag: 'Audited Formula',
+      badgeColor: 'badge-navy'
+    },
+    {
+      id: 'rr',
+      icon: <Users size={20} color="#059669" />,
+      iconBg: '#ecfdf5',
+      title: langHindi ? '4. पुनर्वास एवं R&R गाइड' : '4. R&R Entitlements Guide',
+      statutory: 'Second Schedule Mandatory Packages',
+      desc: langHindi
+        ? 'विस्थापित परिवारों के अधिकार, 11 अनिवार्य वित्तीय पैकेज एवं पुनर्वास कॉलोनी में नागरिक सुविधाओं की जानकारी।'
+        : 'Second Schedule entitlements guide explaining housing grants, subsistence allowances, and resettlement benefits.',
+      users: langHindi ? 'प्रभावित परिवार व नागरिक' : 'Affected Families & Public',
+      tag: 'Social Welfare',
+      badgeColor: 'badge-green'
+    }
+  ];
+
+  // 8 Officer Administrative Modules Definition
+  const OFFICER_MODULES = [
     {
       id: 'dashboard',
       icon: <TrendingUp size={20} color="#0284c7" />,
       iconBg: '#e0f2fe',
-      title: t.navDashboard,
+      title: langHindi ? '1. अधिकारी डैशबोर्ड' : '1. Executive Dashboard',
       statutory: 'Executive Command Console',
       desc: langHindi 
         ? 'अधिसूचित क्षेत्र, भौतिक कब्जा, PFMS DBT भुगतान एवं उच्च जोखिम वाली परियोजनाओं की निगरानी।'
@@ -718,7 +774,7 @@ export default function App() {
       id: 'gis',
       icon: <Layers size={20} color="#059669" />,
       iconBg: '#ecfdf5',
-      title: t.navGis,
+      title: langHindi ? '2. जीआईएस नक्शा' : '2. GIS Parcel Map',
       statutory: 'ULPIN Bhu-Aadhaar • Cadastral Polygons',
       desc: langHindi
         ? 'गांवों के भू-नक्शा पार्सल के ऊपर राइट-ऑफ-वे (RoW) संरेखण का इंटरैक्टिव लेयर व यूएलपीआईएन परीक्षण।'
@@ -731,7 +787,7 @@ export default function App() {
       id: 'workbench',
       icon: <Building2 size={20} color="#ea580c" />,
       iconBg: '#ffedd5',
-      title: t.navWorkflow,
+      title: langHindi ? '3. अधिग्रहण चरण' : '3. Statutory Workflow',
       statutory: 'RFCTLARR Act 2013 • NH Act 1956',
       desc: langHindi
         ? '9-चरणीय वैधानिक वर्कफ़्लो, ई-राजपत्र निर्माण, PFMS DBT बैच एवं राज्य भूमि अभिलेखों में स्वतः दाखिल-खारिज।'
@@ -741,36 +797,10 @@ export default function App() {
       badgeColor: 'badge-saffron'
     },
     {
-      id: 'calculator',
-      icon: <IndianRupee size={20} color="#0b1e36" />,
-      iconBg: '#f1f5f9',
-      title: t.navCalculator,
-      statutory: 'RFCTLARR Sec 26-30 • NH Act 3G',
-      desc: langHindi
-        ? 'बाजार दर × ग्रामीण गुणक + परिसंपत्ति + 100% सोलेशियम + 12% प्रति वर्ष अतिरिक्त राशि का पारदर्शी गणित।'
-        : 'Automated statutory math: Market Value × Rural Multiplier + Assets + 100% Solatium + 12% Additional Amount.',
-      users: langHindi ? 'मूल्यांकन अधिकारी व किसान' : 'Valuation Officers & Landowners',
-      tag: 'Audited Formula',
-      badgeColor: 'badge-navy'
-    },
-    {
-      id: 'citizen',
-      icon: <Search size={20} color="#2563eb" />,
-      iconBg: '#eff6ff',
-      title: t.navLandowner,
-      statutory: 'Citizen Bhu-Aadhaar Self-Service',
-      desc: langHindi
-        ? '14-अंकीय भू-आधार, खसरा या नाम से सार्वजनिक खोज, डिजिटल मुआवजा पर्ची व ऑनलाइन आपत्ति दर्ज करना।'
-        : 'Public lookup by ULPIN / Khasra / Name to view statutory stage, download award estimate slip, and file grievances.',
-      users: langHindi ? 'भू-स्वामी एवं प्रभावित परिवार' : 'Farmers & Affected Families',
-      tag: 'Citizen Access',
-      badgeColor: 'badge-blue'
-    },
-    {
       id: 'objections',
       icon: <Scale size={20} color="#7c3aed" />,
       iconBg: '#f3e8ff',
-      title: t.navObjections,
+      title: langHindi ? '4. धारा 15 आपत्तियां' : '4. Sec 15 Objections',
       statutory: 'RFCTLARR Sec 15 • NH Act Sec 3C',
       desc: langHindi
         ? 'धारा 15 के तहत आपत्तियों का पंजीकरण, अर्ध-न्यायिक सुनवाई का निर्धारण एवं कारणयुक्त निस्तारण आदेश।'
@@ -780,10 +810,23 @@ export default function App() {
       badgeColor: 'badge-purple'
     },
     {
+      id: 'larrda',
+      icon: <Scale size={20} color="#f59e0b" />,
+      iconBg: '#fef3c7',
+      title: langHindi ? '5. लार्ड्डा न्यायाधिकरण' : '5. LARRDA Tribunal (Sec 64)',
+      statutory: 'RFCTLARR Section 64 Tribunal',
+      desc: langHindi
+        ? 'भूमि अधिग्रहण, पुनर्वास एवं पुनर्व्यवस्था प्राधिकरण में लंबित वादों व 90-दिवसीय कलेक्टर प्रेषण की निगरानी।'
+        : 'Quasi-judicial authority established under Section 64 tracking tribunal referrals, awards, and High Court appeals.',
+      users: langHindi ? 'न्यायाधिकरण व कलेक्टर' : 'Tribunal Judges & Collectors',
+      tag: 'Judicial Authority',
+      badgeColor: 'badge-gold'
+    },
+    {
       id: 'rr',
       icon: <Users size={20} color="#059669" />,
       iconBg: '#ecfdf5',
-      title: t.navRR,
+      title: langHindi ? '6. पुनर्वास R&R' : '6. Non-Owner R&R',
       statutory: 'Second Schedule Mandatory Packages',
       desc: langHindi
         ? 'विस्थापित परिवारों की ट्रैकिंग, 11 अनिवार्य वित्तीय पैकेज एवं पुनर्वास कॉलोनी में नागरिक सुविधाओं का आवंटन।'
@@ -796,7 +839,7 @@ export default function App() {
       id: 'airisk',
       icon: <Zap size={20} color="#dc2626" />,
       iconBg: '#fef2f2',
-      title: t.navAIRisk,
+      title: langHindi ? '7. एआई जोखिम' : '7. AI Delay-Risk',
       statutory: 'Statutory Bottleneck & Lapse Forecaster',
       desc: langHindi
         ? 'चरणबद्ध समय, लंबित विवादों व R&R अंतर के आधार पर महीनों के विलंब की सटीक एआई भविष्यवाणी व समाधान।'
@@ -804,6 +847,19 @@ export default function App() {
       users: langHindi ? 'परियोजना निदेशक व अनुश्रवण कक्ष' : 'Project Directors & Monitoring Cells',
       tag: 'AI Intelligence',
       badgeColor: 'badge-critical'
+    },
+    {
+      id: 'calculator',
+      icon: <IndianRupee size={20} color="#0b1e36" />,
+      iconBg: '#f1f5f9',
+      title: langHindi ? '8. मुआवजा मूल्यांकन' : '8. Valuation Sandbox',
+      statutory: 'RFCTLARR Sec 26-30 • NH Act 3G',
+      desc: langHindi
+        ? 'बाजार दर × ग्रामीण गुणक + परिसंपत्ति + 100% सोलेशियम + 12% प्रति वर्ष अतिरिक्त राशि का पारदर्शी गणित।'
+        : 'Automated statutory math: Market Value × Rural Multiplier + Assets + 100% Solatium + 12% Additional Amount.',
+      users: langHindi ? 'मूल्यांकन अधिकारी व सक्षम प्राधिकारी' : 'Valuation Officers & CALA',
+      tag: 'Audited Formula',
+      badgeColor: 'badge-navy'
     }
   ];
 
@@ -896,15 +952,25 @@ export default function App() {
             {/* Modules Grid Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div>
-                <h2 style={{ fontSize: '1.2rem', color: '#071426' }}>{t.modSectionTitle}</h2>
-                <p style={{ fontSize: '0.76rem', color: '#64748b' }}>{t.modSectionDesc}</p>
+                <h2 style={{ fontSize: '1.2rem', color: '#071426', margin: 0 }}>
+                  {!isOfficer 
+                    ? (langHindi ? 'नागरिक एवं भू-स्वामी सार्वजनिक सेवाएं' : 'Citizen Public Services & Landowner Portals')
+                    : (langHindi ? 'अधिकारी प्रशासनिक एवं वैधानिक मॉड्यूल' : 'Officer Administrative & Statutory Modules')}
+                </h2>
+                <p style={{ fontSize: '0.76rem', color: '#64748b', marginTop: 4 }}>
+                  {!isOfficer
+                    ? (langHindi ? 'सार्वजनिक भू-अभिलेख, जीआईएस पार्सल नक्शा, मुआवजा कैलकुलेटर व पुनर्वास मार्गदर्शिका।' : 'Public access to digital land records, GIS parcel viewer, compensation calculator, and R&R guides.')
+                    : (langHindi ? 'अधिसूचना गेटकीपर, धारा 15 आपत्तियां, लार्ड्डा न्यायाधिकरण व एआई जोखिम विश्लेषण।' : 'Statutory lifecycle workflow, Section 15 inquiries, LARRDA tribunal dockets, and AI delay forecasting.')}
+                </p>
               </div>
-              <span className="badge-pill badge-navy" style={{ textTransform: 'uppercase', letterSpacing: '0.04em' }}>Official Enterprise Gateways</span>
+              <span className={`badge-pill ${!isOfficer ? 'badge-blue' : 'badge-gold'}`} style={{ textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                {!isOfficer ? 'Public Citizen Access' : `Authenticated: ${currentUser?.role || 'OFFICER'}`}
+              </span>
             </div>
 
             {/* Modules Grid */}
             <div className="home-portals-grid">
-              {CORE_MODULES.map((mod) => (
+              {(isOfficer ? OFFICER_MODULES : CITIZEN_MODULES).map((mod) => (
                 <div 
                   key={mod.id} 
                   className="portal-tile-card"
@@ -940,6 +1006,46 @@ export default function App() {
                 </div>
               ))}
             </div>
+
+            {/* Officer Access Banner for Citizens on Home */}
+            {!isOfficer && (
+              <div style={{
+                marginTop: 24,
+                padding: '18px 24px',
+                background: 'linear-gradient(135deg, #071426 0%, #0d2847 100%)',
+                borderRadius: 'var(--radius-md)',
+                color: '#ffffff',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                border: '1px solid rgba(255,255,255,0.15)',
+                boxShadow: 'var(--shadow-md)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ background: 'rgba(255,255,255,0.1)', padding: 10, borderRadius: 8 }}>
+                    <Shield size={24} color="#f59e0b" />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '0.95rem', color: '#ffffff' }}>
+                      {langHindi ? 'प्रशासनिक व विभागीय अधिकारी लॉगिन' : 'Authorized Officer & Administrative Console'}
+                    </h4>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '0.76rem', color: '#cbd5e1' }}>
+                      {langHindi 
+                        ? 'जिला कलेक्टर, CALA, राजस्व सर्वेक्षक एवं NHAI अधिकारी 8 वैधानिक प्रशासनिक मॉड्यूल तक पहुंचने हेतु लॉगिन करें।'
+                        : 'District Collectors, CALAs, Revenue Surveyors, and NHAI Project Managers can authenticate to unlock all 8 statutory modules.'}
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  className="btn-action btn-saffron"
+                  style={{ padding: '8px 18px', fontSize: '0.8rem', fontWeight: 700, whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6 }}
+                  onClick={() => setShowLoginModal(true)}
+                >
+                  <LogIn size={15} />
+                  <span>{langHindi ? 'अधिकारी लॉगिन' : 'Officer Login'}</span>
+                </button>
+              </div>
+            )}
           </div>
         )}
 
