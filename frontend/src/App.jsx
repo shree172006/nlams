@@ -196,6 +196,7 @@ export default function App() {
     name: 'Public Citizen / Landowner',
     designation: 'Open Public Access'
   });
+  const isOfficer = currentUser && currentUser.role !== 'CITIZEN';
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [officersList, setOfficersList] = useState([]);
   const [loginEmailInput, setLoginEmailInput] = useState('');
