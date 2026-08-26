@@ -141,18 +141,16 @@ export default function ValuationCalculator({
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-                    <label style={{ fontSize: '0.7rem', fontWeight: 700 }}>Acquired Area (sq.m)</label>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#0284c7' }}>{calcInputs.acquired_area_sqm}</span>
-                  </div>
+                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>Acquired Area (sq.m)</label>
                   <input 
-                    type="range" 
-                    min={500} 
-                    max={20000} 
-                    step={100}
+                    type="number" 
+                    min="1"
+                    style={{ width: '100%', padding: '7px 10px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
                     value={calcInputs.acquired_area_sqm}
-                    onChange={(e) => setCalcInputs({ ...calcInputs, acquired_area_sqm: parseFloat(e.target.value) })}
-                    style={{ width: '100%', accentColor: '#0284c7' }}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      setCalcInputs({ ...calcInputs, acquired_area_sqm: isNaN(val) ? '' : Math.max(1, val) });
+                    }}
                   />
                 </div>
                 <div>
@@ -175,18 +173,26 @@ export default function ValuationCalculator({
                   <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>Circle Rate (₹/sq.m)</label>
                   <input 
                     type="number" 
+                    min="1"
                     style={{ width: '100%', padding: '7px 10px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
                     value={calcInputs.circle_rate_per_sqm} 
-                    onChange={(e) => setCalcInputs({ ...calcInputs, circle_rate_per_sqm: parseFloat(e.target.value) || 0 })} 
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      setCalcInputs({ ...calcInputs, circle_rate_per_sqm: isNaN(val) ? '' : Math.max(1, val) });
+                    }} 
                   />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>3-Yr Deeds Rate (₹/sq.m)</label>
                   <input 
                     type="number" 
+                    min="1"
                     style={{ width: '100%', padding: '7px 10px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
                     value={calcInputs.avg_registered_sale_rate_per_sqm} 
-                    onChange={(e) => setCalcInputs({ ...calcInputs, avg_registered_sale_rate_per_sqm: parseFloat(e.target.value) || 0 })} 
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      setCalcInputs({ ...calcInputs, avg_registered_sale_rate_per_sqm: isNaN(val) ? '' : Math.max(1, val) });
+                    }} 
                   />
                 </div>
               </div>
@@ -196,27 +202,39 @@ export default function ValuationCalculator({
                   <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>Structures (₹)</label>
                   <input 
                     type="number" 
+                    min="0"
                     style={{ width: '100%', padding: '6px 8px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
                     value={calcInputs.structure_valuation} 
-                    onChange={(e) => setCalcInputs({ ...calcInputs, structure_valuation: parseFloat(e.target.value) || 0 })} 
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      setCalcInputs({ ...calcInputs, structure_valuation: isNaN(val) ? '' : Math.max(0, val) });
+                    }} 
                   />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>Trees (₹)</label>
                   <input 
                     type="number" 
+                    min="0"
                     style={{ width: '100%', padding: '6px 8px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
                     value={calcInputs.tree_valuation} 
-                    onChange={(e) => setCalcInputs({ ...calcInputs, tree_valuation: parseFloat(e.target.value) || 0 })} 
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      setCalcInputs({ ...calcInputs, tree_valuation: isNaN(val) ? '' : Math.max(0, val) });
+                    }} 
                   />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>Crops (₹)</label>
                   <input 
                     type="number" 
+                    min="0"
                     style={{ width: '100%', padding: '6px 8px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
                     value={calcInputs.crop_valuation} 
-                    onChange={(e) => setCalcInputs({ ...calcInputs, crop_valuation: parseFloat(e.target.value) || 0 })} 
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      setCalcInputs({ ...calcInputs, crop_valuation: isNaN(val) ? '' : Math.max(0, val) });
+                    }} 
                   />
                 </div>
               </div>
