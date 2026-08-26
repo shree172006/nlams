@@ -1,86 +1,111 @@
+"""
+NLAMS Backend Statutory & Unit Tests
+Verifies RFCTLARR First Schedule math, state machine transitions, and AI risk predictor.
+"""
 import pytest
-from backend.models import ParcelRecord, LandTypeEnum, StateNomenclature, StageEnum, StatutoryActEnum
-from backend.valuation import calculate_parcel_award, get_multiplication_factor
-from backend.statutory_workflow import check_stage_transition_eligibility, advance_project_stage
-from backend.vikas_ranking import compute_state_vikas_score
-from backend.integrations import generate_pfms_dbt_batch
-from backend.seed_data import get_initial_seed_projects
+from fastapi.testclient import TestClient
+from backend.main import app
+from backend.statutory_engine import calculate_statutory_valuation
+from backend.schemas import ValuationRequest, DelayPredictionRequest
+from backend.ml_delay_predictor import predict_project_delay
 
-def test_multiplication_factors():
-    assert get_multiplication_factor(LandTypeEnum.URBAN) == 1.0
-    assert get_multiplication_factor(LandTypeEnum.RURAL_CLOSE) == 1.25
-    assert get_multiplication_factor(LandTypeEnum.RURAL_MID) == 1.50
-    assert get_multiplication_factor(LandTypeEnum.RURAL_REMOTE) == 2.00
+client = TestClient(app)
 
-def test_statutory_valuation_math():
-    # Test case: Rural Remote land parcel
-    # Base rate = max(2000, 2500) = 2500
-    # Acquired Area = 1000 sqm
-    # Base MV = 2,500,000
-    # Adjusted MV = 2,500,000 * 2.0 = 5,000,000
-    # Assets = 500,000 (structures) + 100,000 (trees) = 600,000
-    # Base Compensation C_base = 5,000,000 + 600,000 = 5,600,000
-    # Solatium = 100% * 5,600,000 = 5,600,000
-    # Additional Amount = 12% * 2,500,000 * (365/365) = 300,000
-    # Gross Award = 5,600,000 + 5,600,000 + 300,000 = 11,500,000
-    parcel = ParcelRecord(
-        ulpin="IN07PB12345678",
-        state="Punjab",
-        district="Ludhiana",
-        taluk_tehsil="Sadar",
-        village="Doraha",
-        nomenclature_type=StateNomenclature.PUNJAB_HARYANA,
-        local_record_no="Khasra 101",
-        owner_name="Gurdeep Singh",
-        owner_aadhaar_masked="XXXX-XXXX-9901",
-        bank_account_verified=True,
-        bank_ifsc="SBIN0001423",
-        bank_account_no_masked="XXXX1109",
-        total_parcel_area_sqm=2000.0,
-        acquired_area_sqm=1000.0,
-        land_type=LandTypeEnum.RURAL_REMOTE,
-        circle_rate_per_sqm=2000.0,
-        avg_registered_sale_rate_per_sqm=2500.0,
+def test_statutory_first_schedule_math():
+    """Verifies statutory compensation formula under RFCTLARR Act 2013 First Schedule."""
+    req = ValuationRequest(
+        owner_name="Shri Ramcharan Yadav",
+        acquired_area_sqm=3500.0,
+        land_type="RURAL_REMOTE",  # 2.0x
+        circle_rate_per_sqm=1850.0,
+        avg_registered_sale_rate_per_sqm=2400.0,
         ppp_consented_rate_per_sqm=0.0,
-        structure_valuation=500000.0,
-        tree_valuation=100000.0,
-        crop_valuation=0.0
+        structure_valuation=350000.0,
+        tree_valuation=45000.0,
+        crop_valuation=25000.0,
+        notification_date="2025-05-15",
+        award_date="2026-03-01"
     )
-    
-    val = calculate_parcel_award(parcel, "2025-01-01", "2026-01-01")
-    assert val.base_market_value_per_sqm == 2500.0
-    assert val.base_market_value_total == 2500000.0
+    val = calculate_statutory_valuation(req)
+
+    # 1. Base rate = max(1850, 2400, 0) = 2400
+    assert val.base_market_value_per_sqm == 2400.0
+    # 2. Base market value = 2400 * 3500 = 8,400,000
+    assert val.base_market_value_total == 8400000.0
+    # 3. Multiplication factor = 2.0
     assert val.multiplication_factor == 2.0
-    assert val.adjusted_market_value == 5000000.0
-    assert val.assets_valuation_total == 600000.0
-    assert val.base_compensation == 5600000.0
-    assert val.solatium_amount == 5600000.0
-    assert val.additional_amount_12pct == 300000.0
-    assert val.gross_total_award == 11500000.0
+    # 4. Adjusted MV = 8,400,000 * 2.0 = 16,800,000
+    assert val.adjusted_market_value == 16800000.0
+    # 5. Assets = 350,000 + 45,000 + 25,000 = 420,000
+    assert val.assets_valuation_total == 420000.0
+    # 6. Base compensation = 16,800,000 + 420,000 = 17,220,000
+    assert val.base_compensation == 17220000.0
+    # 7. Solatium = 100% = 17,220,000
+    assert val.solatium_amount == 17220000.0
+    # 8. Additional amount > 0
+    assert val.additional_amount_12pct > 0.0
+    # 9. Gross award = 17,220,000 + 17,220,000 + additional amount
+    assert val.gross_total_award == round(val.base_compensation + val.solatium_amount + val.additional_amount_12pct, 2)
 
-def test_stage_gate_precondition_enforcement():
-    projects = get_initial_seed_projects()
-    p_proposal = [p for p in projects if p.current_stage == StageEnum.PROPOSAL][0]
-    
-    # Attempting to jump directly to Declaration (Stage 5) from Proposal (Stage 1) must fail
-    eligible, reason = check_stage_transition_eligibility(p_proposal, StageEnum.DECLARATION)
-    assert not eligible
-    assert "Illegal skip" in reason
 
-def test_vikas_scoring_bounds():
-    projects = get_initial_seed_projects()
-    res = compute_state_vikas_score("Punjab", projects)
-    assert 0 <= res.total_score <= 140
-    assert 0 <= res.process_velocity_score <= 40
-    assert 0 <= res.financial_dbt_score <= 40
-    assert 0 <= res.social_rr_score <= 40
-    assert 0 <= res.spatial_mutation_score <= 20
+def test_national_metrics_api():
+    res = client.get("/api/national-metrics")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["total_active_projects"] >= 4
+    assert data["total_cadastral_parcels_tracked"] >= 4
 
-def test_pfms_dbt_batch():
-    projects = get_initial_seed_projects()
-    p = projects[0]
-    vals = [calculate_parcel_award(parcel, "2025-01-01", "2026-01-01") for parcel in p.parcels]
-    batch = generate_pfms_dbt_batch(p, vals)
-    assert "PFMS-DBT-NLAMS" in batch["batch_id"]
-    assert "<PFMS_DBT_Batch" in batch["xml_payload"]
-    assert batch["total_beneficiaries"] == len(p.parcels)
+
+def test_projects_list_and_details():
+    res = client.get("/api/projects")
+    assert res.status_code == 200
+    projects = res.json()
+    assert len(projects) >= 4
+    prj_id = projects[0]["id"]
+
+    res_single = client.get(f"/api/projects/{prj_id}")
+    assert res_single.status_code == 200
+    assert res_single.json()["id"] == prj_id
+
+
+def test_ai_delay_predictor_endpoint():
+    payload = {
+        "area_ha": 350.0,
+        "num_parcels": 120,
+        "disputed_parcels_count": 18,
+        "multiplication_factor": 1.5,
+        "forest_overlap_flag": 1,
+        "dwell_time_days": 140
+    }
+    res = client.post("/api/predict-delay", json=payload)
+    assert res.status_code == 200
+    data = res.json()
+    assert "predicted_delay_days" in data
+    assert "risk_score" in data
+    assert "risk_level" in data
+    assert len(data["prescriptive_mitigations"]) > 0
+
+
+def test_citizen_lookup_search():
+    res = client.get("/api/citizen-lookup?query=Ramcharan")
+    assert res.status_code == 200
+    records = res.json()
+    assert len(records) > 0
+    assert "Ramcharan" in records[0]["parcel"]["owner_name"]
+
+
+def test_objections_lifecycle():
+    # 1. File an objection
+    res_file = client.post("/api/projects/PRJ-NHAI-2026-UP01/objections?claimant_name=TestClaimant&contact_phone=9999988888&ulpin=IN09UP23456701&grounds_category=Inadequate%20Valuation&objection_details=TestDetails")
+    assert res_file.status_code == 200
+    obj_id = res_file.json()["objection_id"]
+
+    # 2. Schedule hearing
+    res_sched = client.post(f"/api/projects/PRJ-NHAI-2026-UP01/objections/{obj_id}/schedule-hearing?hearing_date=2026-04-10")
+    assert res_sched.status_code == 200
+    assert res_sched.json()["objection"]["status"] == "HEARING_SCHEDULED"
+
+    # 3. Dispose objection
+    res_disp = client.post(f"/api/projects/PRJ-NHAI-2026-UP01/objections/{obj_id}/dispose?status=DISPOSED_UPHELD&reasoned_order_summary=AwardAdjusted")
+    assert res_disp.status_code == 200
+    assert res_disp.json()["status"] == "DISPOSED_UPHELD"

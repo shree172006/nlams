@@ -1,222 +1,299 @@
 """
-Pre-seeded representative projects for NLAMS demonstration
+Realistic Indian Land Records Seed Data for NLAMS
+Contains projects across Varanasi, Nagpur, Bengaluru Rural, and Ludhiana.
 """
+from backend.models import Project, Parcel, Objection, Award, RRFamily
+from backend.database import SessionLocal, engine, Base
 
-from typing import List
-from datetime import datetime
-from .models import (
-    Project, ParcelRecord, ObjectionRecord, RREntitlement,
-    StageEnum, StatutoryActEnum, LandTypeEnum, StateNomenclature
-)
-from .spatial_cadastral import mock_intersect_alignment_corridor
-from .valuation import calculate_parcel_award
+def seed_database(db=None):
+    """Initializes tables and seeds representative Indian infrastructure projects."""
+    Base.metadata.create_all(bind=engine)
+    
+    close_db = False
+    if db is None:
+        db = SessionLocal()
+        close_db = True
 
-def get_initial_seed_projects() -> List[Project]:
-    # Project 1: NHAI Delhi-Amritsar Expressway (Sec 19 Declaration stage)
-    p1_parcels = mock_intersect_alignment_corridor(
-        "Delhi-Amritsar Expressway Segment 4", "Punjab", "Ludhiana", "Doraha", 6.5
-    )
-    # Give some valuations
-    p1_objections = [
-        ObjectionRecord(
-            id="OBJ-2026-001",
-            project_id="PRJ-NHAI-01",
-            ulpin=p1_parcels[0].ulpin,
-            claimant_name=p1_parcels[0].owner_name,
-            contact_phone="+91 98765 43210",
-            grounds_category="Measurement Discrepancy",
-            objection_details="Survey team marked 4,200 sq.m whereas original Jamabandi record reflects 3,850 sq.m. Joint physical boundary re-verification requested.",
-            filing_date="2026-02-10",
-            hearing_date="2026-02-25",
-            cala_jurisdiction="CALA / SDM Ludhiana West",
-            status="DISPOSED_UPHELD",
-            reasoned_order_summary="Joint boundary re-survey conducted on 2026-02-20 with NAKSHA DGPS kit. Cadastral map updated to 3,850 sq.m. Objection disposed favorably.",
-            disposal_timestamp="2026-02-22T14:30:00"
-        ),
-        ObjectionRecord(
-            id="OBJ-2026-002",
-            project_id="PRJ-NHAI-01",
-            ulpin=p1_parcels[1].ulpin,
-            claimant_name=p1_parcels[1].owner_name,
-            contact_phone="+91 98111 22334",
-            grounds_category="Inadequate Valuation",
-            objection_details="Circle rate of ₹2,200/sq.m does not reflect recent commercial development near bypass. Requesting highest registered sale deed rate.",
-            filing_date="2026-02-14",
-            hearing_date="2026-02-28",
-            cala_jurisdiction="CALA / SDM Ludhiana West",
-            status="DISPOSED_UPHELD",
-            reasoned_order_summary="Section 26 statutory rule applied: System picked top 50% avg 3-year sale deed value of ₹3,150/sq.m with 100% Solatium. Compensation enhanced accordingly.",
-            disposal_timestamp="2026-02-26T16:00:00"
+    try:
+        # Check if already seeded
+        if db.query(Project).count() > 0:
+            return
+
+        # 1. Project 1: Varanasi Ring Road (UP)
+        p1 = Project(
+            id="PRJ-NHAI-2026-UP01",
+            title="Varanasi Ring Road Phase-II Corridor",
+            acquiring_agency="National Highways Authority of India (NHAI)",
+            statutory_act="National Highways Act, 1956 (Sec 3A to 3J)",
+            state="Uttar Pradesh",
+            district="Varanasi",
+            total_length_km=42.5,
+            total_corridor_area_ha=145.8,
+            current_stage="6. Valuation, Award & Compensation (Sec 23/26-30/3G)",
+            stage_progress_pct=66.7,
+            total_compensation_assessed_cr=84.5,
+            total_compensation_disbursed_cr=58.2,
+            physical_possession_pct=62.0,
+            alignment_coordinates=[
+                [25.3176, 82.9739],
+                [25.3350, 83.0020],
+                [25.3620, 83.0310],
+                [25.3900, 83.0650]
+            ]
         )
-    ]
-    p1_rr = [
-        RREntitlement(
-            family_id="FAM-PB-001",
-            head_of_family=p1_parcels[0].owner_name,
-            category="General",
+
+        # Parcels for Varanasi
+        parcels_p1 = [
+            Parcel(
+                ulpin="IN09UP23456701",
+                project_id="PRJ-NHAI-2026-UP01",
+                local_record_no="Khasra No. 342/1",
+                village="Shivpur",
+                district="Varanasi",
+                state="Uttar Pradesh",
+                land_type="RURAL_CLOSE",
+                acquired_area_sqm=3200.0,
+                circle_rate_per_sqm=2100.0,
+                avg_registered_sale_rate_per_sqm=2850.0,
+                owner_name="Shri Ramcharan Yadav",
+                owner_aadhaar_masked="XXXX-XXXX-8921",
+                bank_ifsc="PUNB0021400",
+                bank_account_masked="XXXX-XXXX-4512",
+                encumbrance_locked=True,
+                status="NOTIFIED",
+                coordinates_polygon=[
+                    [25.3160, 82.9720], [25.3190, 82.9720], [25.3190, 82.9755], [25.3160, 82.9755]
+                ]
+            ),
+            Parcel(
+                ulpin="IN09UP23456702",
+                project_id="PRJ-NHAI-2026-UP01",
+                local_record_no="Khasra No. 342/2",
+                village="Shivpur",
+                district="Varanasi",
+                state="Uttar Pradesh",
+                land_type="RURAL_CLOSE",
+                acquired_area_sqm=4100.0,
+                circle_rate_per_sqm=2100.0,
+                avg_registered_sale_rate_per_sqm=2900.0,
+                owner_name="Smt. Shanti Devi",
+                owner_aadhaar_masked="XXXX-XXXX-1142",
+                bank_ifsc="SBIN0004512",
+                bank_account_masked="XXXX-XXXX-7821",
+                encumbrance_locked=True,
+                status="NOTIFIED",
+                coordinates_polygon=[
+                    [25.3195, 82.9760], [25.3225, 82.9760], [25.3225, 82.9795], [25.3195, 82.9795]
+                ]
+            ),
+            Parcel(
+                ulpin="IN09UP23456703",
+                project_id="PRJ-NHAI-2026-UP01",
+                local_record_no="Khasra No. 118",
+                village="Harahua",
+                district="Varanasi",
+                state="Uttar Pradesh",
+                land_type="RURAL_MID",
+                acquired_area_sqm=5800.0,
+                circle_rate_per_sqm=1650.0,
+                avg_registered_sale_rate_per_sqm=2200.0,
+                owner_name="Shri Vinod Kumar Mishra",
+                owner_aadhaar_masked="XXXX-XXXX-6731",
+                bank_ifsc="BARB0VARANA",
+                bank_account_masked="XXXX-XXXX-9923",
+                encumbrance_locked=True,
+                status="DISPUTED",
+                coordinates_polygon=[
+                    [25.3340, 83.0010], [25.3370, 83.0010], [25.3370, 83.0045], [25.3340, 83.0045]
+                ]
+            )
+        ]
+
+        # Objections for Varanasi
+        obj1 = Objection(
+            id="OBJ-UP-2026-081",
+            project_id="PRJ-NHAI-2026-UP01",
+            ulpin="IN09UP23456703",
+            claimant_name="Shri Vinod Kumar Mishra",
+            contact_phone="+91 94152 78120",
+            grounds_category="Inadequate Valuation",
+            objection_details="Sub-Registrar circle rate of Harahua increased in 2025; proposed 3G rate does not reflect commercial potential along NH-31.",
+            filing_date="2026-01-18",
+            status="HEARING_SCHEDULED",
+            hearing_date="2026-03-12",
+            cala_jurisdiction="CALA / Competent Authority cum ADM (Land Acquisition), Varanasi",
+            reasoned_order_summary=None
+        )
+
+        # R&R Families for Varanasi
+        rr1 = RRFamily(
+            family_id="RR-VNS-01",
+            project_id="PRJ-NHAI-2026-UP01",
+            head_of_family="Shri Ramcharan Yadav",
+            category="OBC",
             is_displaced=True,
             monetary_entitlements_settled=11,
-            total_rr_assistance_inr=500000.0,
-            resettlement_amenities_allocated=["Piped Water", "Power Supply", "Primary School Road"]
-        ),
-        RREntitlement(
-            family_id="FAM-PB-002",
-            head_of_family=p1_parcels[1].owner_name,
-            category="SC/ST",
+            total_rr_assistance_inr=550000.0,
+            resettlement_amenities_allocated=["Drinking Water", "Electricity", "Paved Access Road"]
+        )
+        rr2 = RRFamily(
+            family_id="RR-VNS-02",
+            project_id="PRJ-NHAI-2026-UP01",
+            head_of_family="Smt. Shanti Devi",
+            category="General",
             is_displaced=False,
             monetary_entitlements_settled=8,
-            total_rr_assistance_inr=300000.0,
-            resettlement_amenities_allocated=["Subsidized Farm Input Hub", "Community Center Access"]
+            total_rr_assistance_inr=350000.0,
+            resettlement_amenities_allocated=["Access Road"]
         )
-    ]
 
-    p1 = Project(
-        id="PRJ-NHAI-01",
-        title="Delhi-Amritsar-Katra Expressway (Package 4B - Ludhiana Bypass)",
-        acquiring_agency="National Highways Authority of India (NHAI)",
-        sector="Highways",
-        statutory_act=StatutoryActEnum.NH_ACT_1956,
-        state="Punjab",
-        districts=["Ludhiana", "Jalandhar"],
-        current_stage=StageEnum.VALUATION_AWARD,
-        stage_progress_pct=66.7,
-        total_length_km=34.2,
-        total_corridor_area_ha=84.5,
-        parcels=p1_parcels,
-        objections=p1_objections,
-        rr_families=p1_rr,
-        sec11_notification_date="2025-10-15",
-        sec11_gazette_id="DL-(N)-04/2025/GZ-NHAI01",
-        sec19_declaration_date="2026-01-20",
-        award_date="2026-03-01",
-        total_compensation_assessed_cr=42.8,
-        total_compensation_disbursed_cr=38.5,
-        pfs_dbt_batch_id="PFMS-DBT-2026-PB-0941",
-        physical_possession_pct=85.0,
-        mutation_completed_pct=72.0,
-        active_court_cases=1,
-        contingent_liability_cr=1.2,
-        created_at="2025-08-01",
-        alignment_coordinates=[
-            [30.9010, 75.8573],
-            [30.9250, 75.8900],
-            [30.9600, 75.9200],
-            [31.0100, 75.9600]
+        # 2. Project 2: Nagpur-Mumbai Samruddhi Mahamarg (Maharashtra)
+        p2 = Project(
+            id="PRJ-MSRDC-2026-MH04",
+            title="Nagpur-Mumbai Samruddhi Expressway (Package 12)",
+            acquiring_agency="MSRDC / GoM",
+            statutory_act="RFCTLARR Act, 2013",
+            state="Maharashtra",
+            district="Nagpur",
+            total_length_km=58.2,
+            total_corridor_area_ha=210.4,
+            current_stage="8. Physical Possession & Land Mutation (Sec 38/3E)",
+            stage_progress_pct=88.9,
+            total_compensation_assessed_cr=162.0,
+            total_compensation_disbursed_cr=154.8,
+            physical_possession_pct=94.5,
+            alignment_coordinates=[
+                [21.1458, 79.0882],
+                [21.1210, 78.9850],
+                [21.0850, 78.8520],
+                [21.0420, 78.7110]
+            ]
+        )
+
+        parcels_p2 = [
+            Parcel(
+                ulpin="IN27MH89123401",
+                project_id="PRJ-MSRDC-2026-MH04",
+                local_record_no="Gat No. 89/1A",
+                village="Hingna",
+                district="Nagpur",
+                state="Maharashtra",
+                land_type="RURAL_MID",
+                acquired_area_sqm=6500.0,
+                circle_rate_per_sqm=1250.0,
+                avg_registered_sale_rate_per_sqm=1950.0,
+                owner_name="Shri Eknath Patil",
+                owner_aadhaar_masked="XXXX-XXXX-9912",
+                bank_ifsc="MAHB0000124",
+                bank_account_masked="XXXX-XXXX-3341",
+                encumbrance_locked=False,
+                status="ACQUIRED",
+                coordinates_polygon=[
+                    [21.1440, 79.0860], [21.1475, 79.0860], [21.1475, 79.0900], [21.1440, 79.0900]
+                ]
+            )
         ]
-    )
 
-    # Project 2: Dedicated Freight Corridor (Maharashtra - Jawaharlal Nehru Port Trust Link)
-    p2_parcels = mock_intersect_alignment_corridor(
-        "Western DFC - Palghar to JNPT Freight Corridor", "Maharashtra", "Palghar", "Dahanu", 8.0
-    )
-    p2 = Project(
-        id="PRJ-DFCCIL-02",
-        title="Western Dedicated Freight Corridor (Palghar-Vasai Heavy Freight Line)",
-        acquiring_agency="Dedicated Freight Corridor Corporation of India (DFCCIL) / MoR",
-        sector="Railways",
-        statutory_act=StatutoryActEnum.RFCTLARR_2013,
-        state="Maharashtra",
-        districts=["Palghar", "Thane"],
-        current_stage=StageEnum.POSSESSION_MUTATION,
-        stage_progress_pct=88.9,
-        total_length_km=48.6,
-        total_corridor_area_ha=112.4,
-        parcels=p2_parcels,
-        objections=[],
-        rr_families=[],
-        sec11_notification_date="2025-04-10",
-        sec11_gazette_id="MH-(W)-02/2025/GZ-DFC02",
-        sec19_declaration_date="2025-09-18",
-        award_date="2025-12-05",
-        total_compensation_assessed_cr=89.4,
-        total_compensation_disbursed_cr=89.4,
-        pfs_dbt_batch_id="PFMS-DBT-2025-MH-8812",
-        physical_possession_pct=100.0,
-        mutation_completed_pct=95.0,
-        active_court_cases=0,
-        contingent_liability_cr=0.0,
-        created_at="2025-02-15",
-        alignment_coordinates=[
-            [19.6967, 72.7699],
-            [19.6200, 72.8200],
-            [19.4500, 72.8800],
-            [19.3400, 72.9300]
+        # 3. Project 3: Bengaluru Satellite Town Ring Road (Karnataka)
+        p3 = Project(
+            id="PRJ-KRDCL-2026-KA08",
+            title="Bengaluru Satellite Town Ring Road (STRR - NH 948A)",
+            acquiring_agency="NHAI / KRDCL",
+            statutory_act="National Highways Act, 1956",
+            state="Karnataka",
+            district="Bengaluru Rural",
+            total_length_km=76.0,
+            total_corridor_area_ha=312.0,
+            current_stage="3. Preliminary Notification & Freezing (Sec 11/3A)",
+            stage_progress_pct=33.3,
+            total_compensation_assessed_cr=240.0,
+            total_compensation_disbursed_cr=12.0,
+            physical_possession_pct=15.0,
+            alignment_coordinates=[
+                [13.1986, 77.7066],
+                [13.2450, 77.6210],
+                [13.3120, 77.5120],
+                [13.3850, 77.4100]
+            ]
+        )
+
+        parcels_p3 = [
+            Parcel(
+                ulpin="IN29KA56789001",
+                project_id="PRJ-KRDCL-2026-KA08",
+                local_record_no="Sy. No. 45/3",
+                village="Devanahalli",
+                district="Bengaluru Rural",
+                state="Karnataka",
+                land_type="RURAL_CLOSE",
+                acquired_area_sqm=5000.0,
+                circle_rate_per_sqm=4200.0,
+                avg_registered_sale_rate_per_sqm=5600.0,
+                owner_name="Shri Manjunath Swamy",
+                owner_aadhaar_masked="XXXX-XXXX-4532",
+                bank_ifsc="CNRB0001290",
+                bank_account_masked="XXXX-XXXX-9901",
+                encumbrance_locked=True,
+                status="NOTIFIED",
+                coordinates_polygon=[
+                    [13.1970, 77.7050], [13.2005, 77.7050], [13.2005, 77.7085], [13.1970, 77.7085]
+                ]
+            )
         ]
-    )
 
-    # Project 3: Kanpur-Lucknow Expressway (Uttar Pradesh - Sec 11 Notification Stage)
-    p3_parcels = mock_intersect_alignment_corridor(
-        "Kanpur-Lucknow Greenfield Expressway", "Uttar Pradesh", "Unnao", "Nawabganj", 5.0
-    )
-    p3 = Project(
-        id="PRJ-NHAI-03",
-        title="Kanpur-Lucknow 6-Lane Access Controlled Greenfield Expressway",
-        acquiring_agency="National Highways Authority of India (NHAI)",
-        sector="Highways",
-        statutory_act=StatutoryActEnum.NH_ACT_1956,
-        state="Uttar Pradesh",
-        districts=["Unnao", "Lucknow"],
-        current_stage=StageEnum.PRELIMINARY_NOTIFICATION,
-        stage_progress_pct=33.3,
-        total_length_km=62.8,
-        total_corridor_area_ha=145.0,
-        parcels=p3_parcels,
-        objections=[],
-        rr_families=[],
-        sec11_notification_date="2026-02-01",
-        sec11_gazette_id="UP-(E)-01/2026/GZ-KL03",
-        sec19_declaration_date=None,
-        award_date=None,
-        total_compensation_assessed_cr=64.2,
-        total_compensation_disbursed_cr=0.0,
-        physical_possession_pct=0.0,
-        mutation_completed_pct=0.0,
-        active_court_cases=0,
-        contingent_liability_cr=0.0,
-        created_at="2025-11-20",
-        alignment_coordinates=[
-            [26.4499, 80.3319],
-            [26.6200, 80.5500],
-            [26.7800, 80.7500],
-            [26.8467, 80.9462]
+        # 4. Project 4: Delhi-Amritsar High Speed Rail / Freight Corridor (Punjab)
+        p4 = Project(
+            id="PRJ-DFCCIL-2026-PB02",
+            title="Delhi-Amritsar Dedicated Freight & Rail Corridor",
+            acquiring_agency="Dedicated Freight Corridor Corporation (DFCCIL)",
+            statutory_act="Railways Act, 1989 (Sec 20A-20P)",
+            state="Punjab",
+            district="Ludhiana",
+            total_length_km=84.0,
+            total_corridor_area_ha=393.9,
+            current_stage="4. Objection Management & Inquiry (Sec 15/3C)",
+            stage_progress_pct=44.4,
+            total_compensation_assessed_cr=195.0,
+            total_compensation_disbursed_cr=45.0,
+            physical_possession_pct=35.0,
+            alignment_coordinates=[
+                [30.9010, 75.8573],
+                [30.9420, 75.7650],
+                [30.9850, 75.6420],
+                [31.0250, 75.5110]
+            ]
+        )
+
+        parcels_p4 = [
+            Parcel(
+                ulpin="IN03PB11223301",
+                project_id="PRJ-DFCCIL-2026-PB02",
+                local_record_no="Murabba 14, Killa 8",
+                village="Sahnewal",
+                district="Ludhiana",
+                state="Punjab",
+                land_type="RURAL_MID",
+                acquired_area_sqm=7200.0,
+                circle_rate_per_sqm=2800.0,
+                avg_registered_sale_rate_per_sqm=3600.0,
+                owner_name="Sardar Gurdeep Singh",
+                owner_aadhaar_masked="XXXX-XXXX-3312",
+                bank_ifsc="PSIB0000412",
+                bank_account_masked="XXXX-XXXX-6623",
+                encumbrance_locked=True,
+                status="NOTIFIED",
+                coordinates_polygon=[
+                    [30.9000, 75.8550], [30.9035, 75.8550], [30.9035, 75.8590], [30.9000, 75.8590]
+                ]
+            )
         ]
-    )
 
-    # Project 4: Green Energy Super Grid Feeder (Rajasthan - Proposal Stage)
-    p4_parcels = mock_intersect_alignment_corridor(
-        "Bhadla Ultra Mega Solar Transmission Line", "Rajasthan", "Jodhpur", "Bhadla", 4.0
-    )
-    p4 = Project(
-        id="PRJ-PGCIL-04",
-        title="Bhadla-Fatehgarh 765kV Green Energy Corridor High Voltage Transmission Line",
-        acquiring_agency="Power Grid Corporation of India (PGCIL)",
-        sector="Power Grid",
-        statutory_act=StatutoryActEnum.RFCTLARR_2013,
-        state="Rajasthan",
-        districts=["Jodhpur", "Jaisalmer"],
-        current_stage=StageEnum.PROPOSAL,
-        stage_progress_pct=11.1,
-        total_length_km=78.0,
-        total_corridor_area_ha=52.0,
-        parcels=p4_parcels,
-        objections=[],
-        rr_families=[],
-        sec11_notification_date=None,
-        sec11_gazette_id=None,
-        sec19_declaration_date=None,
-        award_date=None,
-        total_compensation_assessed_cr=18.5,
-        total_compensation_disbursed_cr=0.0,
-        physical_possession_pct=0.0,
-        mutation_completed_pct=0.0,
-        active_court_cases=0,
-        contingent_liability_cr=0.0,
-        created_at="2026-01-10",
-        alignment_coordinates=[
-            [27.5300, 71.9100],
-            [27.3500, 71.7200],
-            [27.1000, 71.5000]
-        ]
-    )
+        db.add_all([p1, p2, p3, p4])
+        db.add_all(parcels_p1 + parcels_p2 + parcels_p3 + parcels_p4)
+        db.add(obj1)
+        db.add_all([rr1, rr2])
+        db.commit()
 
-    return [p1, p2, p3, p4]
+    finally:
+        if close_db:
+            db.close()
