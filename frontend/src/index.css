@@ -199,7 +199,7 @@ code, pre, .font-mono {
   box-shadow: var(--shadow-xs);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1050;
 }
 
 .header-container {
@@ -337,7 +337,24 @@ code, pre, .font-mono {
   box-shadow: var(--shadow-md);
   position: sticky;
   top: 80px;
-  z-index: 90;
+  z-index: 1040;
+}
+
+.leaflet-container {
+  position: relative !important;
+  z-index: 1 !important;
+  isolation: isolate !important;
+  border-radius: var(--radius-sm);
+  width: 100%;
+  height: 520px;
+}
+
+.leaflet-pane {
+  z-index: 2 !important;
+}
+
+.leaflet-top, .leaflet-bottom {
+  z-index: 10 !important;
 }
 
 .nav-inner-box {

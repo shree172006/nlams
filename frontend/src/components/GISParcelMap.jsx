@@ -1,6 +1,31 @@
-import React from 'react';
-import { Layers, ShieldCheck, FileText, Lock } from 'lucide-react';
-import { MapContainer, TileLayer, Polygon, Polyline, Tooltip, Popup } from 'react-leaflet';
+import React, { useState, useEffect } from 'react';
+import { Layers, ShieldCheck, FileText, Lock, Maximize2, Minimize2 } from 'lucide-react';
+import { MapContainer, TileLayer, Polygon, Polyline, Tooltip, Popup, useMap } from 'react-leaflet';
+
+// Internal controller to smoothly fly to selected project coordinates and handle resize
+function MapController({ selectedProject, isFullscreen }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (selectedProject?.alignment_coordinates && selectedProject.alignment_coordinates.length > 0) {
+      const coords = selectedProject.alignment_coordinates;
+      if (coords.length > 1) {
+        map.flyToBounds(coords, { padding: [60, 60], duration: 1.2, maxZoom: 14 });
+      } else {
+        map.flyTo(coords[0], 13, { duration: 1.2 });
+      }
+    }
+  }, [selectedProject?.id, map]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      map.invalidateSize();
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [isFullscreen, map]);
+
+  return null;
+}
 
 export default function GISParcelMap({
   selectedProject,
@@ -16,19 +41,38 @@ export default function GISParcelMap({
   t,
   langHindi
 }) {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+    <div style={isFullscreen ? {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      width: '100vw',
+      height: '100vh',
+      zIndex: 99999,
+      background: '#071426',
+      padding: '16px',
+      boxSizing: 'border-box',
+      overflowY: 'auto',
+      display: 'flex',
+      flexDirection: 'column'
+    } : {}}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
         <div>
-          <h2 style={{ fontSize: '1.2rem', color: '#071426' }}>{t.navGis}</h2>
-          <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+          <h2 style={{ fontSize: '1.2rem', color: isFullscreen ? '#ffffff' : '#071426', margin: 0 }}>
+            {t.navGis} {isFullscreen && <span className="badge-pill badge-gold" style={{ marginLeft: 8, fontSize: '0.65rem' }}>FULL VIEW</span>}
+          </h2>
+          <span style={{ fontSize: '0.75rem', color: isFullscreen ? '#94a3b8' : '#64748b' }}>
             {langHindi ? 'भू-नक्शा पार्सल सीमाओं एवं राइट-ऑफ-वे संरेखण का जीआईएस मानचित्र' : 'Vector overlay of corridor alignment against village cadastral survey polygons'}
           </span>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#475569' }}>{t.activeProjectLabel}</span>
+          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: isFullscreen ? '#cbd5e1' : '#475569' }}>{t.activeProjectLabel}</span>
           <select 
-            style={{ padding: '6px 12px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-dark)', fontSize: '0.78rem', fontWeight: 600 }}
+            style={{ padding: '6px 12px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-dark)', fontSize: '0.78rem', fontWeight: 700, background: '#ffffff', color: '#071426' }}
             value={selectedProjectId}
             onChange={(e) => setSelectedProjectId(e.target.value)}
           >
@@ -36,11 +80,32 @@ export default function GISParcelMap({
               <option key={p.id} value={p.id}>{p.title}</option>
             ))}
           </select>
+
+          {/* Full Screen Toggle in Header */}
+          <button 
+            type="button"
+            className="btn-action btn-outline"
+            style={{ 
+              padding: '5px 10px', 
+              fontSize: '0.74rem', 
+              color: isFullscreen ? '#fef08a' : '#071426',
+              borderColor: isFullscreen ? '#fef08a' : 'var(--border-dark)',
+              background: isFullscreen ? 'rgba(254, 240, 138, 0.1)' : 'transparent',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 5
+            }}
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            title={isFullscreen ? "Exit Full Screen" : "Open Full Screen Map"}
+          >
+            {isFullscreen ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+            <span>{isFullscreen ? (langHindi ? 'सामान्य दृश्य' : 'Exit Full View') : (langHindi ? 'पूर्ण स्क्रीन' : 'Full Screen')}</span>
+          </button>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: selectedMapParcel ? '2fr 1fr' : '1fr', gap: 18 }}>
-        <div className="section-panel-card">
+      <div style={{ display: 'grid', gridTemplateColumns: selectedMapParcel ? '2fr 1fr' : '1fr', gap: 18, flex: isFullscreen ? 1 : 'none' }}>
+        <div className="section-panel-card" style={{ display: 'flex', flexDirection: 'column', height: isFullscreen ? '100%' : 'auto' }}>
           <div className="panel-card-head">
             <div>
               <h3 className="panel-card-title">
@@ -69,87 +134,116 @@ export default function GISParcelMap({
             </div>
           </div>
 
-          <div className="panel-card-body" style={{ padding: '16px' }}>
-            <MapContainer 
-              center={selectedProject?.alignment_coordinates[0] || [25.3176, 82.9739]} 
-              zoom={13} 
-              scrollWheelZoom={false}
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Survey of India ORI'
-                url={mapLayer === 'topo' 
-                  ? "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
-                  : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                }
-              />
+          <div className="panel-card-body" style={{ padding: '12px', position: 'relative', flex: isFullscreen ? 1 : 'none', minHeight: isFullscreen ? 480 : 'auto' }}>
+            <div style={{ position: 'relative', width: '100%', height: isFullscreen ? 'calc(100vh - 240px)' : '520px' }}>
+              <MapContainer 
+                center={selectedProject?.alignment_coordinates[0] || [25.3176, 82.9739]} 
+                zoom={13} 
+                scrollWheelZoom={true}
+                style={{ width: '100%', height: '100%', borderRadius: 'var(--radius-sm)' }}
+              >
+                {/* Reactive Project Controller */}
+                <MapController selectedProject={selectedProject} isFullscreen={isFullscreen} />
 
-              {/* Alignment Polyline */}
-              {selectedProject?.alignment_coordinates && (
-                <Polyline 
-                  positions={selectedProject.alignment_coordinates} 
-                  color="#ea580c" 
-                  weight={6}
-                  dashArray="10, 5"
-                >
-                  <Popup>
-                    <div style={{ padding: 4, fontSize: '0.8rem' }}>
-                      <strong>{selectedProject.title}</strong>
-                      <div>Length: {selectedProject.total_length_km} km</div>
-                      <div>Agency: {selectedProject.acquiring_agency}</div>
-                    </div>
-                  </Popup>
-                </Polyline>
-              )}
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | Survey of India ORI'
+                  url={mapLayer === 'topo' 
+                    ? "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+                    : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  }
+                />
 
-              {/* Cadastral Polygons with Color Codes */}
-              {selectedProject?.parcels.map((parcel) => {
-                // Color codes:
-                // Yellow: Section 11 Notified (Encumbrance Locked)
-                // Red: Disputed (Section 15 Active)
-                // Green: Acquired / Possession Completed
-                // Blue: Proposed / Under SIA
-                let strokeColor = '#2563eb';
-                let fillColor = '#3b82f6';
-                if (parcel.status === 'DISPUTED') {
-                  strokeColor = '#b91c1c';
-                  fillColor = '#ef4444';
-                } else if (parcel.status === 'ACQUIRED') {
-                  strokeColor = '#059669';
-                  fillColor = '#10b981';
-                } else if (parcel.encumbrance_locked || parcel.status === 'NOTIFIED') {
-                  strokeColor = '#d97706';
-                  fillColor = '#f59e0b';
-                }
+                {/* Alignment Polyline */}
+                {selectedProject?.alignment_coordinates && (
+                  <Polyline 
+                    positions={selectedProject.alignment_coordinates} 
+                    color="#ea580c" 
+                    weight={6}
+                    dashArray="10, 5"
+                  >
+                    <Popup>
+                      <div style={{ padding: 4, fontSize: '0.8rem' }}>
+                        <strong>{selectedProject.title}</strong>
+                        <div>Length: {selectedProject.total_length_km} km</div>
+                        <div>Agency: {selectedProject.acquiring_agency}</div>
+                      </div>
+                    </Popup>
+                  </Polyline>
+                )}
 
-                return (
-                  parcel.coordinates_polygon && parcel.coordinates_polygon.length > 0 && (
-                    <Polygon
-                      key={parcel.ulpin}
-                      positions={parcel.coordinates_polygon}
-                      pathOptions={{
-                        color: strokeColor,
-                        fillColor: fillColor,
-                        fillOpacity: 0.55,
-                        weight: 2
-                      }}
-                      eventHandlers={{
-                        click: () => setSelectedMapParcel(parcel)
-                      }}
-                    >
-                      <Tooltip sticky>
-                        <div style={{ fontSize: '0.75rem' }}>
-                          <strong>ULPIN: {parcel.ulpin}</strong>
-                          <div>Record: {parcel.local_record_no}</div>
-                          <div>Owner: {parcel.owner_name}</div>
-                          <div>Acquired: {parcel.acquired_area_sqm} sq.m</div>
-                          <div>Status: {parcel.status} {parcel.encumbrance_locked ? '(🔒 Encumbrance Locked)' : ''}</div>
-                        </div>
-                      </Tooltip>
-                    </Polygon>
-                  )
-                );
-              })}
-            </MapContainer>
+                {/* Cadastral Polygons with Color Codes */}
+                {selectedProject?.parcels.map((parcel) => {
+                  let strokeColor = '#2563eb';
+                  let fillColor = '#3b82f6';
+                  if (parcel.status === 'DISPUTED') {
+                    strokeColor = '#b91c1c';
+                    fillColor = '#ef4444';
+                  } else if (parcel.status === 'ACQUIRED') {
+                    strokeColor = '#059669';
+                    fillColor = '#10b981';
+                  } else if (parcel.encumbrance_locked || parcel.status === 'NOTIFIED') {
+                    strokeColor = '#d97706';
+                    fillColor = '#f59e0b';
+                  }
+
+                  return (
+                    parcel.coordinates_polygon && parcel.coordinates_polygon.length > 0 && (
+                      <Polygon
+                        key={parcel.ulpin}
+                        positions={parcel.coordinates_polygon}
+                        pathOptions={{
+                          color: strokeColor,
+                          fillColor: fillColor,
+                          fillOpacity: 0.55,
+                          weight: 2
+                        }}
+                        eventHandlers={{
+                          click: () => setSelectedMapParcel(parcel)
+                        }}
+                      >
+                        <Tooltip sticky>
+                          <div style={{ fontSize: '0.75rem' }}>
+                            <strong>ULPIN: {parcel.ulpin}</strong>
+                            <div>Record: {parcel.local_record_no}</div>
+                            <div>Owner: {parcel.owner_name}</div>
+                            <div>Acquired: {parcel.acquired_area_sqm} sq.m</div>
+                            <div>Status: {parcel.status} {parcel.encumbrance_locked ? '(🔒 Encumbrance Locked)' : ''}</div>
+                          </div>
+                        </Tooltip>
+                      </Polygon>
+                    )
+                  );
+                })}
+              </MapContainer>
+
+              {/* Floating Bottom-Right Full Screen Button */}
+              <button
+                type="button"
+                onClick={() => setIsFullscreen(!isFullscreen)}
+                style={{
+                  position: 'absolute',
+                  bottom: 16,
+                  right: 16,
+                  zIndex: 400,
+                  background: '#071426',
+                  color: '#ffffff',
+                  border: '1px solid rgba(255,255,255,0.4)',
+                  borderRadius: 6,
+                  padding: '7px 12px',
+                  boxShadow: '0 3px 10px rgba(0,0,0,0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  cursor: 'pointer',
+                  fontSize: '0.74rem',
+                  fontWeight: 700
+                }}
+                title={isFullscreen ? "Exit Full Screen" : "Enter Full Screen View"}
+              >
+                {isFullscreen ? <Minimize2 size={14} color="#fef08a" /> : <Maximize2 size={14} color="#60a5fa" />}
+                <span>{isFullscreen ? (langHindi ? 'सामान्य दृश्य' : 'Normal View') : (langHindi ? 'पूर्ण स्क्रीन' : 'Full Screen')}</span>
+              </button>
+            </div>
 
             <div style={{ display: 'flex', gap: 16, marginTop: 12, padding: '10px 14px', background: '#f8fafc', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-main)', fontSize: '0.72rem', flexWrap: 'wrap' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
