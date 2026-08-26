@@ -3,8 +3,8 @@ import 'package:http/http.dart' as http;
 import '../models/survey_model.dart';
 
 class ApiService {
-  // Default backend URL (supports localhost for desktop/web, or emulator 10.0.2.2)
-  static String baseUrl = 'http://localhost:8000';
+  // Default backend URL (points to live Render cloud backend)
+  static String baseUrl = 'https://nlams-backend.onrender.com';
 
   static void setBaseUrl(String url) {
     baseUrl = url;

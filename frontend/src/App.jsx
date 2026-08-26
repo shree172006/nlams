@@ -14,7 +14,7 @@ import ValuationCalculator from './components/ValuationCalculator';
 import LandownerPortal from './components/LandownerPortal';
 import DelayRiskWidget from './components/DelayRiskWidget';
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_BASE || (window.location.hostname === 'localhost' ? 'http://localhost:8000' : 'https://nlams-backend.onrender.com');
 
 // Bilingual translations dictionary
 const T = {
