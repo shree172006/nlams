@@ -2408,7 +2408,7 @@ export default function App() {
                 <span className="badge-pill badge-gold" style={{ fontSize: '0.62rem' }}>Flutter v3.22</span>
               </div>
               <div style={{ fontSize: '0.68rem', color: '#93c5fd', marginTop: 2, textAlign: 'left' }}>
-                {langHindi ? 'ऑफलाइन फील्ड सर्वे डाटा ➔ एनएलएएमएस नेशनल क्लाउड रियल-टाइम सिंक' : 'Offline Ground & Drone Survey ➔ Real-Time Cloud Sync'}
+                {langHindi ? 'ऑफलाइन फील्ड सर्वे डेटा ➔ एनएलएएमएस केंद्रीय रजिस्ट्री (Supabase/DB) रियल-टाइम सिंक' : 'Offline Ground & Drone Survey ➔ Central Registry (Supabase/DB) Sync'}
               </div>
             </div>
 
@@ -2498,7 +2498,7 @@ export default function App() {
                   style={{ fontSize: '0.78rem', padding: '7px 16px', display: 'flex', alignItems: 'center', gap: 6 }}
                 >
                   <RefreshCw size={14} />
-                  <span>{langHindi ? '🚀 क्लाउड पर सिंक करें' : '🚀 Sync Field Survey to Cloud'}</span>
+                  <span>{langHindi ? '🚀 केंद्रीय डेटाबेस पर सिंक करें' : '🚀 Sync Field Survey to Central Database'}</span>
                 </button>
               </div>
             </form>
