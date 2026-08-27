@@ -1038,3 +1038,85 @@ code, pre, .font-mono {
   font-size: 0.72rem;
   color: #94a3b8;
 }
+
+/* ================= COMPREHENSIVE RESPONSIVE DESIGN (DESKTOP & MOBILE) ================= */
+@media (max-width: 1024px) {
+  .footer-top-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .nlams-app-body {
+    padding: 16px 20px 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .gov-top-accessibility {
+    flex-direction: column;
+    gap: 8px;
+    padding: 6px 12px;
+    align-items: flex-start;
+  }
+  .header-container {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 10px 14px;
+  }
+  .main-nav-strip {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav-inner-box {
+    display: flex;
+    gap: 4px;
+    padding: 4px 10px;
+    min-width: max-content;
+  }
+  .home-hero-card {
+    padding: 18px 20px;
+  }
+  .hero-heading {
+    font-size: 1.3rem;
+  }
+  .hero-stats-deck {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .footer-top-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .footer-bottom-bar {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+  .modal-dialog-card {
+    padding: 16px;
+    max-height: 95vh;
+    border-radius: var(--radius-md);
+  }
+  .leaflet-container {
+    height: 380px;
+  }
+  .kpi-row-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-stats-deck {
+    grid-template-columns: 1fr;
+  }
+  .kpi-row-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .brand-hierarchy .main-name {
+    font-size: 0.95rem;
+  }
+  .brand-hierarchy .dept-name {
+    font-size: 0.65rem;
+  }
+}
