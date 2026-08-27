@@ -158,7 +158,7 @@ export default function App() {
   const [activeObjectionToDispose, setActiveObjectionToDispose] = useState(null);
   const [hearingScheduleDate, setHearingScheduleDate] = useState('2026-03-15');
   const [disposalForm, setDisposalForm] = useState({
-    status: 'UPHELD',
+    status: 'PETITION_UPHELD',
     reason: ''
   });
   const [newObjectionForm, setNewObjectionForm] = useState({
@@ -884,6 +884,12 @@ export default function App() {
 
   const filteredObjections = allObjections.filter(item => {
     if (objectionFilter === 'ALL') return true;
+    if (objectionFilter === 'PETITION_UPHELD') {
+      return item.objection.status === 'PETITION_UPHELD' || item.objection.status === 'UPHELD' || item.objection.status === 'DISPOSED_UPHELD';
+    }
+    if (objectionFilter === 'PETITION_REJECTED') {
+      return item.objection.status === 'PETITION_REJECTED' || item.objection.status === 'REJECTED' || item.objection.status === 'DISMISSED' || item.objection.status === 'DISPOSED_REJECTED';
+    }
     return item.objection.status === objectionFilter;
   });
 
@@ -1335,15 +1341,21 @@ export default function App() {
             </div>
 
             {/* Filter bar */}
-            <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
-              {['ALL', 'PENDING', 'HEARING_SCHEDULED', 'DISPOSED_UPHELD', 'DISPOSED_REJECTED'].map(st => (
+            <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
+              {[
+                { key: 'ALL', label: langHindi ? 'सभी आपत्तियां (All)' : 'All Objections' },
+                { key: 'PENDING', label: langHindi ? 'लंबित (Pending)' : 'Pending' },
+                { key: 'HEARING_SCHEDULED', label: langHindi ? 'सुनवाई निर्धारित' : 'Hearing Scheduled' },
+                { key: 'PETITION_UPHELD', label: langHindi ? 'याचिका स्वीकृत' : 'Petition Upheld' },
+                { key: 'PETITION_REJECTED', label: langHindi ? 'याचिका खारिज' : 'Petition Rejected' }
+              ].map(st => (
                 <button 
-                  key={st}
-                  className={`btn-action ${objectionFilter === st ? 'btn-navy' : 'btn-outline'}`}
+                  key={st.key}
+                  className={`btn-action ${objectionFilter === st.key ? 'btn-navy' : 'btn-outline'}`}
                   style={{ fontSize: '0.7rem', padding: '5px 12px' }}
-                  onClick={() => setObjectionFilter(st)}
+                  onClick={() => setObjectionFilter(st.key)}
                 >
-                  {st.replace('_', ' ')}
+                  {st.label}
                 </button>
               ))}
             </div>
@@ -1375,10 +1387,11 @@ export default function App() {
                               <span className={`badge-pill ${
                                 obj.status === 'PENDING' ? 'badge-red' : 
                                 (obj.status === 'HEARING_SCHEDULED' ? 'badge-saffron' : 
-                                ((obj.status === 'UPHELD' || obj.status === 'DISPOSED_UPHELD') ? 'badge-green' : 'badge-navy'))
+                                ((obj.status === 'PETITION_UPHELD' || obj.status === 'UPHELD' || obj.status === 'DISPOSED_UPHELD') ? 'badge-green' : 'badge-red'))
                               }`}>
-                                {(obj.status === 'UPHELD' || obj.status === 'DISPOSED_UPHELD') ? 'UPHELD' : 
-                                 (obj.status === 'DISMISSED' || obj.status === 'DISPOSED_REJECTED') ? 'DISMISSED' : obj.status.replace('_', ' ')}
+                                {(obj.status === 'PETITION_UPHELD' || obj.status === 'UPHELD' || obj.status === 'DISPOSED_UPHELD') ? (langHindi ? 'याचिका स्वीकृत (Petition Upheld)' : 'Petition Upheld') : 
+                                 (obj.status === 'PETITION_REJECTED' || obj.status === 'REJECTED' || obj.status === 'DISMISSED' || obj.status === 'DISPOSED_REJECTED') ? (langHindi ? 'याचिका खारिज (Petition Rejected)' : 'Petition Rejected') : 
+                                 obj.status.replace('_', ' ')}
                               </span>
                             </div>
                             <span style={{ fontSize: '0.7rem', color: '#64748b' }}>Filing Date: {obj.filing_date}</span>
@@ -1417,7 +1430,7 @@ export default function App() {
                               </button>
                             )}
 
-                            {obj.status !== 'UPHELD' && obj.status !== 'DISMISSED' && obj.status !== 'DISPOSED_UPHELD' && obj.status !== 'DISPOSED_REJECTED' && (
+                            {obj.status !== 'PETITION_UPHELD' && obj.status !== 'PETITION_REJECTED' && obj.status !== 'UPHELD' && obj.status !== 'DISMISSED' && obj.status !== 'DISPOSED_UPHELD' && obj.status !== 'DISPOSED_REJECTED' && (
                               <button 
                                 className="btn-action btn-navy" 
                                 style={{ fontSize: '0.7rem', padding: '4px 10px' }}
@@ -2204,8 +2217,8 @@ export default function App() {
                 value={disposalForm.status}
                 onChange={(e) => setDisposalForm({ ...disposalForm, status: e.target.value })}
               >
-                <option value="UPHELD">Upheld (आपत्ति स्वीकृत - Favorable to Claimant)</option>
-                <option value="DISMISSED">Dismissed (आपत्ति खारिज - Unsustainable after Inquiry)</option>
+                <option value="PETITION_UPHELD">Petition Upheld (याचिका स्वीकृत - Favorable to Claimant / Modify Award)</option>
+                <option value="PETITION_REJECTED">Petition Rejected (याचिका खारिज - Deemed Unsustainable after Inquiry)</option>
               </select>
             </div>
 

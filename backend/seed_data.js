@@ -131,20 +131,64 @@ function seedDatabase() {
     }
   ];
 
-  const obj1 = {
-    id: "OBJ-UP-2026-081",
-    project_id: "PRJ-NHAI-2026-UP01",
-    ulpin: "IN09UP23456703",
-    claimant_name: "Shri Vinod Kumar Mishra",
-    contact_phone: "+91 94152 78120",
-    grounds_category: "Inadequate Valuation",
-    objection_details: "Sub-Registrar circle rate of Harahua increased in 2025; proposed 3G rate does not reflect commercial potential along NH-31.",
-    filing_date: "2026-01-18",
-    status: "HEARING_SCHEDULED",
-    hearing_date: "2026-03-12",
-    cala_jurisdiction: "CALA / Competent Authority cum ADM (Land Acquisition), Varanasi",
-    reasoned_order_summary: null
-  };
+  const objectionsAll = [
+    {
+      id: "OBJ-UP-2026-081",
+      project_id: "PRJ-NHAI-2026-UP01",
+      ulpin: "IN09UP23456703",
+      claimant_name: "Shri Vinod Kumar Mishra",
+      contact_phone: "+91 94152 78120",
+      grounds_category: "Inadequate Valuation",
+      objection_details: "Sub-Registrar circle rate of Harahua increased in 2025; proposed 3G rate does not reflect commercial potential along NH-31.",
+      filing_date: "2026-01-18",
+      status: "HEARING_SCHEDULED",
+      hearing_date: "2026-03-12",
+      cala_jurisdiction: "CALA / Competent Authority cum ADM (Land Acquisition), Varanasi",
+      reasoned_order_summary: null
+    },
+    {
+      id: "OBJ-MH-2026-012",
+      project_id: "PRJ-MSRDC-2026-MH04",
+      ulpin: "IN27MH89123401",
+      claimant_name: "Shri Eknath Patil",
+      contact_phone: "+91 98220 54321",
+      grounds_category: "Measurement Discrepancy",
+      objection_details: "Boundary overlap with adjacent Gat No 419/2; actual acquired area is 4,500 sq.m vs 4,200 sq.m recorded in notice.",
+      filing_date: "2026-01-25",
+      status: "PETITION_UPHELD",
+      hearing_date: "2026-02-14",
+      cala_jurisdiction: "CALA / Sub-Divisional Officer (SDO), Hingna, Nagpur",
+      reasoned_order_summary: "Upon joint total-station survey with DLR inspector, area correction from 4,200 sq.m to 4,500 sq.m approved. Differential compensation of ₹5.4 Lakhs sanctioned."
+    },
+    {
+      id: "OBJ-KA-2026-033",
+      project_id: "PRJ-KRDCL-2026-KA08",
+      ulpin: "IN29KA56789001",
+      claimant_name: "Shri Manjunath Swamy",
+      contact_phone: "+91 94480 12345",
+      grounds_category: "Inadequate Valuation",
+      objection_details: "Demanding non-agricultural commercial rate for agricultural parcel claiming future highway commercial frontage.",
+      filing_date: "2026-02-02",
+      status: "PETITION_REJECTED",
+      hearing_date: "2026-02-20",
+      cala_jurisdiction: "CALA / Special Land Acquisition Officer (SLAO), Bengaluru",
+      reasoned_order_summary: "Claimant's demand for commercial rate rejected as revenue records classify land as dry agricultural land without Change of Land Use (CLU) approval on notification date."
+    },
+    {
+      id: "OBJ-PB-2026-045",
+      project_id: "PRJ-DFCCIL-2026-PB02",
+      ulpin: "IN03PB11223301",
+      claimant_name: "Sardar Gurdeep Singh",
+      contact_phone: "+91 98140 98765",
+      grounds_category: "Public Utility Conflict",
+      objection_details: "DFCCIL alignment bisects private irrigation tubewell and tractor access path to remainder 4 acres.",
+      filing_date: "2026-02-10",
+      status: "PENDING",
+      hearing_date: null,
+      cala_jurisdiction: "CALA / Competent Authority cum SDM, Ludhiana",
+      reasoned_order_summary: null
+    }
+  ];
 
   // R&R Families (Second Schedule) across All Corridor Locations
   const rrFamiliesAll = [
@@ -502,7 +546,7 @@ function seedDatabase() {
 
   db.insertProjects([p1, p2, p3, p4]);
   db.insertParcels([...parcelsP1, ...parcelsP2, ...parcelsP3, ...parcelsP4]);
-  db.insertObjection(obj1);
+  objectionsAll.forEach(o => db.insertObjection(o));
   db.insertRRFamilies(rrFamiliesAll);
   db.insertLARRDAReferences([larrda1, larrda2, larrda3, larrda4]);
 }

@@ -385,10 +385,10 @@ app.post('/api/projects/:project_id/objections/:objection_id/dispose', (req, res
     return res.status(404).json({ detail: "Objection not found" });
   }
 
-  let status = getParam(req, 'status', 'UPHELD');
-  // Clean up 'DISPOSED_UPHELD' -> 'UPHELD' and 'DISPOSED_DISMISSED' -> 'DISMISSED'
-  if (status === 'DISPOSED_UPHELD') status = 'UPHELD';
-  if (status === 'DISPOSED_DISMISSED') status = 'DISMISSED';
+  let status = getParam(req, 'status', 'PETITION_UPHELD');
+  // Normalize status to PETITION_UPHELD and PETITION_REJECTED
+  if (status === 'DISPOSED_UPHELD' || status === 'UPHELD') status = 'PETITION_UPHELD';
+  if (status === 'DISPOSED_REJECTED' || status === 'DISPOSED_DISMISSED' || status === 'DISMISSED' || status === 'REJECTED') status = 'PETITION_REJECTED';
 
   const reasonedOrderSummary = getParam(req, 'reasoned_order_summary');
 
