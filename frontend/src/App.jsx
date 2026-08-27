@@ -1462,12 +1462,16 @@ export default function App() {
           </div>
         )}
 
-        {/* ================= MODULE 7: R&R TRACKING ================= */}
+        {/* ================= MODULE: R&R TRACKING ================= */}
         {activeTab === 'rr' && (
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div>
-                <h2 style={{ fontSize: '1.2rem', color: '#071426' }}>{t.navRR}</h2>
+                <h2 style={{ fontSize: '1.2rem', color: '#071426' }}>
+                  {isOfficer 
+                    ? (langHindi ? '6. पुनर्वास एवं पुनर्व्यवस्थापन (R&R) ट्रैकिंग' : '6. Non-Owner R&R Tracking') 
+                    : (langHindi ? '4. पुनर्वास एवं पुनर्व्यवस्थापन मार्गदर्शिका (R&R)' : '4. R&R Entitlements Guide')}
+                </h2>
                 <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
                   {langHindi ? 'पुनर्वास एवं पुनर्व्यवस्था (द्वितीय अनुसूची) निगरानी' : 'Second Schedule mandatory entitlements under RFCTLARR Act, 2013'}
                 </span>
@@ -1631,12 +1635,12 @@ export default function App() {
           />
         )}
 
-        {/* ================= MODULE 9: LARRDA DISPUTE TRIBUNAL (SECTION 64) ================= */}
+        {/* ================= MODULE 5: LARRDA DISPUTE TRIBUNAL (SECTION 64) ================= */}
         {activeTab === 'larrda' && (
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div>
-                <h2 style={{ fontSize: '1.2rem', color: '#071426' }}>Land Acquisition Dispute Settlement Authority (LARRDA)</h2>
+                <h2 style={{ fontSize: '1.2rem', color: '#071426' }}>{t.navLARRDA}</h2>
                 <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
                   {langHindi ? 'धारा 64 न्यायाधिकरण संदर्भ, 90-दिवसीय कलेक्टर प्रेषण व 60-दिवसीय उच्च न्यायालय अपील निगरानी' : 'Quasi-judicial authority established under Section 64 of RFCTLARR Act, 2013 presided over by District Judge'}
                 </span>
