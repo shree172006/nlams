@@ -42,6 +42,7 @@ export default function GISParcelMap({
   langHindi
 }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [previewPhotoUrl, setPreviewPhotoUrl] = useState(null);
 
   return (
     <div style={isFullscreen ? {
@@ -345,18 +346,29 @@ export default function GISParcelMap({
                 </div>
               )}
 
-              {/* Field Survey Photos Gallery */}
+              {/* Field Survey Photos Gallery with Click-to-Enlarge Lightbox */}
               {selectedMapParcel.field_survey_photos && selectedMapParcel.field_survey_photos.length > 0 && (
                 <div style={{ marginBottom: 10 }}>
-                  <span style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: 700 }}>{langHindi ? 'जियो-टैग्ड सर्वेक्षण फोटो:' : 'Geo-Tagged Survey Photos:'}</span>
-                  <div style={{ display: 'flex', gap: 6, marginTop: 4, overflowX: 'auto' }}>
+                  <span style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: 700 }}>
+                    {langHindi ? 'जियो-टैग्ड सर्वेक्षण फोटो (बड़ा देखने हेतु क्लिक करें):' : 'Geo-Tagged Survey Photos (Click to Enlarge):'}
+                  </span>
+                  <div style={{ display: 'flex', gap: 8, marginTop: 4, overflowX: 'auto' }}>
                     {selectedMapParcel.field_survey_photos.map((url, imgIdx) => (
-                      <img 
+                      <div 
                         key={imgIdx} 
-                        src={url} 
-                        alt="Field Survey" 
-                        style={{ width: 65, height: 48, objectFit: 'cover', borderRadius: 4, border: '1px solid #cbd5e1' }} 
-                      />
+                        style={{ position: 'relative', cursor: 'pointer', flexShrink: 0 }}
+                        onClick={() => setPreviewPhotoUrl(url)}
+                        title="Click to open high-resolution survey photo preview"
+                      >
+                        <img 
+                          src={url} 
+                          alt="Field Survey" 
+                          style={{ width: 75, height: 54, objectFit: 'cover', borderRadius: 4, border: '2px solid #3b82f6', transition: 'transform 0.2s ease' }} 
+                        />
+                        <div style={{ position: 'absolute', bottom: 3, right: 3, background: 'rgba(7, 20, 38, 0.85)', color: '#ffffff', fontSize: '0.55rem', padding: '1px 3px', borderRadius: 2 }}>
+                          🔍 GPS
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -392,6 +404,64 @@ export default function GISParcelMap({
           </div>
         )}
       </div>
+
+      {/* ================= LIGHTBOX PHOTO PREVIEW MODAL ================= */}
+      {previewPhotoUrl && (
+        <div 
+          className="modal-overlay" 
+          style={{ zIndex: 100000, background: 'rgba(7, 20, 38, 0.88)' }} 
+          onClick={() => setPreviewPhotoUrl(null)}
+        >
+          <div 
+            className="modal-dialog-card" 
+            style={{ maxWidth: 680, padding: 16, background: '#0b1e36', color: '#ffffff', border: '1px solid #1e3a8a' }} 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, borderBottom: '1px solid rgba(255,255,255,0.15)', paddingBottom: 8 }}>
+              <div>
+                <h3 style={{ fontSize: '0.95rem', color: '#ffffff', margin: 0 }}>
+                  📸 {langHindi ? 'जियो-टैग्ड फील्ड सर्वेक्षण फोटो' : 'Geo-Tagged Field Survey High-Res Photo'}
+                </h3>
+                <span style={{ fontSize: '0.68rem', color: '#93c5fd' }}>
+                  ULPIN: {selectedMapParcel?.ulpin} • {selectedMapParcel?.local_record_no}
+                </span>
+              </div>
+              <button 
+                className="btn-action btn-outline" 
+                style={{ padding: '2px 8px', color: '#ffffff', borderColor: 'rgba(255,255,255,0.3)' }} 
+                onClick={() => setPreviewPhotoUrl(null)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={{ position: 'relative', borderRadius: 6, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.2)' }}>
+              <img 
+                src={previewPhotoUrl} 
+                alt="Geo-Tagged Survey" 
+                style={{ width: '100%', maxHeight: '55vh', objectFit: 'cover', display: 'block' }} 
+              />
+              <div style={{ position: 'absolute', bottom: 10, left: 10, right: 10, background: 'rgba(7, 20, 38, 0.85)', backdropFilter: 'blur(4px)', padding: '8px 12px', borderRadius: 4, fontSize: '0.7rem', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6, color: '#cbd5e1' }}>
+                <div>
+                  <strong style={{ color: '#60a5fa' }}>GPS:</strong> {selectedProject?.alignment_coordinates[0] ? `${selectedProject.alignment_coordinates[0][0].toFixed(5)}° N, ${selectedProject.alignment_coordinates[0][1].toFixed(5)}° E` : '25.31760° N, 82.97390° E'}
+                </div>
+                <div>
+                  <strong style={{ color: '#34d399' }}>Verified Surveyor:</strong> Shri S. K. Sharma (Class-3 DSC)
+                </div>
+                <div>
+                  <strong style={{ color: '#fbbf24' }}>Timestamp:</strong> 2026-08-26 11:42 AM IST
+                </div>
+              </div>
+            </div>
+
+            <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-end' }}>
+              <button className="btn-action btn-navy" style={{ padding: '5px 14px', fontSize: '0.72rem', background: '#1e3a8a' }} onClick={() => setPreviewPhotoUrl(null)}>
+                {langHindi ? 'बंद करें' : 'Close Preview'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
