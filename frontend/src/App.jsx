@@ -224,6 +224,17 @@ export default function App() {
   const [activeSplitKhataParcel, setActiveSplitKhataParcel] = useState(null);
   const [splitHeirsList, setSplitHeirsList] = useState([]);
 
+  // Mobile App Field Survey Sync State
+  const [mobileSyncForm, setMobileSyncForm] = useState({
+    ulpin: 'IN09UP23456701',
+    structure_valuation: 450000,
+    tree_valuation: 35000,
+    crop_valuation: 18000,
+    photo_url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&auto=format&fit=crop&q=60',
+    surveyor_name: 'Shri S. K. Sharma (Field Surveyor)',
+    drone_survey_verified: true
+  });
+
   const t = langHindi ? T.hi : T.en;
 
   // URL Routing, History & Page Title Synchronization
@@ -700,6 +711,61 @@ export default function App() {
     }
   };
 
+  const handleMobileFieldSync = async (e) => {
+    if (e) e.preventDefault();
+    try {
+      const payload = {
+        project_id: selectedProject?.id || 'PRJ-NH19-VARANASI-BYPASS',
+        ulpin: mobileSyncForm.ulpin,
+        surveyor_name: mobileSyncForm.surveyor_name,
+        structure_valuation: parseFloat(mobileSyncForm.structure_valuation) || 0,
+        tree_valuation: parseFloat(mobileSyncForm.tree_valuation) || 0,
+        crop_valuation: parseFloat(mobileSyncForm.crop_valuation) || 0,
+        photo_urls: [mobileSyncForm.photo_url]
+      };
+
+      // Optimistically update local project parcels for instant feedback
+      const updatedProjects = projects.map(p => {
+        const updatedParcels = p.parcels.map(prc => {
+          if (prc.ulpin === mobileSyncForm.ulpin) {
+            return {
+              ...prc,
+              structure_valuation: payload.structure_valuation,
+              tree_valuation: payload.tree_valuation,
+              crop_valuation: payload.crop_valuation,
+              field_survey_photos: [payload.photo_urls[0], ...(prc.field_survey_photos || [])]
+            };
+          }
+          return prc;
+        });
+        return { ...p, parcels: updatedParcels };
+      });
+      setProjects(updatedProjects);
+
+      // If this parcel is selected in map, update selectedMapParcel
+      if (selectedMapParcel && selectedMapParcel.ulpin === mobileSyncForm.ulpin) {
+        setSelectedMapParcel({
+          ...selectedMapParcel,
+          structure_valuation: payload.structure_valuation,
+          tree_valuation: payload.tree_valuation,
+          crop_valuation: payload.crop_valuation,
+          field_survey_photos: [payload.photo_urls[0], ...(selectedMapParcel.field_survey_photos || [])]
+        });
+      }
+
+      await fetch(`${API_BASE}/api/field-surveys/sync`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      showToast(langHindi ? `📲 मोबाइल फील्ड सर्वे सिंक: ${mobileSyncForm.ulpin} का संपत्ति व फोटो विवरण अद्यतन हुआ!` : `📲 Mobile Field Survey Synced: Updated asset valuations & geo-photos for ${mobileSyncForm.ulpin}!`, 'success');
+      setActiveModal(null);
+    } catch (err) {
+      showToast(langHindi ? `📲 मोबाइल फील्ड सर्वे स्थानीय रूप से सिंक हुआ!` : `📲 Mobile Field Survey Synced locally!`, 'success');
+      setActiveModal(null);
+    }
+  };
+
   const handleFileNewObjection = async (e) => {
     e.preventDefault();
     if (!newObjectionForm.claimant_name || !newObjectionForm.ulpin) {
@@ -972,6 +1038,7 @@ export default function App() {
         currentUser={currentUser}
         setShowLoginModal={setShowLoginModal}
         handleLogout={handleLogout}
+        setActiveModal={setActiveModal}
       />
 
       {/* Toast Notification */}
@@ -2318,6 +2385,123 @@ export default function App() {
               <button className="btn-action btn-outline" onClick={() => setActiveObjectionToDispose(null)}>{t.cancel}</button>
               <button className="btn-action btn-green" onClick={handleDisposeObjection}>{langHindi ? 'हस्ताक्षर व मुहर लगाकर आदेश जारी करें' : 'Sign & Seal Order'}</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL: FLUTTER MOBILE APP SURVEY SIMULATOR ================= */}
+      {activeModal === 'mobileSync' && (
+        <div className="modal-overlay" onClick={() => setActiveModal(null)}>
+          <div 
+            className="modal-dialog-card" 
+            style={{ maxWidth: 480, background: '#0b1e36', color: '#ffffff', border: '2px solid #3b82f6', borderRadius: 18, padding: '20px 24px', boxShadow: '0 20px 40px rgba(0,0,0,0.5)' }} 
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Phone Header Notch & Branding */}
+            <div style={{ textAlign: 'center', marginBottom: 12 }}>
+              <div style={{ width: 60, height: 4, background: 'rgba(255,255,255,0.3)', borderRadius: 2, margin: '0 auto 8px' }} />
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Smartphone size={18} color="#60a5fa" />
+                  <strong style={{ fontSize: '0.95rem', color: '#ffffff' }}>NLAMS Field Surveyor App</strong>
+                </div>
+                <span className="badge-pill badge-gold" style={{ fontSize: '0.62rem' }}>Flutter v3.22</span>
+              </div>
+              <div style={{ fontSize: '0.68rem', color: '#93c5fd', marginTop: 2, textAlign: 'left' }}>
+                {langHindi ? 'ऑफलाइन फील्ड सर्वे डाटा ➔ एनएलएएमएस नेशनल क्लाउड रियल-टाइम सिंक' : 'Offline Ground & Drone Survey ➔ Real-Time Cloud Sync'}
+              </div>
+            </div>
+
+            <form onSubmit={handleMobileFieldSync}>
+              <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, padding: 12, marginBottom: 12 }}>
+                <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: '#93c5fd', marginBottom: 4 }}>
+                  {langHindi ? '1. पार्सल भू-आधार (ULPIN) चयन:' : '1. Target Parcel Bhu-Aadhaar (ULPIN):'}
+                </label>
+                <select 
+                  style={{ width: '100%', padding: '6px 10px', borderRadius: 4, border: '1px solid #3b82f6', background: '#071426', color: '#ffffff', fontSize: '0.78rem' }}
+                  value={mobileSyncForm.ulpin}
+                  onChange={(e) => setMobileSyncForm({ ...mobileSyncForm, ulpin: e.target.value })}
+                >
+                  <option value="IN09UP23456701">IN09UP23456701 - Khasra 412/1 (Ram Chandra Yadav)</option>
+                  <option value="IN09UP23456702">IN09UP23456702 - Khasra 412/2 (Kailash Nath Mishra)</option>
+                  <option value="IN09UP23456703">IN09UP23456703 - Khasra 413/1 (Sunita Devi)</option>
+                  <option value="IN10BR78901201">IN10BR78901201 - Khata 58, Plot 302 (Lal Bihari Singh)</option>
+                  <option value="IN27MH89123401">IN27MH89123401 - Gat No. 142/A (Tukaram Patil)</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 12 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.68rem', color: '#cbd5e1', marginBottom: 2 }}>
+                    {langHindi ? 'मकान/ढांचा (₹):' : 'Structures (₹):'}
+                  </label>
+                  <input 
+                    type="number"
+                    style={{ width: '100%', padding: '6px 8px', borderRadius: 4, border: '1px solid rgba(255,255,255,0.2)', background: '#071426', color: '#ffffff', fontSize: '0.78rem' }}
+                    value={mobileSyncForm.structure_valuation}
+                    onChange={(e) => setMobileSyncForm({ ...mobileSyncForm, structure_valuation: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.68rem', color: '#cbd5e1', marginBottom: 2 }}>
+                    {langHindi ? 'पेड़/बाग (₹):' : 'Trees (₹):'}
+                  </label>
+                  <input 
+                    type="number"
+                    style={{ width: '100%', padding: '6px 8px', borderRadius: 4, border: '1px solid rgba(255,255,255,0.2)', background: '#071426', color: '#ffffff', fontSize: '0.78rem' }}
+                    value={mobileSyncForm.tree_valuation}
+                    onChange={(e) => setMobileSyncForm({ ...mobileSyncForm, tree_valuation: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.68rem', color: '#cbd5e1', marginBottom: 2 }}>
+                    {langHindi ? 'फसल (₹):' : 'Crops (₹):'}
+                  </label>
+                  <input 
+                    type="number"
+                    style={{ width: '100%', padding: '6px 8px', borderRadius: 4, border: '1px solid rgba(255,255,255,0.2)', background: '#071426', color: '#ffffff', fontSize: '0.78rem' }}
+                    value={mobileSyncForm.crop_valuation}
+                    onChange={(e) => setMobileSyncForm({ ...mobileSyncForm, crop_valuation: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: 12 }}>
+                <label style={{ display: 'block', fontSize: '0.68rem', color: '#cbd5e1', marginBottom: 2 }}>
+                  {langHindi ? 'जियो-टैग्ड फोटो URL (Drone / Smartphone):' : 'Geo-Tagged Photo URL:'}
+                </label>
+                <input 
+                  type="text"
+                  style={{ width: '100%', padding: '6px 8px', borderRadius: 4, border: '1px solid rgba(255,255,255,0.2)', background: '#071426', color: '#ffffff', fontSize: '0.74rem' }}
+                  value={mobileSyncForm.photo_url}
+                  onChange={(e) => setMobileSyncForm({ ...mobileSyncForm, photo_url: e.target.value })}
+                />
+              </div>
+
+              <div style={{ background: 'rgba(59, 130, 246, 0.15)', border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: 6, padding: '8px 10px', fontSize: '0.68rem', color: '#93c5fd', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <ShieldCheck size={14} color="#60a5fa" />
+                <span>Verified Surveyor: <strong>{mobileSyncForm.surveyor_name}</strong> (GPS & DSC Stamped)</span>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+                <button 
+                  type="button" 
+                  className="btn-action btn-outline" 
+                  style={{ color: '#ffffff', borderColor: 'rgba(255,255,255,0.3)', fontSize: '0.75rem' }} 
+                  onClick={() => setActiveModal(null)}
+                >
+                  {t.cancel}
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn-action btn-saffron" 
+                  style={{ fontSize: '0.78rem', padding: '7px 16px', display: 'flex', alignItems: 'center', gap: 6 }}
+                >
+                  <RefreshCw size={14} />
+                  <span>{langHindi ? '🚀 क्लाउड पर सिंक करें' : '🚀 Sync Field Survey to Cloud'}</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

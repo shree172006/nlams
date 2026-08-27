@@ -16,7 +16,8 @@ export default function Navbar({
   metrics,
   currentUser,
   setShowLoginModal,
-  handleLogout
+  handleLogout,
+  setActiveModal
 }) {
   const isOfficer = currentUser && currentUser.role !== 'CITIZEN';
 
@@ -34,6 +35,16 @@ export default function Navbar({
         </div>
 
         <div className="top-right-tools">
+          <button 
+            className="access-btn"
+            style={{ background: 'rgba(37, 99, 235, 0.35)', color: '#bfdbfe', border: '1px solid #3b82f6', fontWeight: 700, padding: '3px 8px', borderRadius: 4, display: 'flex', alignItems: 'center', gap: 4 }}
+            onClick={() => setActiveModal('mobileSync')}
+            title="Open Live Field Mobile Survey App Simulator"
+          >
+            <Smartphone size={12} color="#60a5fa" />
+            <span>{langHindi ? '📲 फील्ड मोबाइल सिंक' : '📲 Mobile App Sync'}</span>
+          </button>
+          <span style={{ opacity: 0.3, margin: '0 4px' }}>|</span>
           <span style={{ fontSize: '0.7rem', color: '#94a3b8', marginRight: 4 }}>Font:</span>
           <button 
             className={`access-btn ${fontSize === 'sm' ? 'active' : ''}`} 
