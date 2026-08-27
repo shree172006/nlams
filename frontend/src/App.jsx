@@ -31,12 +31,13 @@ const T = {
     gatewayHub: "Home",
     navDashboard: "1. Dashboard",
     navGis: "2. GIS Map",
-    navWorkflow: "3. Workflow",
-    navCalculator: "4. Compensation Calc",
-    navLandowner: "5. Landowner Portal",
-    navObjections: "6. Objections",
-    navRR: "7. R&R Tracking",
-    navAIRisk: "8. AI Delay-Risk",
+    navWorkflow: "3. Statutory Workflow",
+    navObjections: "4. Sec 15 Objections",
+    navLARRDA: "5. LARRDA Tribunal",
+    navRR: "6. R&R Tracking",
+    navAIRisk: "7. AI Delay-Risk",
+    navCalculator: "8. Valuation Sandbox",
+    navLandowner: "1. Citizen Landowner Portal",
     heroBadge: "Department of Land Resources",
     heroTitle: "National Land Acquisition & Management System",
     heroDesc: "A unified, statutory enterprise platform digitizing India's public land acquisition lifecycle end-to-end under the RFCTLARR Act, 2013 and sector-specific central legislations (National Highways Act 1956, Railways Act 1989). Eliminates litigation, locks illegal transactions via 14-digit ULPIN (Bhu-Aadhaar), and automates PFMS Direct Benefit Transfer (DBT).",
@@ -45,7 +46,7 @@ const T = {
     statParcels: "14-Digit ULPINs Linked",
     statModules: "Integrated Modules",
     modSectionTitle: "Core Functional Modules",
-    modSectionDesc: "Select any of the 8 dedicated functional areas below to explore official features.",
+    modSectionDesc: "Select any of the dedicated functional areas below to explore official features.",
     openModule: "Open Module",
     activeProjectLabel: "Active Corridor:",
     activeCorridors: "Active Corridors",
@@ -85,11 +86,12 @@ const T = {
     navDashboard: "1. अधिकारी डैशबोर्ड",
     navGis: "2. जीआईएस पार्सल नक्शा",
     navWorkflow: "3. अधिग्रहण वर्कफ़्लो",
-    navCalculator: "4. मुआवजा गणना",
-    navLandowner: "5. भू-स्वामी पोर्टल",
-    navObjections: "6. आपत्तियां",
-    navRR: "7. पुनर्वास (R&R)",
-    navAIRisk: "8. एआई विलंब-जोखिम",
+    navObjections: "4. धारा 15 आपत्तियां",
+    navLARRDA: "5. लार्ड्डा न्यायाधिकरण",
+    navRR: "6. पुनर्वास R&R ट्रैकिंग",
+    navAIRisk: "7. एआई विलंब-जोखिम",
+    navCalculator: "8. मुआवजा सैंडबॉक्स",
+    navLandowner: "1. नागरिक भू-स्वामी पोर्टल",
     heroBadge: "भूमि संसाधन विभाग",
     heroTitle: "राष्ट्रीय भूमि अधिग्रहण एवं प्रबंधन प्रणाली",
     heroDesc: "भूमि अर्जन एवं पुनर्वास अधिनियम 2013 एवं राष्ट्रीय राजमार्ग अधिनियम 1956 के तहत सार्वजनिक बुनियादी ढांचा परियोजनाओं हेतु भूमि अधिग्रहण की संपूर्ण डिजिटल व पारदर्शी प्रक्रिया। 14-अंकीय भू-आधार (ULPIN) द्वारा अभिलेखों का स्वतः लाकिंग एवं PFMS द्वारा सीधे बैंक खातों में मुआवजा भुगतान।",
@@ -1282,6 +1284,7 @@ export default function App() {
             setActiveTab={setActiveTab}
             t={t}
             langHindi={langHindi}
+            isOfficer={isOfficer}
           />
         )}
 
@@ -1298,6 +1301,7 @@ export default function App() {
             setActiveTab={setActiveTab}
             t={t}
             langHindi={langHindi}
+            isOfficer={isOfficer}
           />
         )}
 

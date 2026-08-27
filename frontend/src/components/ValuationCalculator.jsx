@@ -9,7 +9,8 @@ export default function ValuationCalculator({
   showToast,
   setActiveTab,
   t,
-  langHindi
+  langHindi,
+  isOfficer
 }) {
   const [isCalculating, setIsCalculating] = useState(false);
 
@@ -55,7 +56,9 @@ export default function ValuationCalculator({
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <div>
-          <h2 style={{ fontSize: '1.2rem', color: '#071426' }}>{t.navCalculator}</h2>
+          <h2 style={{ fontSize: '1.2rem', color: '#071426' }}>
+            {isOfficer ? (langHindi ? '8. वैधानिक मुआवजा सैंडबॉक्स' : '8. Statutory Valuation Sandbox') : (langHindi ? '3. मुआवजा कैलकुलेटर' : '3. Compensation Calculator')}
+          </h2>
           <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
             {langHindi ? 'भूमि अर्जन अधिनियम 2013 प्रथम अनुसूची (धारा 26 से 30) एवं NH Act 1956' : 'RFCTLARR Act 2013 First Schedule (Sections 26 to 30) & NH Act 1956 (Sec 3G)'}
           </span>
