@@ -41,10 +41,10 @@ export default function DelayRiskWidget({
             <div className="panel-card-head">
               <h3 className="panel-card-title">
                 <Zap size={16} color="#dc2626" />
-                <span>Delay-Risk Assessment: {projectRisk.project_title}</span>
+                <span>{langHindi ? 'विलंब-जोखिम मूल्यांकन:' : 'Delay-Risk Assessment:'} {projectRisk.project_title}</span>
               </h3>
               <span className={`badge-pill badge-${projectRisk.risk_level.toLowerCase()}`}>
-                {projectRisk.risk_level} RISK
+                {projectRisk.risk_level} {langHindi ? 'जोखिम' : 'RISK'}
               </span>
             </div>
 
@@ -59,12 +59,12 @@ export default function DelayRiskWidget({
                   }}
                 >
                   <span style={{ fontSize: '1.4rem', lineHeight: 1 }}>{projectRisk.risk_score}</span>
-                  <span style={{ fontSize: '0.62rem' }}>SCORE</span>
+                  <span style={{ fontSize: '0.62rem' }}>{langHindi ? 'स्कोर' : 'SCORE'}</span>
                 </div>
 
                 <div>
                   <div style={{ fontSize: '0.98rem', fontWeight: 800, color: '#071426' }}>
-                    {t.forecastLag} +{projectRisk.predicted_delay_months} Months ({projectRisk.predicted_delay_days || Math.round(projectRisk.predicted_delay_months * 30)} Days)
+                    {t.forecastLag} +{projectRisk.predicted_delay_months} {langHindi ? 'महीने' : 'Months'} ({projectRisk.predicted_delay_days || Math.round(projectRisk.predicted_delay_months * 30)} {langHindi ? 'दिन' : 'Days'})
                   </div>
                   <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: 2 }}>
                     {t.bottleneckStage} <strong>{projectRisk.bottleneck_stage}</strong>
@@ -113,9 +113,9 @@ export default function DelayRiskWidget({
             <div className="panel-card-head">
               <h3 className="panel-card-title">
                 <BarChart3 size={16} color="#071426" />
-                <span>Corridor Risk Comparison</span>
+                <span>{langHindi ? 'कॉरिडोर जोखिम तुलना' : 'Corridor Risk Comparison'}</span>
               </h3>
-              <span className="badge-pill badge-navy">All Projects</span>
+              <span className="badge-pill badge-navy">{langHindi ? 'सभी परियोजनाएं' : 'All Projects'}</span>
             </div>
 
             <div className="panel-card-body" style={{ padding: '12px 16px' }}>
@@ -123,7 +123,7 @@ export default function DelayRiskWidget({
                 <div key={r.project_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #edf2f7' }}>
                   <div>
                     <div style={{ fontWeight: 700, fontSize: '0.78rem', color: '#071426' }}>{r.project_title}</div>
-                    <div style={{ fontSize: '0.65rem', color: '#64748b' }}>Predicted Delay: +{r.predicted_delay_months} mos</div>
+                    <div style={{ fontSize: '0.65rem', color: '#64748b' }}>{langHindi ? 'अनुमानित विलंब:' : 'Predicted Delay:'} +{r.predicted_delay_months} {langHindi ? 'माह' : 'mos'}</div>
                   </div>
                   <span className={`badge-pill badge-${r.risk_level.toLowerCase()}`}>
                     {r.risk_level} ({r.risk_score}%)

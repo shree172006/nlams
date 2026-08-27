@@ -94,20 +94,20 @@ export default function OfficerDashboard({
               <Building2 size={16} color="#071426" />
               <span>{langHindi ? 'सक्रिय अवसंरचना कॉरिडोर' : 'Active Infrastructure Corridors'}</span>
             </h3>
-            <span className="badge-pill badge-green">4 Tracked Projects</span>
+            <span className="badge-pill badge-green">{langHindi ? '4 ट्रैक की गई परियोजनाएं' : '4 Tracked Projects'}</span>
           </div>
 
           <div style={{ overflowX: 'auto' }}>
             <table className="nlams-data-table">
               <thead>
                 <tr>
-                  <th style={{ width: 60 }}>Sr. No.</th>
-                  <th>Corridor Title</th>
-                  <th>Agency & Act</th>
-                  <th>State</th>
-                  <th>Stage</th>
-                  <th>Disbursed</th>
-                  <th>Action</th>
+                  <th style={{ width: 60 }}>{langHindi ? 'क्र.सं.' : 'Sr. No.'}</th>
+                  <th>{langHindi ? 'कॉरिडोर शीर्षक' : 'Corridor Title'}</th>
+                  <th>{langHindi ? 'एजेंसी व अधिनियम' : 'Agency & Act'}</th>
+                  <th>{langHindi ? 'राज्य' : 'State'}</th>
+                  <th>{langHindi ? 'अधिग्रहण चरण' : 'Stage'}</th>
+                  <th>{langHindi ? 'वितरित मुआवजा' : 'Disbursed'}</th>
+                  <th>{langHindi ? 'कार्यवाही' : 'Action'}</th>
                 </tr>
               </thead>
               <tbody>
@@ -145,7 +145,7 @@ export default function OfficerDashboard({
                           setActiveTab('workbench');
                         }}
                       >
-                        <span>Workflow</span> <ArrowRight size={10} />
+                        <span>{langHindi ? 'वर्कफ़्लो' : 'Workflow'}</span> <ArrowRight size={10} />
                       </button>
                     </td>
                   </tr>
@@ -163,7 +163,7 @@ export default function OfficerDashboard({
               <span>{langHindi ? 'विलंब-जोखिम पूर्वानुमान' : 'Delay-Risk Forecast'}</span>
             </h3>
             <button className="btn-action btn-outline" style={{ padding: '3px 7px', fontSize: '0.68rem' }} onClick={() => setActiveTab('airisk')}>
-              Open Radar
+              {langHindi ? 'रडार खोलें' : 'Open Radar'}
             </button>
           </div>
 
@@ -173,7 +173,7 @@ export default function OfficerDashboard({
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                   <div>
                     <strong style={{ fontSize: '0.85rem', color: '#071426' }}>{selectedProject?.title}</strong>
-                    <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Current: {projectRisk.bottleneck_stage}</div>
+                    <div style={{ fontSize: '0.7rem', color: '#64748b' }}>{langHindi ? 'वर्तमान चरण:' : 'Current:'} {projectRisk.bottleneck_stage}</div>
                   </div>
                   <span className={`badge-pill badge-${projectRisk.risk_level.toLowerCase()}`}>
                     {projectRisk.risk_level} ({projectRisk.risk_score}%)
@@ -182,7 +182,7 @@ export default function OfficerDashboard({
 
                 <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, padding: 10, marginBottom: 10 }}>
                   <div style={{ fontSize: '0.72rem', color: '#991b1b', fontWeight: 700 }}>
-                    {t.forecastLag} +{projectRisk.predicted_delay_months} Months
+                    {t.forecastLag} +{projectRisk.predicted_delay_months} {langHindi ? 'महीने' : 'Months'}
                   </div>
                   <div style={{ fontSize: '0.7rem', color: '#7f1d1d', marginTop: 3 }}>
                     {projectRisk.risk_factors[0]}
@@ -190,14 +190,14 @@ export default function OfficerDashboard({
                 </div>
 
                 <div style={{ fontSize: '0.72rem', color: '#334155' }}>
-                  <strong style={{ color: '#071426', display: 'block', marginBottom: 3 }}>Prescriptive Action:</strong>
+                  <strong style={{ color: '#071426', display: 'block', marginBottom: 3 }}>{langHindi ? 'एआई सुधारात्मक कार्यवाही:' : 'Prescriptive Action:'}</strong>
                   <div style={{ background: '#f8fafc', padding: 8, borderRadius: 4, border: '1px solid var(--border-main)' }}>
                     💡 {projectRisk.prescriptive_mitigations[0]}
                   </div>
                 </div>
               </div>
             ) : (
-              <div style={{ textAlign: 'center', padding: 16, color: '#64748b' }}>Analyzing corridor parameters...</div>
+              <div style={{ textAlign: 'center', padding: 16, color: '#64748b' }}>{langHindi ? 'कॉरिडोर डेटा का विश्लेषण जारी है...' : 'Analyzing corridor parameters...'}</div>
             )}
           </div>
         </div>

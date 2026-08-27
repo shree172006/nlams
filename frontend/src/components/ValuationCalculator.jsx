@@ -71,31 +71,31 @@ export default function ValuationCalculator({
       {/* Visual Formula Pipeline Banner */}
       <div style={{ background: 'linear-gradient(90deg, #0b1e36 0%, #17375e 100%)', borderRadius: 'var(--radius-md)', padding: '16px 20px', color: '#ffffff', marginBottom: 18, boxShadow: 'var(--shadow-sm)' }}>
         <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#fba94b', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
-          Statutory First Schedule Mathematical Formulation
+          {langHindi ? 'भूमि अर्जन अधिनियम 2013 प्रथम अनुसूची गणितीय सूत्र' : 'Statutory First Schedule Mathematical Formulation'}
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 10, fontSize: '0.8rem', fontFamily: 'monospace' }}>
           <span style={{ background: 'rgba(255,255,255,0.1)', padding: '3px 8px', borderRadius: 4 }}>
-            (Base MV × Factor)
+            {langHindi ? '(बाजार दर × गुणक)' : '(Base MV × Factor)'}
           </span>
           <span style={{ color: '#f97316', fontWeight: 800 }}>+</span>
           <span style={{ background: 'rgba(255,255,255,0.1)', padding: '3px 8px', borderRadius: 4 }}>
-            Attached Assets
+            {langHindi ? 'परिसंपत्तियां' : 'Attached Assets'}
           </span>
           <span style={{ color: '#f97316', fontWeight: 800 }}>=</span>
           <span style={{ background: 'rgba(255,255,255,0.15)', padding: '3px 8px', borderRadius: 4, color: '#93c5fd' }}>
-            Base Compensation
+            {langHindi ? 'मूल प्रतिकर' : 'Base Compensation'}
           </span>
           <span style={{ color: '#f97316', fontWeight: 800 }}>+</span>
           <span style={{ background: 'rgba(37,99,235,0.3)', padding: '3px 8px', borderRadius: 4, color: '#bfdbfe' }}>
-            100% Solatium
+            {langHindi ? '100% सोलेशियम' : '100% Solatium'}
           </span>
           <span style={{ color: '#f97316', fontWeight: 800 }}>+</span>
           <span style={{ background: 'rgba(37,99,235,0.3)', padding: '3px 8px', borderRadius: 4, color: '#bfdbfe' }}>
-            12% p.a. Addl
+            {langHindi ? '12% वार्षिक ब्याज' : '12% p.a. Addl'}
           </span>
           <span style={{ color: '#22c55e', fontWeight: 800 }}>➔</span>
           <span style={{ background: '#059669', padding: '3px 10px', borderRadius: 4, color: '#ffffff', fontWeight: 700 }}>
-            Gross Total Award
+            {langHindi ? 'कुल देय पंचाट' : 'Gross Total Award'}
           </span>
         </div>
       </div>
@@ -105,13 +105,13 @@ export default function ValuationCalculator({
           <div>
             <h3 className="panel-card-title">
               <Sliders size={16} color="#071426" />
-              <span>Interactive Parameter Sandbox</span>
+              <span>{langHindi ? 'पारस्परिक मूल्यांकन सैंडबॉक्स' : 'Interactive Parameter Sandbox'}</span>
             </h3>
             <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: 2 }}>
-              Adjust inputs and live sliders to observe instant transparent statutory award recalculation.
+              {langHindi ? 'मानक मानों को बदलकर तत्काल पारदर्शी वैधानिक मुआवजा गणना देखें।' : 'Adjust inputs and live sliders to observe instant transparent statutory award recalculation.'}
             </div>
           </div>
-          <span className="badge-pill badge-green">IEEE 754 Audited</span>
+          <span className="badge-pill badge-green">{langHindi ? 'IEEE 754 ऑडिटेड' : 'IEEE 754 Audited'}</span>
         </div>
 
         <div className="panel-card-body">
@@ -119,7 +119,7 @@ export default function ValuationCalculator({
             {/* Input form */}
             <form onSubmit={handleSubmitCalculate} style={{ background: '#f8fafc', padding: 18, borderRadius: 'var(--radius-md)', border: '1px solid var(--border-main)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <h4 style={{ fontSize: '0.85rem', color: '#071426', margin: 0 }}>1. Enter Parcel Parameters</h4>
+                <h4 style={{ fontSize: '0.85rem', color: '#071426', margin: 0 }}>{langHindi ? '1. पार्सल मानक दर्ज करें' : '1. Enter Parcel Parameters'}</h4>
                 <button
                   type="button"
                   onClick={handleResetDefaults}
@@ -133,7 +133,7 @@ export default function ValuationCalculator({
               </div>
 
               <div style={{ marginBottom: 10 }}>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>Landholder Name</label>
+                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>{langHindi ? 'भू-स्वामी का नाम' : 'Landholder Name'}</label>
                 <input 
                   type="text" 
                   style={{ width: '100%', padding: '7px 10px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
@@ -144,7 +144,7 @@ export default function ValuationCalculator({
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>Acquired Area (sq.m)</label>
+                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>{langHindi ? 'अधिग्रहित क्षेत्रफल (वर्ग मीटर)' : 'Acquired Area (sq.m)'}</label>
                   <input 
                     type="number" 
                     min="1"
@@ -157,23 +157,23 @@ export default function ValuationCalculator({
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>Location & Multiplier</label>
+                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>{langHindi ? 'स्थान व ग्रामीण गुणक' : 'Location & Multiplier'}</label>
                   <select 
                     style={{ width: '100%', padding: '7px 10px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
                     value={calcInputs.land_type}
                     onChange={(e) => setCalcInputs({ ...calcInputs, land_type: e.target.value })}
                   >
-                    <option value="URBAN">Urban (1.0x)</option>
-                    <option value="RURAL_CLOSE">Rural 0-10 km (1.25x)</option>
-                    <option value="RURAL_MID">Rural 10-20 km (1.50x)</option>
-                    <option value="RURAL_REMOTE">Rural Remote &gt;20 km (2.00x)</option>
+                    <option value="URBAN">{langHindi ? 'शहरी क्षेत्र (1.0x)' : 'Urban (1.0x)'}</option>
+                    <option value="RURAL_CLOSE">{langHindi ? 'ग्रामीण 0-10 किमी (1.25x)' : 'Rural 0-10 km (1.25x)'}</option>
+                    <option value="RURAL_MID">{langHindi ? 'ग्रामीण 10-20 किमी (1.50x)' : 'Rural 10-20 km (1.50x)'}</option>
+                    <option value="RURAL_REMOTE">{langHindi ? 'दूरस्थ ग्रामीण >20 किमी (2.00x)' : 'Rural Remote >20 km (2.00x)'}</option>
                   </select>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>Circle Rate (₹/sq.m)</label>
+                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>{langHindi ? 'सर्किल दर (₹/वर्ग मी.)' : 'Circle Rate (₹/sq.m)'}</label>
                   <input 
                     type="number" 
                     min="1"
@@ -186,7 +186,7 @@ export default function ValuationCalculator({
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>3-Yr Deeds Rate (₹/sq.m)</label>
+                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>{langHindi ? '3-वर्षीय बैनामा दर (₹/वर्ग मी.)' : '3-Yr Deeds Rate (₹/sq.m)'}</label>
                   <input 
                     type="number" 
                     min="1"
@@ -202,7 +202,7 @@ export default function ValuationCalculator({
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 10 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>Structures (₹)</label>
+                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>{langHindi ? 'मकान/ढांचा (₹)' : 'Structures (₹)'}</label>
                   <input 
                     type="number" 
                     min="0"
@@ -215,7 +215,7 @@ export default function ValuationCalculator({
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>Trees (₹)</label>
+                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>{langHindi ? 'पेड़/वृक्ष (₹)' : 'Trees (₹)'}</label>
                   <input 
                     type="number" 
                     min="0"
@@ -228,7 +228,7 @@ export default function ValuationCalculator({
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>Crops (₹)</label>
+                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>{langHindi ? 'फसल (₹)' : 'Crops (₹)'}</label>
                   <input 
                     type="number" 
                     min="0"
@@ -244,7 +244,7 @@ export default function ValuationCalculator({
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>Sec 11 Notification Date</label>
+                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>{langHindi ? 'धारा 11 अधिसूचना तिथि' : 'Sec 11 Notification Date'}</label>
                   <input 
                     type="date" 
                     style={{ width: '100%', padding: '6px 8px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
@@ -253,7 +253,7 @@ export default function ValuationCalculator({
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>Award Sanction Date</label>
+                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>{langHindi ? 'पंचाट/मुआवजा आदेश तिथि' : 'Award Sanction Date'}</label>
                   <input 
                     type="date" 
                     style={{ width: '100%', padding: '6px 8px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
@@ -304,54 +304,54 @@ export default function ValuationCalculator({
             {calcResult && (
               <div style={{ background: '#ffffff', border: '2px solid #059669', borderRadius: 'var(--radius-md)', padding: 18, boxShadow: 'var(--shadow-sm)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-main)', paddingBottom: 8, marginBottom: 10 }}>
-                  <span className="badge-pill badge-green">Statutory Award Breakdown</span>
-                  <span style={{ fontSize: '0.7rem', color: '#64748b' }}>Statutory Days: {calcResult.days_elapsed_notif_to_award}</span>
+                  <span className="badge-pill badge-green">{langHindi ? 'वैधानिक मुआवजा विखंडन' : 'Statutory Award Breakdown'}</span>
+                  <span style={{ fontSize: '0.7rem', color: '#64748b' }}>{langHindi ? 'कुल दिन:' : 'Statutory Days:'} {calcResult.days_elapsed_notif_to_award}</span>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: '0.78rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid #f1f5f9' }}>
-                    <span style={{ color: '#64748b' }}>Sec 26 Base Rate:</span>
+                    <span style={{ color: '#64748b' }}>{langHindi ? 'धारा 26 मूल दर:' : 'Sec 26 Base Rate:'}</span>
                     <strong>₹{calcResult.base_market_value_per_sqm.toLocaleString()} / sq.m</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid #f1f5f9' }}>
-                    <span style={{ color: '#64748b' }}>Base Land Value ({calcResult.acquired_area_sqm} sq.m):</span>
+                    <span style={{ color: '#64748b' }}>{langHindi ? `मूल भूमि मूल्य (${calcResult.acquired_area_sqm} वर्ग मी.):` : `Base Land Value (${calcResult.acquired_area_sqm} sq.m):`}</span>
                     <strong>₹{calcResult.base_market_value_total.toLocaleString()}</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid #f1f5f9' }}>
-                    <span style={{ color: '#64748b' }}>Multiplication Factor:</span>
+                    <span style={{ color: '#64748b' }}>{langHindi ? 'स्थान गुणक:' : 'Multiplication Factor:'}</span>
                     <strong style={{ color: '#b45309' }}>× {calcResult.multiplication_factor}</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid #f1f5f9' }}>
-                    <span style={{ color: '#64748b' }}>Adjusted Land Value:</span>
+                    <span style={{ color: '#64748b' }}>{langHindi ? 'समायोजित भूमि मूल्य:' : 'Adjusted Land Value:'}</span>
                     <strong>₹{calcResult.adjusted_market_value.toLocaleString()}</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid #f1f5f9' }}>
-                    <span style={{ color: '#64748b' }}>Attached Assets (Sec 29):</span>
+                    <span style={{ color: '#64748b' }}>{langHindi ? 'संलग्न परिसंपत्तियां (धारा 29):' : 'Attached Assets (Sec 29):'}</span>
                     <strong>+ ₹{calcResult.assets_valuation_total.toLocaleString()}</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 8px', borderBottom: '1px solid #f1f5f9', background: '#f8fafc', borderRadius: 4 }}>
-                    <span style={{ fontWeight: 700 }}>Base Compensation (C_base):</span>
+                    <span style={{ fontWeight: 700 }}>{langHindi ? 'आधारभूत मुआवजा (C_base):' : 'Base Compensation (C_base):'}</span>
                     <strong style={{ color: '#071426' }}>₹{calcResult.base_compensation.toLocaleString()}</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid #f1f5f9' }}>
-                    <span style={{ color: '#64748b' }}>Solatium 100% (Sec 30(1)):</span>
+                    <span style={{ color: '#64748b' }}>{langHindi ? '100% सोलेशियम (धारा 30(1)):' : 'Solatium 100% (Sec 30(1)):'}</span>
                     <strong style={{ color: '#2563eb' }}>+ ₹{calcResult.solatium_amount.toLocaleString()}</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid #f1f5f9' }}>
-                    <span style={{ color: '#64748b' }}>Additional 12% p.a. (Sec 30(3)):</span>
+                    <span style={{ color: '#64748b' }}>{langHindi ? '12% वार्षिक ब्याज (धारा 30(3)):' : 'Additional 12% p.a. (Sec 30(3)):'}</span>
                     <strong style={{ color: '#2563eb' }}>+ ₹{calcResult.additional_amount_12pct.toLocaleString()}</strong>
                   </div>
                 </div>
 
                 <div style={{ background: '#ecfdf5', border: '1px solid #86efac', borderRadius: 'var(--radius-sm)', padding: 14, marginTop: 12, textAlign: 'center' }}>
                   <div style={{ fontSize: '0.68rem', color: '#166534', fontWeight: 800, textTransform: 'uppercase' }}>
-                    Gross Total Award Payable (PFMS DBT)
+                    {langHindi ? 'कुल देय पंचाट मुआवजा (PFMS DBT बैंक अंतरण)' : 'Gross Total Award Payable (PFMS DBT)'}
                   </div>
                   <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#059669', marginTop: 2 }}>
                     ₹ {calcResult.gross_total_award.toLocaleString()}
                   </div>
                   <div style={{ fontSize: '0.7rem', color: '#15803d' }}>
-                    (₹ {(calcResult.gross_total_award / 10000000).toFixed(4)} Crores)
+                    (₹ {(calcResult.gross_total_award / 10000000).toFixed(4)} {langHindi ? 'करोड़' : 'Crores'})
                   </div>
                 </div>
               </div>
