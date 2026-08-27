@@ -327,11 +327,17 @@ const dao = {
   },
 
   searchParcels(query) {
-    const q = `%${query.trim()}%`;
+    const cleanQ = (query || '').trim();
+    const q = `%${cleanQ}%`;
+    const noHyphenQ = `%${cleanQ.replace(/[-\s]/g, '')}%`;
     const rows = db.prepare(`
       SELECT * FROM parcels 
-      WHERE ulpin LIKE ? OR local_record_no LIKE ? OR owner_name LIKE ? OR village LIKE ?
-    `).all(q, q, q, q);
+      WHERE ulpin LIKE ? 
+         OR REPLACE(ulpin, '-', '') LIKE ? 
+         OR local_record_no LIKE ? 
+         OR owner_name LIKE ? 
+         OR village LIKE ?
+    `).all(q, noHyphenQ, q, q, q);
     return rows.map(formatParcel);
   },
 

@@ -121,11 +121,11 @@ export default function ValuationCalculator({
                   type="button"
                   onClick={handleResetDefaults}
                   className="btn-action btn-outline"
-                  style={{ fontSize: '0.68rem', padding: '3px 8px', gap: 4 }}
-                  title="Reset to benchmark values"
+                  style={{ fontSize: '0.7rem', padding: '4px 10px', gap: 5, color: '#071426', borderColor: '#cbd5e1' }}
+                  title="Reset to statutory baseline defaults"
                 >
-                  <RefreshCw size={10} />
-                  <span>Reset</span>
+                  <RefreshCw size={11} />
+                  <span>{langHindi ? 'मानक मान रीसेट करें' : 'Reset to Statutory Baseline'}</span>
                 </button>
               </div>
 

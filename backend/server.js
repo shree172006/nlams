@@ -316,16 +316,22 @@ app.get('/api/objections', (req, res) => {
   res.json(results);
 });
 
-app.post('/api/projects/:project_id/objections', (req, res) => {
-  const projectId = req.params.project_id;
+app.post(['/api/projects/:project_id/objections', '/api/objections'], (req, res) => {
+  let projectId = req.params.project_id;
   const claimantName = getParam(req, 'claimant_name');
-  const contactPhone = getParam(req, 'contact_phone');
+  const contactPhone = getParam(req, 'contact_phone', '9876543210');
   const ulpin = getParam(req, 'ulpin');
   const groundsCategory = getParam(req, 'grounds_category', 'Inadequate Valuation');
-  const objectionDetails = getParam(req, 'objection_details');
+  const objectionDetails = getParam(req, 'objection_details') || groundsCategory;
 
-  if (!claimantName || !contactPhone || !ulpin || !objectionDetails) {
-    return res.status(400).json({ detail: "Missing required objection fields" });
+  if (!ulpin) {
+    return res.status(400).json({ detail: "14-digit ULPIN is required to file objection" });
+  }
+
+  // If projectId is missing or general, find from parcel database
+  if (!projectId || projectId === 'general' || projectId === 'undefined') {
+    const parcel = db.getParcelByUlpin(ulpin);
+    projectId = parcel ? parcel.project_id : "PRJ-NHAI-2026-UP01";
   }
 
   const now = new Date();
@@ -338,7 +344,7 @@ app.post('/api/projects/:project_id/objections', (req, res) => {
     id,
     project_id: projectId,
     ulpin,
-    claimant_name: claimantName,
+    claimant_name: claimantName || "Affected Landowner",
     contact_phone: contactPhone,
     grounds_category: groundsCategory,
     objection_details: objectionDetails,
@@ -379,7 +385,11 @@ app.post('/api/projects/:project_id/objections/:objection_id/dispose', (req, res
     return res.status(404).json({ detail: "Objection not found" });
   }
 
-  const status = getParam(req, 'status', 'DISPOSED_UPHELD');
+  let status = getParam(req, 'status', 'UPHELD');
+  // Clean up 'DISPOSED_UPHELD' -> 'UPHELD' and 'DISPOSED_DISMISSED' -> 'DISMISSED'
+  if (status === 'DISPOSED_UPHELD') status = 'UPHELD';
+  if (status === 'DISPOSED_DISMISSED') status = 'DISMISSED';
+
   const reasonedOrderSummary = getParam(req, 'reasoned_order_summary');
 
   if (!reasonedOrderSummary) {
@@ -392,7 +402,6 @@ app.post('/api/projects/:project_id/objections/:objection_id/dispose', (req, res
   });
 
   res.json({
-    status: "success",
     status: updated.status,
     objection: updated
   });

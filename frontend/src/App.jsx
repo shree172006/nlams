@@ -156,10 +156,11 @@ export default function App() {
   const [activeObjectionToDispose, setActiveObjectionToDispose] = useState(null);
   const [hearingScheduleDate, setHearingScheduleDate] = useState('2026-03-15');
   const [disposalForm, setDisposalForm] = useState({
-    status: 'DISPOSED_UPHELD',
+    status: 'UPHELD',
     reason: ''
   });
   const [newObjectionForm, setNewObjectionForm] = useState({
+    project_id: '',
     claimant_name: '',
     contact_phone: '',
     ulpin: '',
@@ -370,16 +371,20 @@ export default function App() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [resMetrics, resProjects, resRisks, resObjs] = await Promise.all([
+      const [resMetrics, resProjects, resRisks, resObjs, resLarrda] = await Promise.all([
         fetch(`${API_BASE}/api/national-metrics`).then(r => r.json()),
         fetch(`${API_BASE}/api/projects`).then(r => r.json()),
         fetch(`${API_BASE}/api/delay-risks`).then(r => r.json()),
-        fetch(`${API_BASE}/api/objections`).then(r => r.json())
+        fetch(`${API_BASE}/api/objections`).then(r => r.json()),
+        fetch(`${API_BASE}/api/larrda-references`).then(r => r.json())
       ]);
       setMetrics(resMetrics);
       setProjects(resProjects);
       setAllDelayRisks(resRisks);
       setAllObjections(resObjs);
+      if (Array.isArray(resLarrda)) {
+        setLarrdaReferences(resLarrda);
+      }
       if (resProjects.length > 0 && !selectedProjectId) {
         setSelectedProjectId(resProjects[0].id);
         setSelectedProject(resProjects[0]);
@@ -571,9 +576,9 @@ export default function App() {
         { method: 'POST' }
       );
       if (res.ok) {
-        showToast(`Objection ${disposalForm.status.toLowerCase().replace('_', ' ')} with reasoned order.`, 'success');
+        showToast(`Objection recorded as ${disposalForm.status} with reasoned order.`, 'success');
         setActiveObjectionToDispose(null);
-        setDisposalForm({ status: 'DISPOSED_UPHELD', reason: '' });
+        setDisposalForm({ status: 'UPHELD', reason: '' });
         fetchData();
       }
     } catch (err) {
@@ -632,20 +637,29 @@ export default function App() {
 
   const handleFileNewObjection = async (e) => {
     e.preventDefault();
-    if (!selectedProject || !newObjectionForm.claimant_name || !newObjectionForm.ulpin) {
-      showToast("Please complete required objection fields.", 'error');
+    if (!newObjectionForm.claimant_name || !newObjectionForm.ulpin) {
+      showToast("Please enter Claimant Name and 14-Digit ULPIN.", 'error');
       return;
     }
+    if (newObjectionForm.grounds_category === 'Other' && !newObjectionForm.objection_details) {
+      showToast("Please provide a detailed description for 'Other' grounds.", 'error');
+      return;
+    }
+    const prjId = newObjectionForm.project_id || selectedProject?.id || 'PRJ-NHAI-2026-UP01';
     try {
-      const params = new URLSearchParams(newObjectionForm);
+      const params = new URLSearchParams({
+        ...newObjectionForm,
+        objection_details: newObjectionForm.objection_details || newObjectionForm.grounds_category
+      });
       const res = await fetch(
-        `${API_BASE}/api/projects/${selectedProject.id}/objections?${params.toString()}`,
+        `${API_BASE}/api/projects/${prjId}/objections?${params.toString()}`,
         { method: 'POST' }
       );
       if (res.ok) {
         showToast("Section 15 Objection filed into statutory register.", 'success');
         setActiveModal(null);
         setNewObjectionForm({
+          project_id: '',
           claimant_name: '',
           contact_phone: '',
           ulpin: '',
@@ -653,6 +667,8 @@ export default function App() {
           objection_details: ''
         });
         fetchData();
+      } else {
+        showToast("Failed to file objection. Please check fields.", 'error');
       }
     } catch (err) {
       showToast("Failed to file objection.", 'error');
@@ -1352,8 +1368,13 @@ export default function App() {
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                               <strong style={{ color: '#071426', fontSize: '0.88rem' }}>{obj.id}</strong>
                               <span className="badge-pill badge-blue">{obj.grounds_category}</span>
-                              <span className={`badge-pill ${obj.status === 'PENDING' ? 'badge-red' : (obj.status === 'HEARING_SCHEDULED' ? 'badge-saffron' : 'badge-green')}`}>
-                                {obj.status.replace('_', ' ')}
+                              <span className={`badge-pill ${
+                                obj.status === 'PENDING' ? 'badge-red' : 
+                                (obj.status === 'HEARING_SCHEDULED' ? 'badge-saffron' : 
+                                ((obj.status === 'UPHELD' || obj.status === 'DISPOSED_UPHELD') ? 'badge-green' : 'badge-navy'))
+                              }`}>
+                                {(obj.status === 'UPHELD' || obj.status === 'DISPOSED_UPHELD') ? 'UPHELD' : 
+                                 (obj.status === 'DISMISSED' || obj.status === 'DISPOSED_REJECTED') ? 'DISMISSED' : obj.status.replace('_', ' ')}
                               </span>
                             </div>
                             <span style={{ fontSize: '0.7rem', color: '#64748b' }}>Filing Date: {obj.filing_date}</span>
@@ -1392,7 +1413,7 @@ export default function App() {
                               </button>
                             )}
 
-                            {obj.status !== 'DISPOSED_UPHELD' && obj.status !== 'DISPOSED_REJECTED' && (
+                            {obj.status !== 'UPHELD' && obj.status !== 'DISMISSED' && obj.status !== 'DISPOSED_UPHELD' && obj.status !== 'DISPOSED_REJECTED' && (
                               <button 
                                 className="btn-action btn-navy" 
                                 style={{ fontSize: '0.7rem', padding: '4px 10px' }}
@@ -1966,7 +1987,22 @@ export default function App() {
                   <option value="Title Dispute">Title Dispute / Co-parcenary Partition</option>
                   <option value="Public Utility Conflict">Public Utility Conflict / Irrigation Canal</option>
                   <option value="Ecological Concern / Wildlife">Ecological Concern / Sacred Land</option>
+                  <option value="Other">Other (अन्य आधार - Provide description below)</option>
                 </select>
+              </div>
+
+              <div style={{ marginBottom: 12 }}>
+                <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, marginBottom: 3 }}>
+                  Detailed Description of Grounds {newObjectionForm.grounds_category === 'Other' && <span style={{ color: '#dc2626' }}>* (Required)</span>}
+                </label>
+                <textarea 
+                  rows={3}
+                  required={newObjectionForm.grounds_category === 'Other'}
+                  placeholder="Describe specific survey numbers, measurement mismatches, market rate evidence, or reasons for objection..."
+                  style={{ width: '100%', padding: '7px 10px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
+                  value={newObjectionForm.objection_details}
+                  onChange={(e) => setNewObjectionForm({ ...newObjectionForm, objection_details: e.target.value })}
+                />
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 14 }}>
@@ -1988,7 +2024,7 @@ export default function App() {
                   <Shield size={16} color="#2563eb" />
                   <span>Officer Portal Login (RBAC)</span>
                 </h3>
-                <span style={{ fontSize: '0.7rem', color: '#64748b' }}>Authorized Department of Land Resources Personnel</span>
+                <span style={{ fontSize: '0.72rem', color: '#64748b' }}>Select an administrative role or enter officer email</span>
               </div>
               <button className="btn-action btn-outline" style={{ padding: '2px 7px' }} onClick={() => setShowLoginModal(false)}>✕</button>
             </div>
@@ -2066,6 +2102,16 @@ export default function App() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
                 <div>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, marginBottom: 3 }}>Corridor ID</label>
+                  <input 
+                    type="text" 
+                    required
+                    style={{ width: '100%', padding: '7px 10px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
+                    value={newLarrdaForm.project_id}
+                    onChange={(e) => setNewLarrdaForm({ ...newLarrdaForm, project_id: e.target.value })}
+                  />
+                </div>
+                <div>
                   <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, marginBottom: 3 }}>14-Digit ULPIN</label>
                   <input 
                     type="text" 
@@ -2075,19 +2121,20 @@ export default function App() {
                     onChange={(e) => setNewLarrdaForm({ ...newLarrdaForm, ulpin: e.target.value })}
                   />
                 </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, marginBottom: 3 }}>Ground Type</label>
-                  <select
-                    style={{ width: '100%', padding: '7px 10px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
-                    value={newLarrdaForm.ground_type}
-                    onChange={(e) => setNewLarrdaForm({ ...newLarrdaForm, ground_type: e.target.value })}
-                  >
-                    <option value="VALUATION">Inadequate Valuation</option>
-                    <option value="MEASUREMENT">Measurement / Area Discrepancy</option>
-                    <option value="TITLE_DISPUTE">Title / Co-parcenary Conflict</option>
-                    <option value="RR_PACKAGE">R&R Second Schedule Package</option>
-                  </select>
-                </div>
+              </div>
+
+              <div style={{ marginBottom: 10 }}>
+                <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, marginBottom: 3 }}>Dispute Ground</label>
+                <select 
+                  style={{ width: '100%', padding: '7px 10px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
+                  value={newLarrdaForm.ground_type}
+                  onChange={(e) => setNewLarrdaForm({ ...newLarrdaForm, ground_type: e.target.value })}
+                >
+                  <option value="VALUATION">Inadequate Valuation & Factor Multiplier (Section 26-30)</option>
+                  <option value="MEASUREMENT">Measurement / Boundary Error (Section 64)</option>
+                  <option value="TITLE_DISPUTE">Title / Co-parcenary Conflict (Section 64)</option>
+                  <option value="RR_PACKAGE">R&R Second Schedule Package Deficit</option>
+                </select>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 14 }}>
@@ -2153,8 +2200,8 @@ export default function App() {
                 value={disposalForm.status}
                 onChange={(e) => setDisposalForm({ ...disposalForm, status: e.target.value })}
               >
-                <option value="DISPOSED_UPHELD">Upheld (Favorable to Claimant - Modify Award/Area)</option>
-                <option value="DISPOSED_REJECTED">Rejected (Deemed Unsustainable after Inquiry)</option>
+                <option value="UPHELD">Upheld (आपत्ति स्वीकृत - Favorable to Claimant)</option>
+                <option value="DISMISSED">Dismissed (आपत्ति खारिज - Unsustainable after Inquiry)</option>
               </select>
             </div>
 

@@ -198,9 +198,9 @@ async function runTests() {
     const resSched = await makeRequest('POST', `/api/projects/${prjId}/objections/${objId}/schedule-hearing?hearing_date=2026-04-10`);
     assert.strictEqual(resSched.status, 200);
 
-    const resDisp = await makeRequest('POST', `/api/projects/${prjId}/objections/${objId}/dispose?status=DISPOSED_UPHELD&reasoned_order_summary=AwardAdjusted`);
+    const resDisp = await makeRequest('POST', `/api/projects/${prjId}/objections/${objId}/dispose?status=UPHELD&reasoned_order_summary=AwardAdjusted`);
     assert.strictEqual(resDisp.status, 200);
-    assert.strictEqual(resDisp.body.status, 'DISPOSED_UPHELD');
+    assert.strictEqual(resDisp.body.status, 'UPHELD');
   });
 
   // 10. Field Survey Sync from Flutter App

@@ -201,14 +201,10 @@ export default function GISParcelMap({
                           click: () => setSelectedMapParcel(parcel)
                         }}
                       >
-                        <Tooltip sticky>
-                          <div style={{ fontSize: '0.75rem' }}>
-                            <strong>ULPIN: {parcel.ulpin}</strong>
-                            <div>Record: {parcel.local_record_no}</div>
-                            <div>Owner: {parcel.owner_name}</div>
-                            <div>Acquired: {parcel.acquired_area_sqm} sq.m</div>
-                            <div>Status: {parcel.status} {parcel.encumbrance_locked ? '(🔒 Encumbrance Locked)' : ''}</div>
-                          </div>
+                        <Tooltip permanent direction="center" className="parcel-plot-tag">
+                          <span style={{ fontWeight: 800, fontSize: '0.72rem', color: '#071426' }}>
+                            {parcel.local_record_no}
+                          </span>
                         </Tooltip>
                       </Polygon>
                     )

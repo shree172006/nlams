@@ -36,7 +36,7 @@ export default function OfficerDashboard({
       </div>
 
       {/* KPI Cards */}
-      <div className="kpi-row-grid">
+      <div className="kpi-row-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="kpi-metric-box border-blue">
           <div className="kpi-head">
             <span className="kpi-head-label">{t.activeCorridors}</span>
@@ -73,17 +73,6 @@ export default function OfficerDashboard({
           </div>
         </div>
 
-        <div className="kpi-metric-box border-gold">
-          <div className="kpi-head">
-            <span className="kpi-head-label">{t.activeEncumbranceLocks}</span>
-            <div className="kpi-head-icon" style={{ background: '#fef3c7', color: '#d97706' }}>
-              <Lock size={15} />
-            </div>
-          </div>
-          <div className="kpi-big-num">{metrics?.ulpin_encumbrance_locks_active || 0}</div>
-          <div className="kpi-caption">{langHindi ? 'राज्य रजिस्ट्रियों में लाक' : 'Frozen in State Registries'}</div>
-        </div>
-
         <div className="kpi-metric-box border-navy">
           <div className="kpi-head">
             <span className="kpi-head-label">{t.avgPossession}</span>
@@ -112,6 +101,7 @@ export default function OfficerDashboard({
             <table className="nlams-data-table">
               <thead>
                 <tr>
+                  <th style={{ width: 60 }}>Sr. No.</th>
                   <th>Corridor Title</th>
                   <th>Agency & Act</th>
                   <th>State</th>
@@ -121,8 +111,11 @@ export default function OfficerDashboard({
                 </tr>
               </thead>
               <tbody>
-                {projects.map(p => (
+                {projects.map((p, idx) => (
                   <tr key={p.id} style={{ background: selectedProjectId === p.id ? '#f0f7ff' : 'transparent' }}>
+                    <td>
+                      <span className="badge-pill badge-navy" style={{ fontWeight: 800 }}>{idx + 1}</span>
+                    </td>
                     <td>
                       <strong style={{ color: '#071426', display: 'block' }}>{p.title}</strong>
                       <span style={{ fontSize: '0.7rem', color: '#64748b' }}>{p.id} • {p.total_corridor_area_ha} Ha</span>
