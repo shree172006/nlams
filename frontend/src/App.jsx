@@ -1171,6 +1171,7 @@ export default function App() {
             setActiveTab={setActiveTab}
             t={t}
             langHindi={langHindi}
+            currentUser={currentUser}
           />
         )}
 
