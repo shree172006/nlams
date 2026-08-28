@@ -639,21 +639,7 @@ export default function FieldSurveyApp({
                   <Trees size={15} />
                   <span>B. Tree Census (Forest Dept Schedules)</span>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 10 }}>
-                  <div>
-                    <label style={{ fontSize: '0.72rem', color: '#713f12', fontWeight: 600 }}>Tree Species:</label>
-                    <select
-                      value={formData.tree_type}
-                      onChange={(e) => setFormData(prev => ({ ...prev, tree_type: e.target.value }))}
-                      style={{ width: '100%', padding: '6px 8px', borderRadius: '4px', border: '1px solid #fde047', fontSize: '0.78rem' }}
-                    >
-                      <option>Teak (Tectona grandis)</option>
-                      <option>Neem / Sheesham (Timber)</option>
-                      <option>Mango / Fruit Bearing Orchard</option>
-                      <option>Mahua / Indigenous</option>
-                      <option>Eucalyptus Plantation</option>
-                    </select>
-                  </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
                   <div>
                     <label style={{ fontSize: '0.72rem', color: '#713f12', fontWeight: 600 }}>Mature Tree Count:</label>
                     <input
