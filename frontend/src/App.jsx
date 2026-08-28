@@ -193,9 +193,9 @@ export default function App() {
     circle_rate_per_sqm: 1850,
     avg_registered_sale_rate_per_sqm: 2400,
     ppp_consented_rate_per_sqm: 0,
-    structure_valuation: 350000,
-    tree_valuation: 45000,
-    crop_valuation: 25000,
+    structure_valuation: 0,
+    tree_valuation: 0,
+    crop_valuation: 0,
     notification_date: '2025-05-15',
     award_date: '2026-03-01'
   });

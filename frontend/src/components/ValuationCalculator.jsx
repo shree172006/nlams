@@ -41,9 +41,9 @@ export default function ValuationCalculator({
       circle_rate_per_sqm: 1850,
       avg_registered_sale_rate_per_sqm: 2400,
       ppp_consented_rate_per_sqm: 0,
-      structure_valuation: 350000,
-      tree_valuation: 45000,
-      crop_valuation: 25000,
+      structure_valuation: 0,
+      tree_valuation: 0,
+      crop_valuation: 0,
       notification_date: '2025-05-15',
       award_date: '2026-03-01'
     });
@@ -195,48 +195,6 @@ export default function ValuationCalculator({
                     onChange={(e) => {
                       const val = parseFloat(e.target.value);
                       setCalcInputs({ ...calcInputs, avg_registered_sale_rate_per_sqm: isNaN(val) ? '' : Math.max(1, val) });
-                    }} 
-                  />
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 10 }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>{langHindi ? 'मकान/ढांचा (₹)' : 'Structures (₹)'}</label>
-                  <input 
-                    type="number" 
-                    min="0"
-                    style={{ width: '100%', padding: '6px 8px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
-                    value={calcInputs.structure_valuation} 
-                    onChange={(e) => {
-                      const val = parseFloat(e.target.value);
-                      setCalcInputs({ ...calcInputs, structure_valuation: isNaN(val) ? '' : Math.max(0, val) });
-                    }} 
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>{langHindi ? 'पेड़/वृक्ष (₹)' : 'Trees (₹)'}</label>
-                  <input 
-                    type="number" 
-                    min="0"
-                    style={{ width: '100%', padding: '6px 8px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
-                    value={calcInputs.tree_valuation} 
-                    onChange={(e) => {
-                      const val = parseFloat(e.target.value);
-                      setCalcInputs({ ...calcInputs, tree_valuation: isNaN(val) ? '' : Math.max(0, val) });
-                    }} 
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, marginBottom: 3 }}>{langHindi ? 'फसल (₹)' : 'Crops (₹)'}</label>
-                  <input 
-                    type="number" 
-                    min="0"
-                    style={{ width: '100%', padding: '6px 8px', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-sm)', fontSize: '0.78rem' }}
-                    value={calcInputs.crop_valuation} 
-                    onChange={(e) => {
-                      const val = parseFloat(e.target.value);
-                      setCalcInputs({ ...calcInputs, crop_valuation: isNaN(val) ? '' : Math.max(0, val) });
                     }} 
                   />
                 </div>
