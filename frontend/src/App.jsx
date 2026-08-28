@@ -239,6 +239,9 @@ export default function App() {
     resettlement_amenities_allocated: ['Drinking Water', 'Electricity', 'Paved Access Road']
   });
 
+  // PFMS DBT View Mode Toggle (Voucher vs Raw XML)
+  const [showRawXmlDbt, setShowRawXmlDbt] = useState(false);
+
   const t = langHindi ? T.hi : T.en;
 
   // URL Routing, History & Page Title Synchronization
@@ -2027,35 +2030,117 @@ export default function App() {
       {/* ================= MODAL 2: PFMS DBT BATCH ================= */}
       {activeModal === 'dbt' && dbtBatchData && (
         <div className="modal-overlay" onClick={() => setActiveModal(null)}>
-          <div className="modal-dialog-card" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-dialog-card" style={{ maxWidth: 680 }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-main)', paddingBottom: 10, marginBottom: 12 }}>
               <div>
-                <h3 style={{ fontSize: '1rem', color: '#071426' }}>{langHindi ? 'PFMS प्रत्यक्ष लाभ अंतरण (DBT) ISO 20022 XML बैच' : 'PFMS Direct Benefit Transfer (DBT) ISO 20022 XML Batch'}</h3>
-                <span style={{ fontSize: '0.7rem', color: '#059669' }}>{langHindi ? 'RBI APBS सेटलमेंट गेटवे को प्रेषित' : 'Transmitted to RBI APBS Settlement Gateway'}</span>
+                <h3 style={{ fontSize: '1rem', color: '#071426', margin: 0 }}>
+                  {langHindi ? 'PFMS प्रत्यक्ष लाभ अंतरण (DBT) भुगतान आदेश पंजिका' : 'PFMS Direct Benefit Transfer (DBT) Payment Voucher'}
+                </h3>
+                <span style={{ fontSize: '0.7rem', color: '#059669' }}>
+                  {langHindi ? 'सार्वजनिक वित्तीय प्रबंधन प्रणाली (PFMS) • वित्त मंत्रालय • भारतीय रिजर्व बैंक (RBI APBS)' : 'Public Financial Management System (PFMS) • Ministry of Finance • RBI APBS Gateway'}
+                </span>
               </div>
               <button className="btn-action btn-outline" style={{ padding: '2px 7px' }} onClick={() => setActiveModal(null)}>✕</button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8, marginBottom: 10 }}>
-              <div style={{ background: '#f8fafc', padding: 8, borderRadius: 4 }}>
+            {/* Summary Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 8, marginBottom: 14 }}>
+              <div style={{ background: '#f8fafc', padding: '8px 10px', borderRadius: 4, border: '1px solid var(--border-main)' }}>
                 <span style={{ fontSize: '0.65rem', color: '#64748b' }}>{langHindi ? 'स्वीकृति संदर्भ संख्या' : 'Batch Sanction Ref'}</span>
                 <strong style={{ fontSize: '0.75rem', color: '#071426', display: 'block' }}>{dbtBatchData.batch_id}</strong>
               </div>
-              <div style={{ background: '#ecfdf5', padding: 8, borderRadius: 4 }}>
-                <span style={{ fontSize: '0.65rem', color: '#166534' }}>{langHindi ? 'प्रत्यक्ष बैंक भुगतान' : 'Direct Bank Credit'}</span>
-                <strong style={{ fontSize: '0.9rem', color: '#059669', display: 'block' }}>₹ {dbtBatchData.total_amount_cr} {langHindi ? 'करोड़' : 'Cr'}</strong>
+              <div style={{ background: '#ecfdf5', padding: '8px 10px', borderRadius: 4, border: '1px solid #a7f3d0' }}>
+                <span style={{ fontSize: '0.65rem', color: '#166534' }}>{langHindi ? 'कुल प्रत्यक्ष बैंक अंतरण' : 'Direct Bank Credit'}</span>
+                <strong style={{ fontSize: '0.92rem', color: '#059669', display: 'block' }}>₹ {dbtBatchData.total_amount_cr} {langHindi ? 'करोड़' : 'Cr'}</strong>
               </div>
-              <div style={{ background: '#f8fafc', padding: 8, borderRadius: 4 }}>
-                <span style={{ fontSize: '0.65rem', color: '#64748b' }}>{langHindi ? 'सत्यापित लाभार्थी' : 'Verified Beneficiaries'}</span>
-                <strong style={{ fontSize: '0.9rem', color: '#2563eb', display: 'block' }}>{dbtBatchData.total_beneficiaries} {langHindi ? 'भू-स्वामी' : 'Landholders'}</strong>
+              <div style={{ background: '#f0fdf4', padding: '8px 10px', borderRadius: 4, border: '1px solid #bbf7d0' }}>
+                <span style={{ fontSize: '0.65rem', color: '#15803d' }}>{langHindi ? 'सत्यापित लाभार्थी' : 'Beneficiaries'}</span>
+                <strong style={{ fontSize: '0.92rem', color: '#15803d', display: 'block' }}>{dbtBatchData.total_beneficiaries} {langHindi ? 'भू-स्वामी' : 'Landholders'}</strong>
+              </div>
+              <div style={{ background: '#eff6ff', padding: '8px 10px', borderRadius: 4, border: '1px solid #bfdbfe' }}>
+                <span style={{ fontSize: '0.65rem', color: '#1e40af' }}>{langHindi ? 'भुगतान माध्यम' : 'Settlement Channel'}</span>
+                <strong style={{ fontSize: '0.72rem', color: '#1d4ed8', display: 'block' }}>RBI APBS / NPCI</strong>
               </div>
             </div>
 
-            <pre style={{ background: '#071426', color: '#a5f3fc', padding: 12, borderRadius: 4, fontSize: '0.7rem', overflowX: 'auto', maxHeight: '42vh' }}>
-              {dbtBatchData.xml_payload}
-            </pre>
+            {/* Normalized Beneficiaries Payment Advice Table */}
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                <strong style={{ fontSize: '0.78rem', color: '#071426' }}>
+                  {langHindi ? 'लाभार्थी बैंक खाता एवं प्रतिकर भुगतान अनुसूची' : 'Beneficiary Bank Account & Direct Compensation Schedule'}
+                </strong>
+                <span className="badge-pill badge-green" style={{ fontSize: '0.65rem' }}>
+                  ✓ {langHindi ? 'आधार-लिंक्ड बैंक खाते सत्यापित' : 'Aadhaar-Linked Bank Accounts Verified'}
+                </span>
+              </div>
 
-            <div style={{ marginTop: 14, display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+              <div style={{ maxHeight: '36vh', overflowY: 'auto', border: '1px solid var(--border-main)', borderRadius: 6 }}>
+                <table className="nlams-data-table" style={{ fontSize: '0.72rem', margin: 0 }}>
+                  <thead style={{ background: '#f1f5f9', position: 'sticky', top: 0 }}>
+                    <tr>
+                      <th>{langHindi ? 'भू-स्वामी का नाम' : 'Landowner Name'}</th>
+                      <th>{langHindi ? 'भू-आधार (ULPIN)' : 'ULPIN'}</th>
+                      <th>{langHindi ? 'बैंक एवं खाता संख्या' : 'Bank & Account'}</th>
+                      <th>{langHindi ? 'IFSC कोड' : 'IFSC Code'}</th>
+                      <th>{langHindi ? 'प्रतिकर राशि (₹)' : 'Compensation (₹)'}</th>
+                      <th>{langHindi ? 'PFMS स्थिति' : 'PFMS Status'}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(dbtBatchData.beneficiaries && dbtBatchData.beneficiaries.length > 0) ? (
+                      dbtBatchData.beneficiaries.map((b, idx) => (
+                        <tr key={idx}>
+                          <td><strong>{b.owner_name}</strong></td>
+                          <td style={{ fontFamily: 'monospace', fontWeight: 600, color: '#0284c7' }}>{b.ulpin}</td>
+                          <td>
+                            <div>{b.bank_name}</div>
+                            <span style={{ fontSize: '0.65rem', color: '#64748b', fontFamily: 'monospace' }}>{b.bank_account}</span>
+                          </td>
+                          <td style={{ fontFamily: 'monospace', fontSize: '0.68rem' }}>{b.ifsc}</td>
+                          <td><strong style={{ color: '#059669' }}>₹ {Number(b.amount_inr || 0).toLocaleString()}</strong></td>
+                          <td><span className="badge-pill badge-green">✓ {langHindi ? 'खाते में प्रेषित' : 'Credited (APBS)'}</span></td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td><strong>Shri Ramcharan Yadav</strong></td>
+                        <td style={{ fontFamily: 'monospace', fontWeight: 600, color: '#0284c7' }}>UP-VNS-2026-001</td>
+                        <td>
+                          <div>State Bank of India (SBI)</div>
+                          <span style={{ fontSize: '0.65rem', color: '#64748b', fontFamily: 'monospace' }}>XXXX-XXXX-4512</span>
+                        </td>
+                        <td style={{ fontFamily: 'monospace', fontSize: '0.68rem' }}>SBIN0001234</td>
+                        <td><strong style={{ color: '#059669' }}>₹ {(dbtBatchData.total_amount_cr * 10000000).toLocaleString()}</strong></td>
+                        <td><span className="badge-pill badge-green">✓ {langHindi ? 'खाते में प्रेषित' : 'Credited (APBS)'}</span></td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Optional Collapsible Technical ISO 20022 XML Payload */}
+            <div style={{ marginBottom: 14 }}>
+              <button 
+                type="button"
+                className="btn-action btn-outline" 
+                style={{ fontSize: '0.68rem', padding: '3px 8px', color: '#64748b' }}
+                onClick={() => setShowRawXmlDbt(!showRawXmlDbt)}
+              >
+                {showRawXmlDbt ? '▲ ' + (langHindi ? 'तकनीकी ISO 20022 XML छिपाएं' : 'Hide Technical ISO 20022 XML Payload') : '▼ ' + (langHindi ? 'तकनीकी ISO 20022 XML ऑडिट पेलोड देखें' : 'Show Technical ISO 20022 XML Audit Payload')}
+              </button>
+
+              {showRawXmlDbt && (
+                <pre style={{ marginTop: 6, background: '#071426', color: '#a5f3fc', padding: 10, borderRadius: 4, fontSize: '0.65rem', overflowX: 'auto', maxHeight: '18vh' }}>
+                  {dbtBatchData.xml_payload}
+                </pre>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.68rem', color: '#64748b' }}>
+                🔒 {langHindi ? 'RBI APBS गेटवे पर 256-बिट SSL सुरक्षित अंतरण' : '256-Bit SSL Encrypted Direct Credit via RBI APBS'}
+              </span>
               <button className="btn-action btn-green" onClick={() => setActiveModal(null)}>
                 <CheckCircle size={13} />
                 <span>{langHindi ? 'PFMS प्रत्यक्ष भुगतान की पुष्टि करें' : 'Confirm PFMS Direct Disbursal'}</span>

@@ -541,15 +541,29 @@ app.post('/api/projects/:project_id/disburse-pfms-dbt', (req, res) => {
     total_compensation_disbursed_cr: prj.total_compensation_assessed_cr
   });
 
-  const parcelsCount = (prj.parcels || []).length;
+  const parcels = prj.parcels || [];
+  const parcelsCount = parcels.length;
   const nowStr = new Date().toISOString();
+
+  const beneficiariesList = parcels.map((p, idx) => ({
+    ulpin: p.ulpin,
+    owner_name: p.owner_name,
+    bank_account: p.bank_ifsc ? `XXXX-XXXX-${(4512 + idx * 37)}` : 'XXXX-XXXX-9981',
+    ifsc: p.bank_ifsc || 'SBIN0001234',
+    bank_name: (p.bank_ifsc && p.bank_ifsc.startsWith('HDFC')) ? 'HDFC Bank Ltd.' : (p.bank_ifsc && p.bank_ifsc.startsWith('PUNB')) ? 'Punjab National Bank' : 'State Bank of India (SBI)',
+    amount_inr: (p.circle_rate_per_sqm * p.acquired_area_sqm * 2.0) || (prj.total_compensation_assessed_cr * 10000000 / Math.max(1, parcelsCount)),
+    utr_no: `RBI${Date.now().toString().slice(-6)}${idx}APBS`,
+    status: 'CREDITED_SUCCESSFULLY',
+    disbursal_timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+  }));
 
   res.json({
     status: "SUCCESS_CREDITED",
     batch_id: `PFMS/DBT/2026/${prj.id.slice(-4)}/001`,
     total_amount_cr: prj.total_compensation_assessed_cr,
     total_beneficiaries: parcelsCount,
-    settlement_channel: "RBI Aadhaar Payment Bridge System (APBS)",
+    settlement_channel: "RBI Aadhaar Payment Bridge System (APBS) / NPCI",
+    beneficiaries: beneficiariesList,
     xml_payload: `<?xml version="1.0" encoding="UTF-8"?>\n<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08">\n  <GrpHdr>\n    <MsgId>PFMS-DBT-${prj.id}-20260826</MsgId>\n    <CreDtTm>${nowStr}</CreDtTm>\n    <NbOfTxs>${parcelsCount}</NbOfTxs>\n    <CtrlSum>${prj.total_compensation_assessed_cr * 10000000}</CtrlSum>\n  </GrpHdr>\n</Document>`
   });
 });
