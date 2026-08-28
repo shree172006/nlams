@@ -841,19 +841,6 @@ export default function App() {
       users: langHindi ? 'प्रभावित परिवार व नागरिक' : 'Affected Families & Public',
       tag: 'Social Welfare',
       badgeColor: 'badge-green'
-    },
-    {
-      id: 'survey',
-      icon: <Smartphone size={20} color="#ea580c" />,
-      iconBg: '#fff7ed',
-      title: langHindi ? '5. फील्ड सर्वे (ऑफलाइन टूल)' : '5. Field Survey (Offline PWA)',
-      statutory: 'Offline-First On-Ground Survey & Census',
-      desc: langHindi
-        ? 'दूरदराज के इलाकों में बिना इंटरनेट के भी परिसंपत्ति, पेड़, फसल गणना व भू-टैग फोटो दर्ज करें; इंटरनेट मिलते ही स्वतः सिंक।'
-        : 'Offline-first PWA survey tool to record structures, trees, crops, borewells, and PAF claims with automatic database sync upon reconnection.',
-      users: langHindi ? 'सर्वेक्षक व नागरिक' : 'Field Surveyors & Landowners',
-      tag: 'Offline Sync PWA',
-      badgeColor: 'badge-saffron'
     }
   ];
 
