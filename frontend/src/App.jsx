@@ -1116,46 +1116,6 @@ export default function App() {
                 </div>
               ))}
             </div>
-
-            {/* Officer Access Banner for Citizens on Home */}
-            {!isOfficer && (
-              <div style={{
-                marginTop: 24,
-                padding: '18px 24px',
-                background: 'linear-gradient(135deg, #071426 0%, #0d2847 100%)',
-                borderRadius: 'var(--radius-md)',
-                color: '#ffffff',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                border: '1px solid rgba(255,255,255,0.15)',
-                boxShadow: 'var(--shadow-md)'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                  <div style={{ background: 'rgba(255,255,255,0.1)', padding: 10, borderRadius: 8 }}>
-                    <Shield size={24} color="#f59e0b" />
-                  </div>
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '0.95rem', color: '#ffffff' }}>
-                      {langHindi ? 'प्रशासनिक व विभागीय अधिकारी लॉगिन' : 'Authorized Officer & Administrative Console'}
-                    </h4>
-                    <p style={{ margin: '4px 0 0 0', fontSize: '0.76rem', color: '#cbd5e1' }}>
-                      {langHindi 
-                        ? 'जिला कलेक्टर, CALA, राजस्व सर्वेक्षक एवं NHAI अधिकारी 8 वैधानिक प्रशासनिक मॉड्यूल तक पहुंचने हेतु लॉगिन करें।'
-                        : 'District Collectors, CALAs, Revenue Surveyors, and NHAI Project Managers can authenticate to unlock all 8 statutory modules.'}
-                    </p>
-                  </div>
-                </div>
-                <button 
-                  className="btn-action btn-saffron"
-                  style={{ padding: '8px 18px', fontSize: '0.8rem', fontWeight: 700, whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 6 }}
-                  onClick={() => setShowLoginModal(true)}
-                >
-                  <LogIn size={15} />
-                  <span>{langHindi ? 'अधिकारी लॉगिन' : 'Officer Login'}</span>
-                </button>
-              </div>
-            )}
           </div>
         )}
 
