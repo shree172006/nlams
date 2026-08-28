@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Home, TrendingUp, Layers, Building2, IndianRupee, 
-  Search, Scale, Users, Zap, Globe, Shield, UserCheck, LogIn, LogOut
+  Search, Scale, Users, Zap, Globe, Shield, UserCheck, LogIn, LogOut,
+  Smartphone, Wifi, WifiOff, Download
 } from 'lucide-react';
+import { useNetworkSync } from '../utils/offlineSurveyStore';
 
 export default function Navbar({ 
   activeTab, 
@@ -17,9 +19,38 @@ export default function Navbar({
   currentUser,
   setShowLoginModal,
   handleLogout,
-  setActiveModal
+  setActiveModal,
+  apiBase
 }) {
   const isOfficer = currentUser && currentUser.role !== 'CITIZEN';
+  const { isOnline, pendingCount } = useNetworkSync(apiBase);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isInstallable, setIsInstallable] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setIsInstallable(false);
+      }
+      setDeferredPrompt(null);
+    } else {
+      // Fallback instruction for browsers where prompt has already been dismissed or manual install
+      alert('To install NLAMS on your device:\n- Chrome/Edge: Click the install icon in the URL address bar or select "Install NLAMS" from the browser menu.\n- iOS Safari: Tap Share -> "Add to Home Screen".');
+    }
+  };
 
   return (
     <>
@@ -32,9 +63,51 @@ export default function Navbar({
           </div>
           <span style={{ opacity: 0.3 }}>|</span>
           <span style={{ color: '#93c5fd' }}>{t.deptHindi}</span>
+          <span style={{ opacity: 0.3 }}>|</span>
+          {/* Live Network State Badge */}
+          <span style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
+            fontSize: '0.68rem',
+            padding: '2px 8px',
+            borderRadius: '10px',
+            background: isOnline ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.3)',
+            color: isOnline ? '#86efac' : '#fca5a5',
+            fontWeight: 700
+          }}>
+            {isOnline ? <Wifi size={11} /> : <WifiOff size={11} />}
+            <span>{isOnline ? 'Online (DB Live)' : 'Offline (Field Mode)'}</span>
+            {pendingCount > 0 && (
+              <span style={{ background: '#ef4444', color: '#fff', padding: '0 4px', borderRadius: 6, fontSize: '0.62rem' }}>
+                {pendingCount}
+              </span>
+            )}
+          </span>
         </div>
 
         <div className="top-right-tools">
+          {/* Install PWA Button */}
+          <button
+            className="access-btn"
+            style={{
+              background: 'rgba(245, 158, 11, 0.2)',
+              color: '#fde047',
+              border: '1px solid rgba(245, 158, 11, 0.4)',
+              fontWeight: 700,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 5
+            }}
+            onClick={handleInstallClick}
+            title="Install NLAMS as a Native App on your Phone, Tablet, or PC"
+          >
+            <Smartphone size={12} />
+            <span>{langHindi ? 'ऐप इंस्टॉल करें' : 'Install App (PWA)'}</span>
+          </button>
+
+          <span style={{ opacity: 0.3, margin: '0 2px' }}>|</span>
+
           <span style={{ fontSize: '0.7rem', color: '#94a3b8', marginRight: 4 }}>Font:</span>
           <button 
             className={`access-btn ${fontSize === 'sm' ? 'active' : ''}`} 
@@ -194,6 +267,14 @@ export default function Navbar({
                 <Users size={14} />
                 <span>{langHindi ? '4. पुनर्वास R&R' : '4. R&R Entitlements Guide'}</span>
               </button>
+              <button 
+                className={`nav-link-btn ${activeTab === 'survey' ? 'active' : ''}`}
+                onClick={() => setActiveTab('survey')}
+                style={{ background: activeTab === 'survey' ? 'var(--nlams-saffron)' : 'rgba(245,158,11,0.1)', color: activeTab === 'survey' ? '#fff' : '#f59e0b' }}
+              >
+                <Smartphone size={14} />
+                <span>{langHindi ? '5. फील्ड सर्वे (ऑफलाइन)' : '5. Field Survey (Offline Tool)'}</span>
+              </button>
             </>
           ) : (
             /* ================= OFFICER TABS (WHEN AUTHENTICATED) ================= */
@@ -253,6 +334,14 @@ export default function Navbar({
               >
                 <IndianRupee size={14} />
                 <span>{langHindi ? '8. मुआवजा कैलकुलेटर' : '8. Valuation Sandbox'}</span>
+              </button>
+              <button 
+                className={`nav-link-btn ${activeTab === 'survey' ? 'active' : ''}`}
+                onClick={() => setActiveTab('survey')}
+                style={{ background: activeTab === 'survey' ? 'var(--nlams-saffron)' : 'rgba(245,158,11,0.1)', color: activeTab === 'survey' ? '#fff' : '#f59e0b' }}
+              >
+                <Smartphone size={14} />
+                <span>{langHindi ? '9. फील्ड सर्वे एवं सिंक' : '9. Field Survey & Sync'}</span>
               </button>
             </>
           )}

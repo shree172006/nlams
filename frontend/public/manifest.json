@@ -1,7 +1,7 @@
 {
   "short_name": "NLAMS",
   "name": "National Land Acquisition & Management System (NLAMS)",
-  "description": "Government of India unified digital land acquisition, GIS mapping, valuation, and PFMS DBT portal",
+  "description": "Government of India unified digital land acquisition, Cadastral GIS, offline field surveys, and PFMS DBT portal",
   "icons": [
     {
       "src": "/favicon.svg",
@@ -10,10 +10,33 @@
       "purpose": "any maskable"
     }
   ],
-  "start_url": "/home",
+  "start_url": "/",
   "background_color": "#071426",
   "theme_color": "#071426",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "scope": "/"
+  "scope": "/",
+  "shortcuts": [
+    {
+      "name": "Field Survey (Offline)",
+      "short_name": "Field Survey",
+      "description": "Conduct on-ground asset and crop census with offline sync",
+      "url": "/?tab=survey",
+      "icons": [{ "src": "/favicon.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Citizen Land Portal",
+      "short_name": "Land Portal",
+      "description": "Search Bhu-Aadhaar ULPIN & view compensation award",
+      "url": "/?tab=citizen",
+      "icons": [{ "src": "/favicon.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "GIS Cadastral Map",
+      "short_name": "GIS Map",
+      "description": "Interactive Map-to-Money alignment parcel viewer",
+      "url": "/?tab=gis",
+      "icons": [{ "src": "/favicon.svg", "sizes": "192x192" }]
+    }
+  ]
 }

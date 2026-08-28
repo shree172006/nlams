@@ -4,7 +4,7 @@ import {
   TrendingUp, AlertTriangle, CheckCircle, Search, Clock, 
   ArrowRight, Lock, RefreshCw, Check, HelpCircle, Printer, Globe,
   Home, ChevronRight, Scale, Users, PlusCircle, Zap, Sparkles, Calendar,
-  Shield, LogIn, LogOut, UserCheck
+  Shield, LogIn, LogOut, UserCheck, Smartphone
 } from 'lucide-react';
 
 import Navbar from './components/Navbar';
@@ -13,6 +13,7 @@ import GISParcelMap from './components/GISParcelMap';
 import ValuationCalculator from './components/ValuationCalculator';
 import LandownerPortal from './components/LandownerPortal';
 import DelayRiskWidget from './components/DelayRiskWidget';
+import FieldSurveyApp from './components/FieldSurveyApp';
 import { 
   FALLBACK_METRICS, 
   FALLBACK_PROJECTS, 
@@ -238,7 +239,8 @@ export default function App() {
       objections: "Section 15 Objections | NLAMS",
       larrda: "LARRDA Dispute Tribunal | NLAMS",
       rr: "R&R Tracking | NLAMS",
-      airisk: "AI Delay-Risk Forecaster | NLAMS"
+      airisk: "AI Delay-Risk Forecaster | NLAMS",
+      survey: "On-Ground Field Survey & Offline Sync | NLAMS"
     };
     document.title = tabTitles[activeTab] || "NLAMS | National Land Acquisition & Management System";
 
@@ -834,10 +836,23 @@ export default function App() {
       users: langHindi ? 'प्रभावित परिवार व नागरिक' : 'Affected Families & Public',
       tag: 'Social Welfare',
       badgeColor: 'badge-green'
+    },
+    {
+      id: 'survey',
+      icon: <Smartphone size={20} color="#ea580c" />,
+      iconBg: '#fff7ed',
+      title: langHindi ? '5. फील्ड सर्वे (ऑफलाइन टूल)' : '5. Field Survey (Offline PWA)',
+      statutory: 'Offline-First On-Ground Survey & Census',
+      desc: langHindi
+        ? 'दूरदराज के इलाकों में बिना इंटरनेट के भी परिसंपत्ति, पेड़, फसल गणना व भू-टैग फोटो दर्ज करें; इंटरनेट मिलते ही स्वतः सिंक।'
+        : 'Offline-first PWA survey tool to record structures, trees, crops, borewells, and PAF claims with automatic database sync upon reconnection.',
+      users: langHindi ? 'सर्वेक्षक व नागरिक' : 'Field Surveyors & Landowners',
+      tag: 'Offline Sync PWA',
+      badgeColor: 'badge-saffron'
     }
   ];
 
-  // 8 Officer Administrative Modules Definition
+  // 9 Officer Administrative Modules Definition
   const OFFICER_MODULES = [
     {
       id: 'dashboard',
@@ -942,6 +957,19 @@ export default function App() {
       users: langHindi ? 'मूल्यांकन अधिकारी व सक्षम प्राधिकारी' : 'Valuation Officers & CALA',
       tag: 'Audited Formula',
       badgeColor: 'badge-navy'
+    },
+    {
+      id: 'survey',
+      icon: <Smartphone size={20} color="#ea580c" />,
+      iconBg: '#fff7ed',
+      title: langHindi ? '9. फील्ड सर्वे एवं सिंक' : '9. Field Survey & Sync',
+      statutory: 'Offline-First On-Ground Survey & Census',
+      desc: langHindi
+        ? 'दूरदराज के इलाकों में बिना इंटरनेट के भी परिसंपत्ति, पेड़, फसल गणना व भू-टैग फोटो दर्ज करें; इंटरनेट मिलते ही स्वतः सिंक।'
+        : 'Offline-first PWA survey tool to record structures, trees, crops, borewells, and PAF claims with automatic database sync upon reconnection.',
+      users: langHindi ? 'राजस्व निरीक्षक एवं फील्ड सर्वेक्षक' : 'Revenue Inspectors & Field Surveyors',
+      tag: 'Offline Sync PWA',
+      badgeColor: 'badge-saffron'
     }
   ];
 
@@ -973,6 +1001,7 @@ export default function App() {
         setShowLoginModal={setShowLoginModal}
         handleLogout={handleLogout}
         setActiveModal={setActiveModal}
+        apiBase={API_BASE}
       />
 
       {/* Toast Notification */}
@@ -1788,6 +1817,21 @@ export default function App() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* ================= VIEW: ON-GROUND FIELD SURVEY & OFFLINE-FIRST PWA ================= */}
+        {activeTab === 'survey' && (
+          <FieldSurveyApp
+            projects={projects}
+            selectedProject={selectedProject}
+            setSelectedProject={(p) => {
+              setSelectedProjectId(p.id);
+            }}
+            apiBase={API_BASE}
+            langHindi={langHindi}
+            showToast={showToast}
+            currentUser={currentUser}
+          />
         )}
 
       </main>
