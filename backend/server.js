@@ -457,6 +457,59 @@ app.post('/api/projects/:project_id/rr-tracking/settle-family', (req, res) => {
   });
 });
 
+app.post('/api/projects/:project_id/rr-tracking/update-family', (req, res) => {
+  const familyId = getParam(req, 'family_id');
+  if (!familyId) {
+    return res.status(400).json({ detail: "family_id is required" });
+  }
+
+  const fam = db.getRRFamilyById(familyId);
+  if (!fam) {
+    return res.status(404).json({ detail: "Family record not found" });
+  }
+
+  const updates = {};
+  if (req.body.head_of_family !== undefined) updates.head_of_family = req.body.head_of_family;
+  if (req.body.category !== undefined) updates.category = req.body.category;
+  if (req.body.is_displaced !== undefined) updates.is_displaced = req.body.is_displaced ? 1 : 0;
+  if (req.body.monetary_entitlements_settled !== undefined) updates.monetary_entitlements_settled = parseInt(req.body.monetary_entitlements_settled);
+  if (req.body.total_rr_assistance_inr !== undefined) updates.total_rr_assistance_inr = parseFloat(req.body.total_rr_assistance_inr);
+  if (req.body.resettlement_amenities_allocated !== undefined) updates.resettlement_amenities_allocated = req.body.resettlement_amenities_allocated;
+
+  const updated = db.updateRRFamily(familyId, updates);
+  res.json({
+    status: "success",
+    family: updated
+  });
+});
+
+app.post('/api/projects/:project_id/rr-tracking/enroll-family', (req, res) => {
+  const projectId = req.params.project_id;
+  const headOfFamily = getParam(req, 'head_of_family');
+  if (!headOfFamily) {
+    return res.status(400).json({ detail: "head_of_family is required" });
+  }
+
+  const familyId = getParam(req, 'family_id') || `RR-${projectId.slice(0, 7)}-${Date.now().toString().slice(-4)}`;
+  const fam = {
+    family_id: familyId,
+    project_id: projectId,
+    head_of_family: headOfFamily,
+    category: getParam(req, 'category', 'General'),
+    is_displaced: Boolean(getParam(req, 'is_displaced', true)),
+    claimant_type: getParam(req, 'claimant_type', 'OWNER'),
+    monetary_entitlements_settled: parseInt(getParam(req, 'monetary_entitlements_settled', 0)),
+    total_rr_assistance_inr: parseFloat(getParam(req, 'total_rr_assistance_inr', 450000.0)),
+    resettlement_amenities_allocated: req.body.resettlement_amenities_allocated || ["Drinking Water", "Electricity"]
+  };
+
+  const created = db.insertRRFamily(fam);
+  res.json({
+    status: "success",
+    family: created
+  });
+});
+
 // ================= 8. STATUTORY E-GOV INTEGRATIONS =================
 app.post('/api/projects/:project_id/generate-egazette', (req, res) => {
   const prj = db.getProjectById(req.params.project_id);

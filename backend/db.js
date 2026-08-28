@@ -414,6 +414,35 @@ const dao = {
     return this.getRRFamilyById(familyId);
   },
 
+  insertRRFamily(fam) {
+    const stmt = db.prepare(`
+      INSERT INTO rr_families (
+        family_id, project_id, head_of_family, category, is_displaced,
+        claimant_type, monetary_entitlements_settled, total_rr_assistance_inr,
+        resettlement_amenities_allocated
+      ) VALUES (
+        @family_id, @project_id, @head_of_family, @category, @is_displaced,
+        @claimant_type, @monetary_entitlements_settled, @total_rr_assistance_inr,
+        @resettlement_amenities_allocated
+      )
+    `);
+    const amenities = typeof fam.resettlement_amenities_allocated !== 'string'
+      ? JSON.stringify(fam.resettlement_amenities_allocated || [])
+      : fam.resettlement_amenities_allocated;
+    stmt.run({
+      family_id: fam.family_id,
+      project_id: fam.project_id,
+      head_of_family: fam.head_of_family,
+      category: fam.category || 'General',
+      is_displaced: fam.is_displaced ? 1 : 0,
+      claimant_type: fam.claimant_type || 'OWNER',
+      monetary_entitlements_settled: parseInt(fam.monetary_entitlements_settled) || 0,
+      total_rr_assistance_inr: parseFloat(fam.total_rr_assistance_inr) || 0.0,
+      resettlement_amenities_allocated: amenities
+    });
+    return this.getRRFamilyById(fam.family_id);
+  },
+
   // Field Surveys (from Mobile App)
   getAllFieldSurveys() {
     const rows = db.prepare('SELECT * FROM field_surveys').all();
