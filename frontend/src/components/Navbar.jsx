@@ -63,27 +63,6 @@ export default function Navbar({
           </div>
           <span style={{ opacity: 0.3 }}>|</span>
           <span style={{ color: '#93c5fd' }}>{t.deptHindi}</span>
-          <span style={{ opacity: 0.3 }}>|</span>
-          {/* Live Network State Badge */}
-          <span style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 4,
-            fontSize: '0.68rem',
-            padding: '2px 8px',
-            borderRadius: '10px',
-            background: isOnline ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.3)',
-            color: isOnline ? '#86efac' : '#fca5a5',
-            fontWeight: 700
-          }}>
-            {isOnline ? <Wifi size={11} /> : <WifiOff size={11} />}
-            <span>{isOnline ? 'Online (DB Live)' : 'Offline (Field Mode)'}</span>
-            {pendingCount > 0 && (
-              <span style={{ background: '#ef4444', color: '#fff', padding: '0 4px', borderRadius: 6, fontSize: '0.62rem' }}>
-                {pendingCount}
-              </span>
-            )}
-          </span>
         </div>
 
         <div className="top-right-tools">

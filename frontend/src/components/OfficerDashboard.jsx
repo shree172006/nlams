@@ -96,14 +96,9 @@ export default function OfficerDashboard({
       {/* 1. Header & Corridor Selector */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <h2 style={{ fontSize: '1.25rem', color: '#071426', fontWeight: 800, margin: 0 }}>
-              {currentTierMeta.title}
-            </h2>
-            <span className="badge-pill badge-gold" style={{ fontSize: '0.68rem', fontWeight: 700 }}>
-              {langHindi ? 'लाइव डेटा सिंक' : 'Live DB Sync'}
-            </span>
-          </div>
+          <h2 style={{ fontSize: '1.25rem', color: '#071426', fontWeight: 800, margin: 0 }}>
+            {currentTierMeta.title}
+          </h2>
           <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
             {currentTierMeta.subtitle}
           </span>
