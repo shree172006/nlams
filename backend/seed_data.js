@@ -554,6 +554,26 @@ function seedDatabase() {
 function seedOfficers() {
   const officers = [
     {
+      id: "USR-ADMIN-01",
+      name: "Shri Ajay Tirkey, IAS",
+      email: "secretary.dolr@nic.in",
+      role: "ADMIN",
+      designation: "Secretary, Department of Land Resources (DoLR)",
+      district: "New Delhi",
+      agency: "Ministry of Rural Development (Govt of India)",
+      token: "TOKEN-ADMIN-GOI"
+    },
+    {
+      id: "USR-STATE-01",
+      name: "Shri Manoj Kumar, IAS",
+      email: "ps.revenue@up.gov.in",
+      role: "STATE_OFFICER",
+      designation: "Principal Secretary (Revenue) & State Nodal Officer",
+      district: "Lucknow",
+      agency: "Board of Revenue, Govt of Uttar Pradesh",
+      token: "TOKEN-STATE-UP"
+    },
+    {
       id: "USR-COLL-01",
       name: "Shri S. Rajalingam, IAS",
       email: "collector@nlams.gov.in",

@@ -35,7 +35,7 @@ const T = {
     govtDept: "Govt of India (DoLR)",
     actBadge: "RFCTLARR Act 2013",
     actSub: "NH Act 1956 (Sec 3G)",
-    tickerTitle: "SYSTEM CONTROL CONSOLE",
+    tickerTitle: "NATIONAL STATUTORY UPDATES & NOTICES",
     gatewayHub: "Home",
     navDashboard: "1. Dashboard",
     navGis: "2. GIS Map",
@@ -89,7 +89,7 @@ const T = {
     govtDept: "भारत सरकार (DoLR)",
     actBadge: "भूमि अर्जन अधिनियम 2013",
     actSub: "राजमार्ग अधिनियम 1956 (धारा 3G)",
-    tickerTitle: "प्रणाली नियंत्रण पटल",
+    tickerTitle: "राष्ट्रीय सांविधिक अपडेट व सूचनाएं",
     gatewayHub: "होम (Home)",
     navDashboard: "1. अधिकारी डैशबोर्ड",
     navGis: "2. जीआईएस पार्सल नक्शा",
@@ -108,7 +108,6 @@ const T = {
     statParcels: "14-अंकीय भू-आधार जुड़े पार्सल",
     statModules: "एकीकृत मुख्य मॉड्यूल",
     modSectionTitle: "मुख्य कार्यात्मक मॉड्यूल",
-    modSectionDesc: "लाइव सुविधाओं का अनुभव करने हेतु नीचे दिए गए 8 समर्पित मॉड्यूल में से किसी एक का चयन करें।",
     modSectionDesc: "लाइव सुविधाओं का अनुभव करने हेतु नीचे दिए गए 8 समर्पित मॉड्यूल में से किसी एक का चयन करें।",
     openModule: "मॉड्यूल खोलें",
     activeProjectLabel: "सक्रिय कॉरिडोर:",
@@ -137,8 +136,16 @@ const T = {
   }
 };
 
+// URL-to-Tab Routing Helper (used by popstate handler for browser Back/Forward navigation)
+function getInitialTabFromUrl() {
+  const path = window.location.pathname.replace(/^\//, '').toLowerCase();
+  const validTabs = ['home', 'citizen', 'gis', 'calculator', 'dashboard', 'workbench', 'objections', 'larrda', 'rr', 'airisk', 'survey'];
+  if (validTabs.includes(path)) return path;
+  return 'home';
+}
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState(getInitialTabFromUrl);
   const [metrics, setMetrics] = useState(null);
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
@@ -395,7 +402,7 @@ export default function App() {
     showToast("Switched to Free Citizen Public Mode", 'info');
   };
 
-  const requireOfficerRole = (requiredRoles = ['COLLECTOR', 'CALA', 'AGENCY', 'SURVEYOR']) => {
+  const requireOfficerRole = (requiredRoles = ['ADMIN', 'STATE_OFFICER', 'COLLECTOR', 'CALA', 'AGENCY', 'SURVEYOR']) => {
     if (!currentUser || currentUser.role === 'CITIZEN') {
       setShowLoginModal(true);
       showToast("Officer Authorization Required: Please login with an officer profile.", 'error');
@@ -409,7 +416,7 @@ export default function App() {
   };
 
   const handleSelectTab = (tabId) => {
-    const officerExclusiveTabs = ['dashboard', 'workbench', 'objections', 'larrda', 'airisk'];
+    const officerExclusiveTabs = ['dashboard', 'workbench', 'objections', 'larrda', 'airisk', 'survey'];
     if (officerExclusiveTabs.includes(tabId) && (!currentUser || currentUser.role === 'CITIZEN')) {
       setShowLoginModal(true);
       showToast("Officer Login Required: Please authenticate to access official administrative modules.", 'error');
@@ -996,7 +1003,7 @@ export default function App() {
       icon: <TrendingUp size={20} color="#0284c7" />,
       iconBg: '#e0f2fe',
       title: langHindi ? '1. अधिकारी डैशबोर्ड' : '1. Executive Dashboard',
-      statutory: 'Executive Command Console',
+      statutory: 'Executive Administrative Dashboard',
       desc: langHindi 
         ? 'अधिसूचित क्षेत्र, भौतिक कब्जा, PFMS DBT भुगतान एवं उच्च जोखिम वाली परियोजनाओं की निगरानी।'
         : 'Pan-India corridor tracker monitoring acreage, possession %, DBT disbursals, and bottleneck flags.',
@@ -2188,7 +2195,7 @@ export default function App() {
                     <th>{langHindi ? 'पूर्व भू-स्वामी' : 'Previous Landowner'}</th>
                     <th>{langHindi ? 'अधिग्रहण एजेंसी नाम' : 'Vesting Agency Title'}</th>
                     <th>{langHindi ? 'नामांतरण आदेश संख्या' : 'Mutation Order Ref'}</th>
-                    <th>{langHindi ? 'राज्य API स्थिति' : 'State API Status'}</th>
+                    <th>{langHindi ? 'राज्य RoR स्थिति' : 'Registry Sync Status'}</th>
                   </tr>
                 </thead>
                 <tbody>

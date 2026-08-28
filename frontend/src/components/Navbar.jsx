@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Home, TrendingUp, Layers, Building2, IndianRupee, 
   Search, Scale, Users, Zap, Globe, Shield, UserCheck, LogIn, LogOut,
-  Smartphone, Wifi, WifiOff, Download
+  Smartphone, Download
 } from 'lucide-react';
 import { useNetworkSync } from '../utils/offlineSurveyStore';
 

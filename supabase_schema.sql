@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS parcels (
     village TEXT NOT NULL,
     tehsil TEXT NOT NULL,
     district TEXT NOT NULL,
+    state TEXT NOT NULL DEFAULT 'Uttar Pradesh',
     acquired_area_sqm NUMERIC NOT NULL,
     circle_rate_per_sqm NUMERIC NOT NULL,
     market_value_total NUMERIC NOT NULL,
@@ -116,7 +117,7 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Enable Row Level Security (RLS) & Public Read Policy
+-- Row Level Security (RLS) Configuration with Full Read/Write Support
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE parcels ENABLE ROW LEVEL SECURITY;
 ALTER TABLE objections ENABLE ROW LEVEL SECURITY;
@@ -125,10 +126,26 @@ ALTER TABLE larrda_references ENABLE ROW LEVEL SECURITY;
 ALTER TABLE field_surveys ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Public Read Access projects" ON projects FOR SELECT USING (true);
-CREATE POLICY "Public Read Access parcels" ON parcels FOR SELECT USING (true);
-CREATE POLICY "Public Read Access objections" ON objections FOR SELECT USING (true);
-CREATE POLICY "Public Read Access rr_families" ON rr_families FOR SELECT USING (true);
-CREATE POLICY "Public Read Access larrda_references" ON larrda_references FOR SELECT USING (true);
-CREATE POLICY "Public Read Access field_surveys" ON field_surveys FOR ALL USING (true);
-CREATE POLICY "Public Read Access users" ON users FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public Read Access projects" ON projects;
+DROP POLICY IF EXISTS "Public Read Access parcels" ON parcels;
+DROP POLICY IF EXISTS "Public Read Access objections" ON objections;
+DROP POLICY IF EXISTS "Public Read Access rr_families" ON rr_families;
+DROP POLICY IF EXISTS "Public Read Access larrda_references" ON larrda_references;
+DROP POLICY IF EXISTS "Public Read Access field_surveys" ON field_surveys;
+DROP POLICY IF EXISTS "Public Read Access users" ON users;
+
+DROP POLICY IF EXISTS "Full Access projects" ON projects;
+DROP POLICY IF EXISTS "Full Access parcels" ON parcels;
+DROP POLICY IF EXISTS "Full Access objections" ON objections;
+DROP POLICY IF EXISTS "Full Access rr_families" ON rr_families;
+DROP POLICY IF EXISTS "Full Access larrda_references" ON larrda_references;
+DROP POLICY IF EXISTS "Full Access field_surveys" ON field_surveys;
+DROP POLICY IF EXISTS "Full Access users" ON users;
+
+CREATE POLICY "Full Access projects" ON projects FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Full Access parcels" ON parcels FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Full Access objections" ON objections FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Full Access rr_families" ON rr_families FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Full Access larrda_references" ON larrda_references FOR ALL USING (true);
+CREATE POLICY "Full Access field_surveys" ON field_surveys FOR ALL USING (true);
+CREATE POLICY "Full Access users" ON users FOR ALL USING (true);

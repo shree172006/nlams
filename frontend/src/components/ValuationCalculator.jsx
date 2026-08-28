@@ -283,10 +283,6 @@ export default function ValuationCalculator({
                     <span style={{ color: '#64748b' }}>{langHindi ? 'समायोजित भूमि मूल्य:' : 'Adjusted Land Value:'}</span>
                     <strong>₹{calcResult.adjusted_market_value.toLocaleString()}</strong>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: '1px solid #f1f5f9' }}>
-                    <span style={{ color: '#64748b' }}>{langHindi ? 'संलग्न परिसंपत्तियां (धारा 29):' : 'Attached Assets (Sec 29):'}</span>
-                    <strong>+ ₹{calcResult.assets_valuation_total.toLocaleString()}</strong>
-                  </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 8px', borderBottom: '1px solid #f1f5f9', background: '#f8fafc', borderRadius: 4 }}>
                     <span style={{ fontWeight: 700 }}>{langHindi ? 'आधारभूत मुआवजा (C_base):' : 'Base Compensation (C_base):'}</span>
                     <strong style={{ color: '#071426' }}>₹{calcResult.base_compensation.toLocaleString()}</strong>

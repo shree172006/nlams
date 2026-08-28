@@ -1040,13 +1040,42 @@ code, pre, .font-mono {
 }
 
 /* ================= COMPREHENSIVE RESPONSIVE DESIGN (DESKTOP & MOBILE) ================= */
+.survey-form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(0, 1.2fr);
+  gap: 24px;
+}
+
+.responsive-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.table-responsive-wrapper,
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 12px;
+  border-radius: var(--radius-sm);
+}
+
 @media (max-width: 1024px) {
+  .survey-form-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .responsive-two-col {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
   .footer-top-grid {
     grid-template-columns: 1fr 1fr;
     gap: 24px;
   }
   .nlams-app-body {
-    padding: 16px 20px 32px;
+    padding: 14px 16px 28px;
   }
 }
 
@@ -1057,11 +1086,22 @@ code, pre, .font-mono {
     padding: 6px 12px;
     align-items: flex-start;
   }
+  .top-right-tools {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
   .header-container {
     flex-direction: column;
     gap: 12px;
     align-items: flex-start;
     padding: 10px 14px;
+  }
+  .header-trust-badges {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
   }
   .main-nav-strip {
     overflow-x: auto;
@@ -1071,14 +1111,18 @@ code, pre, .font-mono {
   .nav-inner-box {
     display: flex;
     gap: 4px;
-    padding: 4px 10px;
+    padding: 4px 8px;
     min-width: max-content;
   }
+  .nav-link-btn {
+    padding: 8px 12px !important;
+    font-size: 0.76rem !important;
+  }
   .home-hero-card {
-    padding: 18px 20px;
+    padding: 16px 18px;
   }
   .hero-heading {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
   }
   .hero-stats-deck {
     grid-template-columns: 1fr 1fr;
@@ -1094,15 +1138,20 @@ code, pre, .font-mono {
     text-align: center;
   }
   .modal-dialog-card {
-    padding: 16px;
-    max-height: 95vh;
+    padding: 14px;
+    max-height: 94vh;
     border-radius: var(--radius-md);
+    width: 95% !important;
   }
   .leaflet-container {
-    height: 380px;
+    height: 350px !important;
   }
   .kpi-row-grid {
     grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+  .home-portals-grid {
+    grid-template-columns: 1fr !important;
   }
 }
 
@@ -1114,9 +1163,22 @@ code, pre, .font-mono {
     grid-template-columns: 1fr !important;
   }
   .brand-hierarchy .main-name {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
   }
   .brand-hierarchy .dept-name {
     font-size: 0.65rem;
+  }
+  .nlams-app-body {
+    padding: 10px 10px 24px;
+  }
+  .section-container {
+    padding: 0;
+  }
+  .gov-card {
+    padding: 12px;
+  }
+  .btn-action {
+    padding: 8px 12px;
+    font-size: 0.78rem;
   }
 }

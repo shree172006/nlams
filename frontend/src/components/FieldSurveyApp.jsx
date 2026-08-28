@@ -454,7 +454,7 @@ export default function FieldSurveyApp({
 
       {/* 3. Sub Tab Content */}
       {activeSubTab === 'new_survey' && (
-        <form onSubmit={handleSaveSurvey} style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.8fr) minmax(0, 1.2fr)', gap: 24 }}>
+        <form onSubmit={handleSaveSurvey} className="survey-form-grid">
           {/* Left Column: Form Fields */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             {/* Card 1: Project Corridor & Land Parcel Metadata */}

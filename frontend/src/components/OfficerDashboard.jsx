@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   Building2, MapPin, IndianRupee, Lock, ShieldCheck, ArrowRight, Zap, 
   Users, CheckCircle2, AlertTriangle, Clock, RefreshCw, FileText, Check, ChevronRight,
-  TrendingUp, BarChart3, Database, Smartphone, Shield, Layers, Scale
+  TrendingUp, BarChart3, Smartphone, Shield, Layers, Scale
 } from 'lucide-react';
 
 export default function OfficerDashboard({
@@ -67,14 +67,14 @@ export default function OfficerDashboard({
       bg: '#ecfdf5'
     },
     district: {
-      title: langHindi ? 'जिला सक्षम प्राधिकारी (CALA / DM) कार्यपालक डैशबोर्ड' : 'District Authority (CALA / Collector) Executive Console',
+      title: langHindi ? 'जिला सक्षम प्राधिकारी (CALA / DM) कार्यपालक डैशबोर्ड' : 'District Authority (CALA / Collector) Executive Dashboard',
       subtitle: langHindi ? '14-अंकीय भू-आधार सत्यापन, धारा 15 आपत्तियां व पंचाट अवार्ड निष्पादन' : 'Cadastral Verification, Section 15 Objections, Hearing Dockets & Form-7 Award Execution',
       badge: langHindi ? 'जिला स्तर (CALA / DM)' : 'Tier 3: District Authority (CALA)',
       color: '#c2410c',
       bg: '#fff7ed'
     },
     pia: {
-      title: langHindi ? 'परियोजना क्रियान्वयन एजेंसी (PIA / NHAI) डैशबोर्ड' : 'Project Implementing Agency (PIA / NHAI) Console',
+      title: langHindi ? 'परियोजना क्रियान्वयन एजेंसी (PIA / NHAI) डैशबोर्ड' : 'Project Implementing Agency (PIA / NHAI) Dashboard',
       subtitle: langHindi ? 'रेखीय गलियारा भूमि आवश्यकता, कब्जा प्रमाणपत्र एवं निर्माण हस्तांतरण' : 'Linear Corridor Land Requisition, Possession Handover & Right of Way Clearance',
       badge: langHindi ? 'एजेंसी स्तर (NHAI / MSRDC)' : 'Tier 4: Project Implementing Agency (PIA)',
       color: '#831843',
@@ -151,6 +151,47 @@ export default function OfficerDashboard({
           <span>{langHindi ? 'RBAC विशेषाधिकार सुरक्षित (पृथक प्रशासनिक स्तर)' : 'Strict RBAC Tier Isolation Enforced (DPDP Compliant)'}</span>
         </div>
       </div>
+
+      {/* ================= OFFICER QUICK GUIDE & NAVIGATION HELP ================= */}
+      <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
+        <h3 style={{ fontSize: '1rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+          <FileText size={18} color="#2563eb" />
+          {langHindi ? 'अधिकारी त्वरित मार्गदर्शिका (Officer Quick Guide)' : 'Officer Quick Guide & Navigation Help'}
+        </h3>
+        <p style={{ fontSize: '0.82rem', color: '#475569', marginBottom: '16px' }}>
+          {langHindi 
+            ? 'सिस्टम की विभिन्न सुविधाओं को समझने के लिए इस मार्गदर्शिका का उपयोग करें। नीचे दी गई तालिका से किसी भी कॉरिडोर का चयन कर "ओपन वर्कफ़्लो इंजन" पर क्लिक करें।' 
+            : 'Welcome to your administrative workspace. Use the quick reference below to navigate the system modules. To manage a project, select it from the Corridor Table at the bottom and click "Open Workflow Engine".'
+          }
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+          <div style={{ background: '#fff', padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
+            <div style={{ fontWeight: 700, fontSize: '0.85rem', color: '#1e3a8a', marginBottom: '4px' }}>1. Dashboard (Home)</div>
+            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>High-level KPI monitoring, State benchmarking, and Active Corridor tracking.</div>
+          </div>
+          <div style={{ background: '#fff', padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
+            <div style={{ fontWeight: 700, fontSize: '0.85rem', color: '#1e3a8a', marginBottom: '4px' }}>2. Statutory Workflow</div>
+            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Manage project stages (Sec 11 to Sec 38), generate e-Gazettes, and trigger PFMS DBT.</div>
+          </div>
+          <div style={{ background: '#fff', padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
+            <div style={{ fontWeight: 700, fontSize: '0.85rem', color: '#1e3a8a', marginBottom: '4px' }}>3. GIS Parcel Map</div>
+            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Visualize land parcels, check Bhu-Aadhaar encumbrance locks, and print award slips.</div>
+          </div>
+          <div style={{ background: '#fff', padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
+            <div style={{ fontWeight: 700, fontSize: '0.85rem', color: '#1e3a8a', marginBottom: '4px' }}>4. Sec 15 Objections</div>
+            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Manage citizen disputes, schedule quasi-judicial hearings, and record disposal orders.</div>
+          </div>
+          <div style={{ background: '#fff', padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
+            <div style={{ fontWeight: 700, fontSize: '0.85rem', color: '#1e3a8a', marginBottom: '4px' }}>5. LARRDA Tribunal</div>
+            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Track Section 64 reference dockets, authority rulings, and High Court appeals.</div>
+          </div>
+          <div style={{ background: '#fff', padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
+            <div style={{ fontWeight: 700, fontSize: '0.85rem', color: '#1e3a8a', marginBottom: '4px' }}>6. R&R Tracking</div>
+            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Track and fulfill Schedule II welfare entitlements for displaced & affected families.</div>
+          </div>
+        </div>
+      </div>
+
 
       {/* ================= TIER 1: CENTRAL MINISTRY LEVEL DASHBOARD ================= */}
       {hierarchyTier === 'central' && (
@@ -289,7 +330,7 @@ export default function OfficerDashboard({
                 {langHindi ? 'महाराष्ट्र राज्य भूमि अधिग्रहण निगरानी' : 'State Land Acquisition Directorate (Maharashtra & States)'}
               </h3>
               <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                {langHindi ? 'राज्य स्तरीय नोडल अधिकारी कंसोल (जिला कलेक्टरों व CALA पीठों का पर्यवेक्षण)' : 'State Nodal Officer Console • Oversight across District Collectors & CALAs'}
+                {langHindi ? 'राज्य स्तरीय नोडल अधिकारी डैशबोर्ड (जिला कलेक्टरों व CALA पीठों का पर्यवेक्षण)' : 'State Nodal Officer Directorate • Oversight across District Collectors & CALAs'}
               </span>
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
@@ -366,7 +407,7 @@ export default function OfficerDashboard({
                     </td>
                     <td><strong style={{ color: '#059669' }}>{d.comp}</strong></td>
                     <td>
-                      <button className="btn-action btn-outline" style={{ fontSize: '0.7rem', padding: '3px 8px' }} onClick={() => setHierarchyTier('district')}>
+                      <button className="btn-action btn-outline" style={{ fontSize: '0.7rem', padding: '3px 8px' }} onClick={() => alert('Access Restricted: Detailed district oversight is natively managed by CALA and Collector nodes in Tier 3.')}>
                         <span>{langHindi ? 'जिला विवरण' : 'Inspect District'}</span> <ChevronRight size={12} />
                       </button>
                     </td>
@@ -585,38 +626,8 @@ export default function OfficerDashboard({
           </div>
         </div>
       )}
-
-      {/* ================= TIER 6: SYSTEM ADMIN CONSOLE ================= */}
-      {hierarchyTier === 'admin' && (
-        <div className="section-panel-card">
-          <div className="panel-card-head">
-            <h3 className="panel-card-title">
-              <Database size={16} color="#071426" />
-              <span>{langHindi ? 'सिस्टम व्यवस्थापक एवं सुरक्षा लॉग्स' : 'System Administration, Roles & Security Audit Logs'}</span>
-            </h3>
-            <span className="badge-pill badge-green">Zero Trust RBAC</span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
-            <div style={{ background: '#f8fafc', padding: 12, borderRadius: 6, border: '1px solid #e2e8f0' }}>
-              <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>ACTIVE USER ROLES</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#071426', marginTop: 4 }}>4 Roles Enforced</div>
-              <div style={{ fontSize: '0.68rem', color: '#059669', marginTop: 2 }}>Collector, CALA, Agency, Surveyor</div>
-            </div>
-            <div style={{ background: '#f8fafc', padding: 12, borderRadius: 6, border: '1px solid #e2e8f0' }}>
-              <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>DATABASE HEALTH</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#059669', marginTop: 4 }}>100% ACID Synced</div>
-              <div style={{ fontSize: '0.68rem', color: '#64748b', marginTop: 2 }}>7 SQL Tables • Supabase Ready</div>
-            </div>
-            <div style={{ background: '#f8fafc', padding: 12, borderRadius: 6, border: '1px solid #e2e8f0' }}>
-              <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700 }}>SECURITY AUDIT TRAIL</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0284c7', marginTop: 4 }}>1,842 Events</div>
-              <div style={{ fontSize: '0.68rem', color: '#64748b', marginTop: 2 }}>DSC Signatures & IP Stamps Verified</div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Corridor Table & AI Delay Radar */}
+      {/* Corridor Table & AI Delay Radar — visible only for management tiers */}
+      {(hierarchyTier === 'central' || hierarchyTier === 'state' || hierarchyTier === 'district') && (
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16, marginTop: 18 }}>
         <div className="section-panel-card">
           <div className="panel-card-head">
@@ -667,13 +678,13 @@ export default function OfficerDashboard({
                     <td>
                       <button 
                         className="btn-action btn-outline" 
-                        style={{ padding: '4px 8px', fontSize: '0.7rem' }}
+                        style={{ padding: '6px 10px', fontSize: '0.75rem', background: '#f8fafc' }}
                         onClick={() => {
                           setSelectedProjectId(p.id);
                           setActiveTab('workbench');
                         }}
                       >
-                        <span>{langHindi ? 'वर्कफ़्लो' : 'Workflow'}</span> <ArrowRight size={10} />
+                        <span>{langHindi ? 'वर्कफ़्लो खोलें' : 'Open Workflow Engine'}</span> <ArrowRight size={12} />
                       </button>
                     </td>
                   </tr>
@@ -730,6 +741,7 @@ export default function OfficerDashboard({
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }
