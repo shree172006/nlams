@@ -9,7 +9,7 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 require('dotenv').config();
 
-const uri = process.env.MONGODB_URI || "mongodb+srv://guptakundan63519_db_user:ryRs1I3rH6zy92XL@cluster0.elqd4oq.mongodb.net/nlams?retryWrites=true&w=majority&appName=Cluster0";
+const uri = process.env.MONGODB_URI || "mongodb+srv://guptakundan63519_db_user:A5YX9ujERdyFgn4U@cluster0.gzklplk.mongodb.net/nlams?retryWrites=true&w=majority&appName=Cluster0";
 
 let client = null;
 let db = null;
