@@ -277,7 +277,12 @@ export default function FieldSurveyApp({
       showToast('Device is offline. Please reconnect to internet to sync.', 'error');
       return;
     }
-    showToast('Initiating background sync to national registry...', 'info');
+    if (pendingCount === 0) {
+      showToast('✓ All records are fully synchronized! There are 0 offline surveys in queue.', 'success');
+      loadLists();
+      return;
+    }
+    showToast(`Initiating cloud synchronization for ${pendingCount} offline survey records...`, 'info');
     const result = await triggerSync();
     if (result?.success) {
       showToast(result.message || 'Synchronization complete!', 'success');
@@ -362,9 +367,9 @@ export default function FieldSurveyApp({
           <button
             className="btn-action"
             onClick={handleManualSyncNow}
-            disabled={isSyncing || pendingCount === 0}
+            disabled={isSyncing}
             style={{
-              background: pendingCount > 0 ? 'var(--nlams-saffron)' : '#334155',
+              background: pendingCount > 0 ? 'var(--nlams-saffron)' : 'rgba(255,255,255,0.12)',
               color: '#ffffff',
               fontWeight: 800,
               padding: '10px 18px',
@@ -373,13 +378,21 @@ export default function FieldSurveyApp({
               alignItems: 'center',
               gap: 8,
               borderRadius: 'var(--radius-md)',
-              border: 'none',
-              cursor: pendingCount > 0 ? 'pointer' : 'not-allowed',
-              boxShadow: pendingCount > 0 ? '0 4px 12px rgba(245,158,11,0.4)' : 'none'
+              border: `1px solid ${pendingCount > 0 ? 'var(--nlams-saffron)' : 'rgba(255,255,255,0.2)'}`,
+              cursor: 'pointer',
+              boxShadow: pendingCount > 0 ? '0 4px 12px rgba(245,158,11,0.4)' : 'none',
+              transition: 'all 0.2s ease'
             }}
+            title={pendingCount > 0 ? `Sync ${pendingCount} offline surveys now` : 'All surveys are synced. Click to re-check connection.'}
           >
             <RefreshCw size={16} className={isSyncing ? 'spin-anim' : ''} />
-            <span>{isSyncing ? 'Syncing...' : (langHindi ? 'डेटाबेस सिंक करें' : 'Sync to Database')}</span>
+            <span>
+              {isSyncing 
+                ? 'Syncing...' 
+                : pendingCount > 0 
+                  ? (langHindi ? `⚡ ${pendingCount} सर्वे सिंक करें` : `⚡ Sync ${pendingCount} Surveys Now`)
+                  : (langHindi ? '✓ डेटाबेस सिंक है (रीचेक)' : '✓ Check Cloud Sync')}
+            </span>
           </button>
         </div>
       </div>
