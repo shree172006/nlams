@@ -290,6 +290,24 @@ export default function App() {
   }, []);
 
   const DEMO_OFFICERS = {
+    ADMIN: {
+      id: "usr_admin_01",
+      name: "Shri Ajay Tirkey, IAS",
+      email: "secretary.dolr@nic.in",
+      role: "ADMIN",
+      designation: "Secretary, Department of Land Resources (DoLR)",
+      district: "New Delhi",
+      agency: "Ministry of Rural Development (Govt of India)"
+    },
+    STATE_OFFICER: {
+      id: "usr_state_01",
+      name: "Shri Manoj Kumar, IAS",
+      email: "ps.revenue@up.gov.in",
+      role: "STATE_OFFICER",
+      designation: "Principal Secretary (Revenue) & State Nodal Officer",
+      district: "Lucknow",
+      agency: "Board of Revenue, Govt of Uttar Pradesh"
+    },
     COLLECTOR: {
       id: "usr_coll_01",
       name: "Shri S. Rajalingam, IAS",
@@ -297,7 +315,7 @@ export default function App() {
       role: "COLLECTOR",
       designation: "District Magistrate & Collector, Varanasi",
       district: "Varanasi",
-      agency: "Revenue Administration"
+      agency: "District Revenue Administration"
     },
     CALA: {
       id: "usr_cala_01",
@@ -308,23 +326,23 @@ export default function App() {
       district: "Varanasi",
       agency: "CALA Revenue Bench"
     },
-    SURVEYOR: {
-      id: "usr_surv_01",
-      name: "Shri S. K. Sharma",
-      email: "sk.sharma.survey@gov.in",
-      role: "SURVEYOR",
-      designation: "Assistant Director / Field Surveyor",
-      district: "Varanasi",
-      agency: "Directorate of Land Records & Survey"
-    },
     AGENCY: {
       id: "usr_nhai_01",
       name: "Er. Ramesh Chandra",
       email: "ramesh.chandra@nhai.org",
       role: "AGENCY",
-      designation: "Project Director & GM (Tech), NHAI PIU Varanasi",
+      designation: "Project Director & GM (Tech), NHAI PIU",
       district: "Varanasi",
       agency: "National Highways Authority of India (NHAI)"
+    },
+    SURVEYOR: {
+      id: "usr_surv_01",
+      name: "Shri S. K. Sharma",
+      email: "sk.sharma.survey@gov.in",
+      role: "SURVEYOR",
+      designation: "Cadastral Revenue Inspector & Drone Surveyor",
+      district: "Varanasi",
+      agency: "Directorate of Land Records & Survey"
     }
   };
 
@@ -2339,30 +2357,33 @@ export default function App() {
       {/* ================= MODAL: OFFICER AUTHENTICATION & DEMO ROLES ================= */}
       {showLoginModal && (
         <div className="modal-overlay" onClick={() => setShowLoginModal(false)}>
-          <div className="modal-dialog-card" style={{ maxWidth: 520 }} onClick={(e) => e.stopPropagation()}>
+          <div className="modal-dialog-card" style={{ maxWidth: 580 }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-main)', paddingBottom: 10, marginBottom: 14 }}>
               <div>
-                <h3 style={{ fontSize: '1.05rem', color: '#071426', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <h3 style={{ fontSize: '1.05rem', color: '#071426', display: 'flex', alignItems: 'center', gap: 6, margin: 0 }}>
                   <Shield size={16} color="#2563eb" />
-                  <span>{langHindi ? 'अधिकारी पोर्टल लॉगिन (RBAC)' : 'Officer Portal Login (RBAC)'}</span>
+                  <span>{langHindi ? 'राष्ट्रीय भूमि अर्जन पोर्टल - सुरक्षित लॉगिन' : 'National Land Acquisition Portal - Secure Login'}</span>
                 </h3>
-                <span style={{ fontSize: '0.72rem', color: '#64748b' }}>{langHindi ? 'प्रशासनिक भूमिका चुनें' : 'Select an administrative role or enter officer credentials'}</span>
+                <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                  {langHindi ? 'प्रशासनिक स्तर व अधिकृत भूमिका का चयन करें (RBAC)' : 'Select your administrative tier to access your dedicated workspace'}
+                </span>
               </div>
               <button className="btn-action btn-outline" style={{ padding: '2px 7px' }} onClick={() => setShowLoginModal(false)}>✕</button>
             </div>
 
             <p style={{ fontSize: '0.75rem', color: '#475569', marginBottom: 14 }}>
               {langHindi 
-                ? 'मूल्यांकन एवं कार्य निष्पादन हेतु नीचे दिए गए पूर्व-कॉन्फ़िगर आधिकारिक पदों में से किसी एक पर क्लिक करें:'
-                : 'Select a pre-configured official role below for instant 1-click evaluation access, or enter your official credentials.'}
+                ? 'प्रत्येक प्रशासनिक स्तर का अपना पृथक कार्यक्षेत्र है। अपने अधिकृत स्तर पर क्लिक करके लॉगिन करें:'
+                : 'Each stakeholder level is strictly isolated by role. Click below to enter your authorized government tier workspace:'}
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
               {[
-                { role: 'COLLECTOR', label: langHindi ? 'जिला कलेक्टर / DM' : 'District Collector', name: 'Shri S. Rajalingam, IAS', color: '#1e3a8a', bg: '#eff6ff' },
-                { role: 'CALA', label: langHindi ? 'सक्षम प्राधिकारी (CALA / ADM)' : 'CALA / ADM Bench', name: 'Dr. Alok Verma, PCS', color: '#78350f', bg: '#fffbeb' },
-                { role: 'SURVEYOR', label: langHindi ? 'राजस्व / फील्ड सर्वेक्षक' : 'Field Surveyor', name: 'Shri S. K. Sharma', color: '#065f46', bg: '#ecfdf5' },
-                { role: 'AGENCY', label: langHindi ? 'NHAI प्रोजेक्ट जीएम' : 'NHAI Project GM', name: 'Er. Ramesh Chandra', color: '#831843', bg: '#fdf2f8' }
+                { role: 'ADMIN', tier: 'Tier 1: Central Ministry', label: langHindi ? 'केंद्रीय मंत्रालय (DoLR / MoRD)' : 'Central Ministry (National Apex)', name: 'Shri Ajay Tirkey, IAS • Secretary, Department of Land Resources', color: '#1e3a8a', bg: '#eff6ff' },
+                { role: 'STATE_OFFICER', tier: 'Tier 2: State Govt', label: langHindi ? 'राज्य सरकार (Board of Revenue)' : 'State Government (Revenue Nodal)', name: 'Shri Manoj Kumar, IAS • Principal Secretary (Revenue), UP', color: '#065f46', bg: '#ecfdf5' },
+                { role: 'COLLECTOR', tier: 'Tier 3: District CALA', label: langHindi ? 'जिला प्रशासन (CALA / DM Collector)' : 'District Authority (CALA / DM Bench)', name: 'Shri S. Rajalingam, IAS • District Magistrate & Collector', color: '#c2410c', bg: '#fff7ed' },
+                { role: 'AGENCY', tier: 'Tier 4: Project Agency', label: langHindi ? 'परियोजना एजेंसी (NHAI / PIA)' : 'Project Implementing Agency (NHAI / PIA)', name: 'Er. Ramesh Chandra • Project Director & GM (Tech)', color: '#831843', bg: '#fdf2f8' },
+                { role: 'SURVEYOR', tier: 'Tier 5: Field Cadastral', label: langHindi ? 'फील्ड राजस्व सर्वेक्षक (Mobile PWA)' : 'Field Surveyor (Offline PWA & Cadastral)', name: 'Shri S. K. Sharma • Cadastral Revenue Inspector', color: '#047857', bg: '#f0fdf4' }
               ].map(prof => (
                 <button
                   key={prof.role}
@@ -2371,16 +2392,23 @@ export default function App() {
                     background: prof.bg, 
                     border: `1px solid ${prof.color}40`, 
                     color: prof.color, 
-                    padding: '10px 12px', 
+                    padding: '10px 14px', 
                     textAlign: 'left',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    gap: 2
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    display: 'flex',
+                    borderRadius: 6
                   }}
                   onClick={() => handleOfficerLogin(prof.role)}
                 >
-                  <strong style={{ fontSize: '0.8rem' }}>{prof.label}</strong>
-                  <span style={{ fontSize: '0.68rem', opacity: 0.85 }}>{prof.name}</span>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                      <span className="badge-pill" style={{ background: prof.color, color: '#fff', fontSize: '0.62rem', padding: '1px 6px' }}>{prof.tier}</span>
+                      <strong style={{ fontSize: '0.82rem', color: '#071426' }}>{prof.label}</strong>
+                    </div>
+                    <div style={{ fontSize: '0.7rem', color: '#64748b' }}>{prof.name}</div>
+                  </div>
+                  <ChevronRight size={16} color={prof.color} />
                 </button>
               ))}
             </div>
@@ -2397,7 +2425,7 @@ export default function App() {
               >
                 🇮🇳 {langHindi ? 'नागरिक मोड में वापस जाएं' : 'Continue in Free Citizen Mode'}
               </button>
-              <span style={{ fontSize: '0.68rem', color: '#94a3b8' }}>{langHindi ? 'DPDP अधिनियम 2023 अनुपालन' : 'DPDP Act 2023 Compliant'}</span>
+              <span style={{ fontSize: '0.68rem', color: '#94a3b8' }}>{langHindi ? 'DPDP अधिनियम 2023 अनुपालन' : 'DPDP Act 2023 Strict RBAC'}</span>
             </div>
           </div>
         </div>

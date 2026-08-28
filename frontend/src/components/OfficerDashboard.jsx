@@ -17,12 +17,13 @@ export default function OfficerDashboard({
   langHindi,
   currentUser
 }) {
-  // Multitier hierarchy view state: 'central' | 'state' | 'district' | 'pia' | 'field' | 'admin'
-  const [hierarchyTier, setHierarchyTier] = useState(
-    currentUser?.role === 'COLLECTOR' || currentUser?.role === 'CALA' ? 'district' :
-    currentUser?.role === 'AGENCY' ? 'pia' :
-    currentUser?.role === 'SURVEYOR' ? 'field' : 'central'
-  );
+  // Strict RBAC Tier Binding: User cannot switch tiers across governments
+  const hierarchyTier = 
+    (currentUser?.role === 'STATE_OFFICER' || currentUser?.role === 'STATE_GOVT') ? 'state' :
+    (currentUser?.role === 'COLLECTOR' || currentUser?.role === 'CALA') ? 'district' :
+    (currentUser?.role === 'AGENCY') ? 'pia' :
+    (currentUser?.role === 'SURVEYOR') ? 'field' :
+    'central';
 
   const [selectedState, setSelectedState] = useState('All');
 
@@ -49,21 +50,62 @@ export default function OfficerDashboard({
     { id: 'TSK-104', title: 'Project NH-19 Section 15 Hearing Docket scheduled for today', type: 'HEARING', tag: 'Bench Today', color: '#8b5cf6' }
   ];
 
+  // Tier Labels and Metadata
+  const TIER_META = {
+    central: {
+      title: langHindi ? 'केंद्रीय मंत्रालय शीर्ष कमान डैशबोर्ड' : 'Central Ministry Apex Dashboard',
+      subtitle: langHindi ? 'राष्ट्रीय राजमार्ग, रेलवे एवं सागरमाला अवसंरचना अधिग्रहण निगरानी' : 'National Infrastructure Corridors, Inter-State Benchmarking & National Monitoring',
+      badge: langHindi ? 'केंद्रीय स्तर (DoLR / MoRD)' : 'Tier 1: Central Ministry (National)',
+      color: '#1e3a8a',
+      bg: '#eff6ff'
+    },
+    state: {
+      title: langHindi ? 'राज्य सरकार भू-राजस्व नोडल डैशबोर्ड' : 'State Government Revenue Nodal Dashboard',
+      subtitle: langHindi ? 'राज्य अधिकार अभिलेख (RoR), जिला समन्वय एवं दाखिल-खारिज निगरानी' : 'State RoR Integration, District CALA Review, Compensation & Mutation Tracking',
+      badge: langHindi ? 'राज्य स्तर (Board of Revenue)' : 'Tier 2: State Government Nodal',
+      color: '#065f46',
+      bg: '#ecfdf5'
+    },
+    district: {
+      title: langHindi ? 'जिला सक्षम प्राधिकारी (CALA / DM) कार्यपालक डैशबोर्ड' : 'District Authority (CALA / Collector) Executive Console',
+      subtitle: langHindi ? '14-अंकीय भू-आधार सत्यापन, धारा 15 आपत्तियां व पंचाट अवार्ड निष्पादन' : 'Cadastral Verification, Section 15 Objections, Hearing Dockets & Form-7 Award Execution',
+      badge: langHindi ? 'जिला स्तर (CALA / DM)' : 'Tier 3: District Authority (CALA)',
+      color: '#c2410c',
+      bg: '#fff7ed'
+    },
+    pia: {
+      title: langHindi ? 'परियोजना क्रियान्वयन एजेंसी (PIA / NHAI) डैशबोर्ड' : 'Project Implementing Agency (PIA / NHAI) Console',
+      subtitle: langHindi ? 'रेखीय गलियारा भूमि आवश्यकता, कब्जा प्रमाणपत्र एवं निर्माण हस्तांतरण' : 'Linear Corridor Land Requisition, Possession Handover & Right of Way Clearance',
+      badge: langHindi ? 'एजेंसी स्तर (NHAI / MSRDC)' : 'Tier 4: Project Implementing Agency (PIA)',
+      color: '#831843',
+      bg: '#fdf2f8'
+    },
+    field: {
+      title: langHindi ? 'फील्ड राजस्व निरीक्षक एवं ड्रोन सर्वेक्षक वर्कस्पेस' : 'Field Surveyor & Cadastral Inspection Workspace',
+      subtitle: langHindi ? 'धरातलीय सत्यापन, मोबाइल ऑफलाइन सिंक व भू-टैग फोटोग्राफी' : 'Ground Verification, Mobile Offline Sync & Geo-Tagged Cadastral Photography',
+      badge: langHindi ? 'फील्ड स्तर (Surveyor)' : 'Tier 5: Field Cadastral Surveyor',
+      color: '#047857',
+      bg: '#f0fdf4'
+    }
+  };
+
+  const currentTierMeta = TIER_META[hierarchyTier] || TIER_META.central;
+
   return (
     <div>
-      {/* 1. Header & Hierarchy Selector */}
+      {/* 1. Header & Corridor Selector */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <h2 style={{ fontSize: '1.25rem', color: '#071426', fontWeight: 800, margin: 0 }}>
-              {langHindi ? 'बहु-स्तरीय हितधारक डैशबोर्ड' : 'Multi-Tier Stakeholder Dashboard'}
+              {currentTierMeta.title}
             </h2>
             <span className="badge-pill badge-gold" style={{ fontSize: '0.68rem', fontWeight: 700 }}>
               {langHindi ? 'लाइव डेटा सिंक' : 'Live DB Sync'}
             </span>
           </div>
           <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
-            {langHindi ? 'केंद्रीय मंत्रालय ➔ राज्य सरकार ➔ जिला प्रशासन (CALA) ➔ कार्यान्वयन एजेंसी ➔ फील्ड सर्वेक्षक' : 'Central Ministry ➔ State Govt ➔ District CALA ➔ Project Agency ➔ Field Surveyor'}
+            {currentTierMeta.subtitle}
           </span>
         </div>
 
@@ -81,54 +123,38 @@ export default function OfficerDashboard({
         </div>
       </div>
 
-      {/* 2. Stakeholder Hierarchy Switcher Ribbon (Matching Blueprint PDF) */}
+      {/* 2. Official Role & Security Tier Clearance Banner (Strict RBAC Enforcement) */}
       <div style={{ 
-        background: '#071426', 
+        background: currentTierMeta.bg, 
         borderRadius: 8, 
-        padding: '6px 10px', 
+        padding: '10px 14px', 
         marginBottom: 18, 
         display: 'flex', 
+        justifyContent: 'space-between',
         alignItems: 'center', 
-        gap: 6, 
-        overflowX: 'auto',
-        border: '1px solid #1e293b',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+        border: `1px solid ${currentTierMeta.color}30`,
+        boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+        flexWrap: 'wrap',
+        gap: 10
       }}>
-        <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 700, paddingRight: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-          {langHindi ? 'स्तर चयन:' : 'Hierarchy Tier:'}
-        </span>
-        
-        {[
-          { id: 'central', label: langHindi ? 'केंद्रीय मंत्रालय' : 'Central Ministry', sub: 'Overview | States | Projects | Analytics' },
-          { id: 'state', label: langHindi ? 'राज्य सरकार' : 'State Government', sub: 'Districts | Projects | Compensation | R&R' },
-          { id: 'district', label: langHindi ? 'जिला प्रशासन (CALA)' : 'District Authority', sub: 'Parcels | Tasks | Approvals | Hearings' },
-          { id: 'pia', label: langHindi ? 'परियोजना एजेंसी (NHAI)' : 'Project Agency (PIA)', sub: 'My Projects | Land Parcels | Progress' },
-          { id: 'field', label: langHindi ? 'फील्ड सर्वेक्षक' : 'Field Surveyor', sub: 'My Tasks | Verification | Offline PWA' },
-          { id: 'admin', label: langHindi ? 'प्रणाली व्यवस्थापक' : 'System Admin', sub: 'Users | Roles | Audit Logs | Config' }
-        ].map(tier => (
-          <button
-            key={tier.id}
-            onClick={() => setHierarchyTier(tier.id)}
-            style={{
-              background: hierarchyTier === tier.id ? 'var(--nlams-saffron)' : 'rgba(255,255,255,0.06)',
-              color: hierarchyTier === tier.id ? '#ffffff' : '#cbd5e1',
-              border: hierarchyTier === tier.id ? '1px solid #ea580c' : '1px solid rgba(255,255,255,0.1)',
-              padding: '6px 12px',
-              borderRadius: 6,
-              fontSize: '0.75rem',
-              fontWeight: hierarchyTier === tier.id ? 800 : 600,
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-              transition: 'all 0.2s ease',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'flex-start'
-            }}
-          >
-            <span>{tier.label}</span>
-            <span style={{ fontSize: '0.6rem', opacity: 0.8, fontWeight: 400 }}>{tier.sub}</span>
-          </button>
-        ))}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ background: currentTierMeta.color, color: '#fff', padding: '6px 10px', borderRadius: 6, fontSize: '0.72rem', fontWeight: 800 }}>
+            {currentTierMeta.badge}
+          </div>
+          <div>
+            <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#071426' }}>
+              {currentUser?.name || 'Authorized Official'}
+            </div>
+            <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+              {currentUser?.designation || 'Statutory Authority'} • {currentUser?.agency || 'Government of India'}
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.7rem', color: currentTierMeta.color, fontWeight: 700 }}>
+          <ShieldCheck size={14} />
+          <span>{langHindi ? 'RBAC विशेषाधिकार सुरक्षित (पृथक प्रशासनिक स्तर)' : 'Strict RBAC Tier Isolation Enforced (DPDP Compliant)'}</span>
+        </div>
       </div>
 
       {/* ================= TIER 1: CENTRAL MINISTRY LEVEL DASHBOARD ================= */}

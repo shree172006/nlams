@@ -217,7 +217,7 @@ export default function Navbar({
                 onClick={() => setShowLoginModal(true)}
               >
                 <Shield size={16} color="#60a5fa" />
-                <span>{langHindi ? 'अधिकारी लॉगिन' : 'Officer Login'}</span>
+                <span>{langHindi ? 'लॉगिन' : 'Login'}</span>
                 <span className="badge-pill badge-gold" style={{ fontSize: '0.62rem', padding: '1px 6px' }}>Portal</span>
               </button>
             )}
