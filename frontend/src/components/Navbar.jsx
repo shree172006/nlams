@@ -267,17 +267,19 @@ export default function Navbar({
                 <Users size={14} />
                 <span>{langHindi ? '4. पुनर्वास R&R' : '4. R&R Entitlements Guide'}</span>
               </button>
-              <button 
-                className={`nav-link-btn ${activeTab === 'survey' ? 'active' : ''}`}
-                onClick={() => setActiveTab('survey')}
-                style={{ background: activeTab === 'survey' ? 'var(--nlams-saffron)' : 'rgba(245,158,11,0.1)', color: activeTab === 'survey' ? '#fff' : '#f59e0b' }}
-              >
-                <Smartphone size={14} />
-                <span>{langHindi ? '5. फील्ड सर्वे (ऑफलाइन)' : '5. Field Survey (Offline Tool)'}</span>
-              </button>
             </>
+          ) : currentUser?.role === 'SURVEYOR' ? (
+            /* ================= FIELD SURVEYOR EXCLUSIVE SINGLE TAB ================= */
+            <button 
+              className={`nav-link-btn ${activeTab === 'survey' ? 'active' : ''}`}
+              onClick={() => setActiveTab('survey')}
+              style={{ background: activeTab === 'survey' ? 'var(--nlams-saffron)' : 'rgba(245,158,11,0.15)', color: activeTab === 'survey' ? '#fff' : '#f59e0b', fontWeight: 700 }}
+            >
+              <Smartphone size={14} />
+              <span>{langHindi ? '1. फील्ड सर्वे एवं ऑफलाइन सिंक (PWA)' : '1. Field Survey & Offline Sync (PWA)'}</span>
+            </button>
           ) : (
-            /* ================= OFFICER TABS (WHEN AUTHENTICATED) ================= */
+            /* ================= ADMINISTRATIVE OFFICERS (COLLECTOR, CALA, AGENCY) ================= */
             <>
               <button 
                 className={`nav-link-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
@@ -334,14 +336,6 @@ export default function Navbar({
               >
                 <IndianRupee size={14} />
                 <span>{langHindi ? '8. मुआवजा कैलकुलेटर' : '8. Valuation Sandbox'}</span>
-              </button>
-              <button 
-                className={`nav-link-btn ${activeTab === 'survey' ? 'active' : ''}`}
-                onClick={() => setActiveTab('survey')}
-                style={{ background: activeTab === 'survey' ? 'var(--nlams-saffron)' : 'rgba(245,158,11,0.1)', color: activeTab === 'survey' ? '#fff' : '#f59e0b' }}
-              >
-                <Smartphone size={14} />
-                <span>{langHindi ? '9. फील्ड सर्वे एवं सिंक' : '9. Field Survey & Sync'}</span>
               </button>
             </>
           )}

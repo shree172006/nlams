@@ -337,8 +337,13 @@ export default function App() {
 
       setCurrentUser(loggedUser);
       setShowLoginModal(false);
-      setActiveTab('dashboard');
-      showToast(`Authenticated as ${loggedUser.name} (${loggedUser.role}) • Officer Workspace Enabled`, 'success');
+      if (loggedUser.role === 'SURVEYOR') {
+        setActiveTab('survey');
+        showToast(`Logged in as Field Surveyor: ${loggedUser.name} • Dedicated On-Ground Survey Workspace Enabled`, 'success');
+      } else {
+        setActiveTab('dashboard');
+        showToast(`Authenticated as ${loggedUser.name} (${loggedUser.role}) • Officer Workspace Enabled`, 'success');
+      }
     } catch (e) {
       console.error(e);
       showToast("Officer login error.", 'error');
